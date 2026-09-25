@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="winterGame2026.vcxproj" />
+  <Project Path="winterGame2026.vcxproj" Id="751c60ee-cad6-43a7-9349-a18076e7a3f1" />
 </Solution>
