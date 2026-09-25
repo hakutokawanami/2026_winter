@@ -1,0 +1,27 @@
+# ビルド系
+Debug/
+x64/
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.tlog
+*.lastbuildstate
+*.pch
+*.ipch
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+
+# 一時ファイル
+*.log
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+/springGame2026/.vs
+springGame2026/.vs/springGame2026.slnx/v18/.suo
+springGame2026_2/Log.txt
