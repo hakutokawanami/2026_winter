@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Input\InputManager.cpp" />
     <ClCompile Include="Source\Game\Scene\DebugScene.cpp" />
     <ClCompile Include="Source\Engine\Core\Application.cpp" />
     <ClCompile Include="Source\Engine\Core\main.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="Source\Game\Scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Engine\Input\InputManager.h" />
     <ClInclude Include="Source\Game\Scene\DebugScene.h" />
     <ClInclude Include="Source\Engine\Core\Application.h" />
     <ClInclude Include="Source\Engine\Core\Game.h" />
