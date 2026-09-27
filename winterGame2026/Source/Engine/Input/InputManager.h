@@ -4,14 +4,20 @@
 #include<string>
 #include<vector>
 #include<DxLib.h>
-
+#include<array>
 /// <summary>
 /// 周辺機器種別
 /// </summary>
 enum class PeripheralType
 {
 	keyBoard,
-	pad1
+	pad
+};
+
+enum class Pad
+{
+	P1 = 0,
+	P2 = 1
 };
 
 /// <summary>
@@ -24,6 +30,7 @@ struct  InputState
 	//入力情報が入る(キーボードならインデックス,パッドならビット)
 	int id;
 };
+
 
 /// <summary>
 /// 入力を抽象化するためのクラス
@@ -48,45 +55,57 @@ public:
 	/// <summary>
 	/// 特定のボタンが押されているか
 	/// </summary>
+	/// <param name="player">何Pか</param>
 	/// <param name="name">イベント名</param>
 	/// <returns>押されている:true / 押されていない:false</returns>
-	bool IsPressed(const char* name)const;
+	bool IsPressed(Pad player,const char* name)const;
 	/// <summary>
 	/// 特定のボタンが今押されたか
 	/// </summary>
+	/// <param name="player">何Pか</param>
 	/// <param name="name">イベント名</param>
 	/// <returns>今押された:true / 押されていないor押しっぱなし:false</returns>
-	bool IsTriggered(const char* name)const;
+	bool IsTriggered(Pad player, const char* name)const;
 	/// <summary>
 	/// 特定のボタンが今離されたか
 	/// </summary>
+	/// <param name="player">何Pか</param>
 	/// <param name="name">イベント名</param>
 	/// <returns>今離された:true / 押されていないor押しっぱなし:false</returns>
-	bool IsReleased(const char* name)const;
+	bool IsReleased(Pad player, const char* name)const;
 	/// <summary>
 	/// 左スティックの入力を取得する関数
 	/// </summary>
+	/// <param name="player">何Pか</param>
 	/// <returns>入力の方向ベクトル</returns>
-	Vector2 GetLeftStick()const;
+	Vector2 GetLeftStick(Pad player)const;
 	/// <summary>
 	/// 右スティックの入力を取得する関数
 	/// </summary>
+	/// <param name="player">何Pか</param>
 	/// <returns>入力の方向ベクトル</returns>
-	Vector2 GetRightStick()const;
+	Vector2 GetRightStick(Pad player)const;
 	/// <summary>
 	/// InputManagerが管理しているすべての入力イベントのうち、どれか一つでも入力されているか
 	/// </summary>
+	/// <param name="player">何Pか</param>
 	/// <returns>どれか一つでも入力されている:true / すべて入力されていない:false</returns>
-	bool AnyPressButtonInput()const;
+	bool AnyPressButtonInput(Pad player)const;
+	/// <summary>
+	/// どのゲームパッドを使うか
+	/// </summary>
+	/// <param name="player">何Pか</param>
+	/// <returns></returns>
+	int GetPadNo(Pad player)const;
 
 private:
 	//イベント名と実際の入力の対応表
 	std::map<std::string, std::vector<InputState>>m_inputTable;
 	//実際に入力されたかどうかのデータ
-	std::map<std::string, bool>m_inputData;
+	std::array<std::map<std::string, bool>,2>m_inputData;
 	//前のフレームに押されたかどうか
-	std::map<std::string, bool>m_lastInputData;
+	std::array<std::map<std::string, bool>,2>m_lastInputData;
 
 	//GetJoypadXInputStateで取得した入力を保存する変数
-	XINPUT_STATE m_stick;
+	std::array<XINPUT_STATE,2> m_stick;
 };

@@ -4,7 +4,7 @@
 #include "DxLib.h"
 
 #include "TitleScene.h"
-//#include "GameScene.h"
+#include "GameScene.h"
 //#include "ResultScene.h"
 //#include "CollisionTestScene.h"
 //#include "AnimationTestScene.h"
@@ -79,9 +79,9 @@ void DebugScene::NormalUpdate()
 			break;
 
 		case 1:
-			//m_controller.ChangeScene(
-			//	std::make_shared<GameScene>(m_controller)
-			//);
+			m_controller.ChangeScene(
+				std::make_shared<GameScene>(m_controller)
+			);
 			break;
 
 		case 2:
