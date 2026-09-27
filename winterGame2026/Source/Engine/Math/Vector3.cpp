@@ -1,4 +1,6 @@
 #include "Vector3.h"
+#include<cmath>
+
 float Vector3::Length() const
 {
 	return std::hypot(x, y, z);
