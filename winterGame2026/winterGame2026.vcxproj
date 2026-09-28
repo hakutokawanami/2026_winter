@@ -139,6 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Camera\BattleCamera.cpp" />
+    <ClCompile Include="Source\Game\Camera\CameraBase.cpp" />
+    <ClCompile Include="Source\Game\Player\Player.cpp" />
     <ClCompile Include="Source\Engine\Core\GameObjectManager.cpp" />
     <ClCompile Include="Source\Game\Base\GameObject.cpp" />
     <ClCompile Include="Source\Engine\Math\Matrix4x4.cpp" />
@@ -156,6 +159,9 @@
     <ClCompile Include="Source\Engine\Math\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Camera\BattleCamera.h" />
+    <ClInclude Include="Source\Game\Camera\CameraBase.h" />
+    <ClInclude Include="Source\Game\Player\Player.h" />
     <ClInclude Include="Source\Engine\Core\GameObjectManager.h" />
     <ClInclude Include="Source\Game\Base\GameObject.h" />
     <ClInclude Include="Source\Engine\Math\Matrix4x4.h" />
