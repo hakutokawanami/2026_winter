@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
-
+#include<memory>
+class Player;
 class GameScene : public SceneBase
 {
 public:
@@ -8,6 +9,8 @@ public:
 	~GameScene();
 	void Update()override;
 	void Draw()override;
+
+	void DrawGrid();
 
 private:
 	//フェードイン更新
@@ -30,5 +33,8 @@ private:
 
 	//フェード用のフレームカウンター
 	int m_frame;
+
+	std::shared_ptr<Player>m_player1;
+	std::shared_ptr<Player>m_player2;
 };
 
