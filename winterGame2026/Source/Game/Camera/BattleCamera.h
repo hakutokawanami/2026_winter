@@ -19,10 +19,10 @@ public:
 	~BattleCamera()override;
 
 	void Init()override;
-	void Init(std::shared_ptr<Player>player1, std::shared_ptr<Player>player2);
+	void Init(Player* player1, Player* player2);
 	void Update()override;
 
-	void SetPlayers(std::shared_ptr<Player>player1, std::shared_ptr<Player>player2);
+	void SetPlayers(Player* player1, Player* player2);
 	// カメラの位置とターゲットを計算する関数
 	void CalculateCameraPositionAndTarget();
 	// カメラの位置とターゲットを補間する関数
@@ -33,8 +33,8 @@ public:
 	void Apply();
 
 private:
-	std::weak_ptr<Player>m_player1;
-	std::weak_ptr<Player>m_player2;
+	Player* m_player1;
+	Player* m_player2;
 
 	CameraState m_cameraState;
 };

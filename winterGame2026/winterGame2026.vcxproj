@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Battle\BattleManager.cpp" />
     <ClCompile Include="Source\Engine\Core\ResourceManager.cpp" />
     <ClCompile Include="Source\Engine\Animation\AnimationController.cpp" />
     <ClCompile Include="Source\Game\Camera\BattleCamera.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="Source\Engine\Math\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Battle\BattleManager.h" />
     <ClInclude Include="Source\Engine\Core\ResourceManager.h" />
     <ClInclude Include="Source\Engine\Animation\AnimationController.h" />
     <ClInclude Include="Source\Game\Camera\BattleCamera.h" />

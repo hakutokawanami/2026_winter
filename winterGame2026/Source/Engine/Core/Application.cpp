@@ -56,7 +56,7 @@ bool Application::Init()
 	//ライティングの計算を行うかどうかの設定
 	SetUseLighting(true);
 	// カメラの近くと遠くの距離を設定
-	SetCameraNearFar(0.1f, 10000.0f);
+	SetCameraNearFar(10.0f, 10000.0f);
 
 	//初期化成功
 	return true;

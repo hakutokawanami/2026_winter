@@ -7,7 +7,7 @@ namespace
 	// カメラの高さ
 	constexpr float kCameraHeightOffset = 100.0f; 
 	// カメラのオフセット
-	constexpr float kCameraDistanceOffset = 3000.0f; 
+	constexpr float kCameraDistanceOffset = 500.0f; 
 }
 
 BattleCamera::BattleCamera():
@@ -23,7 +23,7 @@ void BattleCamera::Init()
 {
 }
 
-void BattleCamera::Init(std::shared_ptr<Player>player1, std::shared_ptr<Player>player2)
+void BattleCamera::Init(Player* player1, Player*player2)
 {
 	m_player1 = player1;
 	m_player2 = player2;
@@ -47,7 +47,7 @@ void BattleCamera::Update()
 
 }
 
-void BattleCamera::SetPlayers(std::shared_ptr<Player>player1, std::shared_ptr<Player>player2)
+void BattleCamera::SetPlayers(Player* player1, Player* player2)
 {
 	m_player1 = player1;
 	m_player2 = player2;
@@ -56,8 +56,8 @@ void BattleCamera::SetPlayers(std::shared_ptr<Player>player1, std::shared_ptr<Pl
 void BattleCamera::CalculateCameraPositionAndTarget()
 {
 	// プレイヤーの位置を取得してカメラのターゲットを設定
-	Vector3 player1Pos = m_player1.lock()->GetTransform().GetPosition();
-	Vector3 player2Pos = m_player2.lock()->GetTransform().GetPosition();
+	Vector3 player1Pos = m_player1->GetTransform().GetPosition();
+	Vector3 player2Pos = m_player2->GetTransform().GetPosition();
 	m_calculatedTarget = (player1Pos + player2Pos) * 0.5f;
 	//プレイヤー間の距離を計算
 	Vector3 playerToPlayerDirection = player2Pos - player1Pos;

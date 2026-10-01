@@ -17,12 +17,12 @@ Player::Player(PlayerID id, int modelHandle):
 	//モデル複製
 	m_modelHandle = MV1DuplicateModel(modelHandle);
 	//アニメーションコントローラー生成
-//	m_animationController = std::make_unique<AnimationController>(m_modelHandle);
+	m_animationController = std::make_unique<AnimationController>(m_modelHandle);
 	//アニメーション登録
-//	m_animationController->AddAnimation(PlayerAnim::idle);
-//	m_animationController->AddAnimation(PlayerAnim::walk);
+	m_animationController->AddAnimation(PlayerAnim::idle);
+	m_animationController->AddAnimation(PlayerAnim::walk);
 	//初期アニメーション再生
-//	m_animationController->Play(PlayerAnim::idle, true, 15.0f);
+	m_animationController->Play(PlayerAnim::idle, true, 15.0f);
 }
 
 Player::~Player()
@@ -34,9 +34,9 @@ void Player::Init()
 	if(m_playerID == PlayerID::P1)
 	{
 		// 1Pの初期化処理
-	//	m_transform.SetPosition(kPlayer1InitPos);
-	//	m_transform.SetRotate(Quaternion::AngleAxis(0.0f, Vector3::Up()));
-	//	MV1SetMatrix(m_modelHandle, m_transform.GetWorldMatrix().ChangeDxMat());
+		m_transform.SetPosition(kPlayer1InitPos);
+		m_transform.SetRotate(Quaternion::AngleAxis(0.0f, Vector3::Up()));
+		MV1SetMatrix(m_modelHandle, m_transform.GetWorldMatrix().ChangeDxMat());
 	}
 	else
 	{

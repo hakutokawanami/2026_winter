@@ -3,7 +3,7 @@
 
 namespace
 {
-    constexpr const wchar_t* kPlayer1ModelPath = L"Data/Model/Player/Player_3.mv1";
+    constexpr const wchar_t* kPlayer1ModelPath = L"Data/Model/Player/Player_1.mv1";
     constexpr const wchar_t* kPlayer2ModelPath = L"Data/Model/Player/Player_2.mv1";
 }
 
@@ -27,8 +27,6 @@ ResourceManager& ResourceManager::GetInstance()
 
 void ResourceManager::LoadResources()
 {
-    MV1SetLoadModelUsePhysicsMode(DX_LOADMODEL_PHYSICS_DISABLE);
-
     //プレイヤー
     m_player1ModelHandle = MV1LoadModel(kPlayer1ModelPath);
     m_modelHandleTable[ModelType::player1] = { m_player1ModelHandle };
