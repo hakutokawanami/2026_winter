@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include<memory>
 class Player;
+class BattleCamera;
 class GameScene : public SceneBase
 {
 public:
@@ -36,5 +37,7 @@ private:
 
 	std::shared_ptr<Player>m_player1;
 	std::shared_ptr<Player>m_player2;
+
+	std::shared_ptr<BattleCamera>m_camera;
 };
 

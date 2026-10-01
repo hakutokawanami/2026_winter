@@ -2,6 +2,9 @@
 #include"SceneController.h"
 #include"Engine/Core/Application.h"
 #include"Game/Player/Player.h"
+#include"Engine/Core/ResourceManager.h"
+#include"Game/Common/PlayerID.h"
+#include"Game/Camera/BattleCamera.h"
 #include<DxLib.h>
 
 namespace
@@ -20,7 +23,15 @@ GameScene::GameScene(SceneController& controller) :
 	//フェード用のフレームカウンター初期化
 	m_frame = kFadeInterval;
 
-	m_player1 = std::make_shared<Player>();
+	auto& resourceManager = ResourceManager::GetInstance();
+	//プレイヤー生成
+	m_player1 = std::make_shared<Player>(PlayerID::P1, resourceManager.GetModel(ModelType::player2));
+	m_player2 = std::make_shared<Player>(PlayerID::P2, resourceManager.GetModel(ModelType::player2));
+	m_player1->Init();
+	m_player2->Init();
+	//カメラ生成
+	m_camera = std::make_shared<BattleCamera>();
+	m_camera->Init(m_player1, m_player2);
 }
 
 GameScene::~GameScene()
@@ -49,7 +60,10 @@ void GameScene::FadeInUpdate()
 
 void GameScene::NormalUpdate()
 {
+	m_player1->Update();
+	m_player2->Update();
 
+	m_camera->Update();
 }
 
 void GameScene::FadeOutUpdate()
@@ -65,6 +79,9 @@ void GameScene::FadeOutUpdate()
 void GameScene::NormalDraw()
 {
 	auto& wsize = Application::GetInstance().GetWindowSize();
+
+	m_player1->Draw();
+	m_player2->Draw();
 
 	DrawGrid();
 

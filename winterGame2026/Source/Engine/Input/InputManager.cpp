@@ -65,7 +65,7 @@ void InputManager::Update()
 
 	for (int i = 0; i < m_inputData.size(); i++)
 	{
-		Pad player = static_cast<Pad>(i);
+		PlayerID player = static_cast<PlayerID>(i);
 
 		int padNo = GetPadNo(player);
 
@@ -108,28 +108,28 @@ void InputManager::Update()
 	}	
 }
 
-bool InputManager::IsPressed(Pad player,const char* name) const
+bool InputManager::IsPressed(PlayerID player,const char* name) const
 {
 	int index = static_cast<int>(player);
 
 	return m_inputData[index].at(name);
 }
 
-bool InputManager::IsTriggered(Pad player,const char* name) const
+bool InputManager::IsTriggered(PlayerID player,const char* name) const
 {
 	int index = static_cast<int>(player);
 
 	return m_inputData[index].at(name) && !m_lastInputData[index].at(name);
 }
 
-bool InputManager::IsReleased(Pad player,const char* name) const
+bool InputManager::IsReleased(PlayerID player,const char* name) const
 {
 	int index = static_cast<int>(player);
 
 	return !m_inputData[index].at(name) && m_lastInputData[index].at(name);
 }
 
-Vector2 InputManager::GetLeftStick(Pad player) const
+Vector2 InputManager::GetLeftStick(PlayerID player) const
 {
 	int index = static_cast<int>(player);
 
@@ -152,7 +152,7 @@ Vector2 InputManager::GetLeftStick(Pad player) const
 	return stick;
 }
 
-Vector2 InputManager::GetRightStick(Pad player) const
+Vector2 InputManager::GetRightStick(PlayerID player) const
 {
 	int index = static_cast<int>(player);
 
@@ -178,7 +178,7 @@ Vector2 InputManager::GetRightStick(Pad player) const
 	return stick;
 }
 
-bool InputManager::AnyPressButtonInput(Pad player) const
+bool InputManager::AnyPressButtonInput(PlayerID player) const
 {
 	int index = static_cast<int>(player);
 
@@ -197,15 +197,15 @@ bool InputManager::AnyPressButtonInput(Pad player) const
 	return false;
 }
 
-int InputManager::GetPadNo(Pad player) const
+int InputManager::GetPadNo(PlayerID player) const
 {
 	switch (player)
 	{
-	case Pad::P1:
+	case PlayerID::P1:
 		return DX_INPUT_PAD1;
 		break;
 
-	case Pad::P2:
+	case PlayerID::P2:
 		return DX_INPUT_PAD2;
 		break;
 	}

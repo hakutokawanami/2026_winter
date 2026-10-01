@@ -1,16 +1,23 @@
 #pragma once
 #include"Game/Base/GameObject.h"
+#include"Game/Common/PlayerID.h"
+#include<string>
+#include<memory>
 
-enum class PlayerID
+/// <summary>
+/// プレイヤーアニメーションの名前空間
+/// </summary>
+namespace PlayerAnim
 {
-	P1,
-	P2
-};
+	const std::wstring idle = L"Armature|Idle";
+	const std::wstring walk = L"Armature|Walk";
+}
 
+class AnimationController;
 class Player : public GameObject
 {
 public:
-	Player(PlayerID id);
+	Player(PlayerID id, int modelHandle);
 	~Player();
 
 	void Init()override;
@@ -19,7 +26,11 @@ public:
 	void Draw()override;
 
 private:
-
+	///モデルハンドル
+	int m_modelHandle;
+	//プレイヤー識別子
 	PlayerID m_playerID;
+	//アニメーションコントローラー
+	std::unique_ptr<AnimationController>m_animationController;
 };
 

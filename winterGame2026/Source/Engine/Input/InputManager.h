@@ -1,5 +1,6 @@
 #pragma once
 #include"Engine/Math/Vector2.h"
+#include"Game/Common/PlayerID.h"
 #include<map>
 #include<string>
 #include<vector>
@@ -12,12 +13,6 @@ enum class PeripheralType
 {
 	keyBoard,
 	pad
-};
-
-enum class Pad
-{
-	P1 = 0,
-	P2 = 1
 };
 
 /// <summary>
@@ -58,45 +53,45 @@ public:
 	/// <param name="player">何Pか</param>
 	/// <param name="name">イベント名</param>
 	/// <returns>押されている:true / 押されていない:false</returns>
-	bool IsPressed(Pad player,const char* name)const;
+	bool IsPressed(PlayerID player,const char* name)const;
 	/// <summary>
 	/// 特定のボタンが今押されたか
 	/// </summary>
 	/// <param name="player">何Pか</param>
 	/// <param name="name">イベント名</param>
 	/// <returns>今押された:true / 押されていないor押しっぱなし:false</returns>
-	bool IsTriggered(Pad player, const char* name)const;
+	bool IsTriggered(PlayerID player, const char* name)const;
 	/// <summary>
 	/// 特定のボタンが今離されたか
 	/// </summary>
 	/// <param name="player">何Pか</param>
 	/// <param name="name">イベント名</param>
 	/// <returns>今離された:true / 押されていないor押しっぱなし:false</returns>
-	bool IsReleased(Pad player, const char* name)const;
+	bool IsReleased(PlayerID player, const char* name)const;
 	/// <summary>
 	/// 左スティックの入力を取得する関数
 	/// </summary>
 	/// <param name="player">何Pか</param>
 	/// <returns>入力の方向ベクトル</returns>
-	Vector2 GetLeftStick(Pad player)const;
+	Vector2 GetLeftStick(PlayerID player)const;
 	/// <summary>
 	/// 右スティックの入力を取得する関数
 	/// </summary>
 	/// <param name="player">何Pか</param>
 	/// <returns>入力の方向ベクトル</returns>
-	Vector2 GetRightStick(Pad player)const;
+	Vector2 GetRightStick(PlayerID player)const;
 	/// <summary>
 	/// InputManagerが管理しているすべての入力イベントのうち、どれか一つでも入力されているか
 	/// </summary>
 	/// <param name="player">何Pか</param>
 	/// <returns>どれか一つでも入力されている:true / すべて入力されていない:false</returns>
-	bool AnyPressButtonInput(Pad player)const;
+	bool AnyPressButtonInput(PlayerID player)const;
 	/// <summary>
 	/// どのゲームパッドを使うか
 	/// </summary>
 	/// <param name="player">何Pか</param>
 	/// <returns></returns>
-	int GetPadNo(Pad player)const;
+	int GetPadNo(PlayerID player)const;
 
 private:
 	//イベント名と実際の入力の対応表

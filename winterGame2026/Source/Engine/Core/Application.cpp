@@ -1,9 +1,10 @@
 ﻿#include "Application.h"
 #include"Game.h"
-#include"DxLib.h"
+#include"ResourceManager.h"
 #include"Game/Scene/SceneController.h"
 #include"Game/Scene/TitleScene.h"
 #include"Game/Scene/DebugScene.h"
+#include<DxLib.h>
 
 Application::Application() :
 	m_windowSize({ Game::kScreenWidth,Game::kScreenHeight })
@@ -39,7 +40,7 @@ bool Application::Init()
 #endif // _DEBUG
 
 	//ウィンドウのタイトル設定
-	SetMainWindowText(L"SUPER CHUCHU ODYSSEY");
+	SetMainWindowText(L"3D格ゲー(仮)");
 	//文字コードの設定
 	SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
 
@@ -51,9 +52,13 @@ bool Application::Init()
 	// 描画対象をバックバッファに変更
 	SetDrawScreen(DX_SCREEN_BACK);
 	// カリングの設定
-	SetUseBackCulling(true);
+//	SetUseBackCulling(true);
 	//ライティングの計算を行うかどうかの設定
 	SetUseLighting(true);
+	// カメラの近くと遠くの距離を設定
+	SetCameraNearFar(0.1f, 10000.0f);
+
+	SetLightDirection(VECTOR{ -1.0f, -1.0f, 0.0f });
 
 	//初期化成功
 	return true;
@@ -64,6 +69,9 @@ void Application::Run()
 	// Zバッファの設定
 	SetUseZBuffer3D(true);	// Zバッファを使います
 	SetWriteZBuffer3D(true);	// 描画する物体はZバッファにも距離を書き込む
+
+	auto& resourceManager = ResourceManager::GetInstance();
+	resourceManager.LoadResources();
 
 	//シーンの作成
 	SceneController SceneController;
@@ -115,6 +123,8 @@ void Application::Run()
 
 void Application::Terminate()
 {
+	auto& resourceManager = ResourceManager::GetInstance();
+	resourceManager.ReleaseResources();
 	DxLib_End();
 }
 
