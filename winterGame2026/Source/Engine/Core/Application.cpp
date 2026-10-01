@@ -52,13 +52,11 @@ bool Application::Init()
 	// 描画対象をバックバッファに変更
 	SetDrawScreen(DX_SCREEN_BACK);
 	// カリングの設定
-//	SetUseBackCulling(true);
+	SetUseBackCulling(true);
 	//ライティングの計算を行うかどうかの設定
 	SetUseLighting(true);
 	// カメラの近くと遠くの距離を設定
 	SetCameraNearFar(0.1f, 10000.0f);
-
-	SetLightDirection(VECTOR{ -1.0f, -1.0f, 0.0f });
 
 	//初期化成功
 	return true;

@@ -7,7 +7,7 @@ namespace
 	// カメラの高さ
 	constexpr float kCameraHeightOffset = 100.0f; 
 	// カメラのオフセット
-	constexpr float kCameraDistanceOffset = 500.0f; 
+	constexpr float kCameraDistanceOffset = 3000.0f; 
 }
 
 BattleCamera::BattleCamera():

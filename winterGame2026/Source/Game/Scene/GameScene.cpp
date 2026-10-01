@@ -25,7 +25,7 @@ GameScene::GameScene(SceneController& controller) :
 
 	auto& resourceManager = ResourceManager::GetInstance();
 	//プレイヤー生成
-	m_player1 = std::make_shared<Player>(PlayerID::P1, resourceManager.GetModel(ModelType::player2));
+	m_player1 = std::make_shared<Player>(PlayerID::P1, resourceManager.GetModel(ModelType::player1));
 	m_player2 = std::make_shared<Player>(PlayerID::P2, resourceManager.GetModel(ModelType::player2));
 	m_player1->Init();
 	m_player2->Init();
