@@ -54,7 +54,7 @@ bool Application::Init()
 	// カリングの設定
 	SetUseBackCulling(true);
 	//ライティングの計算を行うかどうかの設定
-	SetUseLighting(true);
+	SetUseLighting(false);
 	// カメラの近くと遠くの距離を設定
 	SetCameraNearFar(10.0f, 10000.0f);
 

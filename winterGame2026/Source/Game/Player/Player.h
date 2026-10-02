@@ -4,20 +4,17 @@
 #include<string>
 #include<memory>
 
-/// <summary>
-/// プレイヤーアニメーションの名前空間
-/// </summary>
-namespace PlayerAnim
-{
-	const std::wstring idle = L"Armature|Idle";
-	const std::wstring walk = L"Armature|Walk";
-}
-
 class AnimationController;
+class BattleManager;
 class Player : public GameObject
 {
 public:
-	Player(PlayerID id, int modelHandle);
+	//アニメーション名たち
+	static constexpr const wchar_t* kIdleAnimName = L"Armature|Idle";
+	static constexpr const wchar_t* kWalkAnimName = L"Armature|Walk";
+
+public:
+	Player(PlayerID id, int modelHandle, BattleManager* battleManager);
 	~Player();
 
 	void Init()override;
@@ -25,6 +22,16 @@ public:
 	void Update()override;
 	void Draw()override;
 
+	/// <summary>
+	/// 相手のプレイヤーの方向を向く
+	/// </summary>
+	void OpponentRotate();
+
+	/// <summary>
+	/// Dxライブラリにトランスフォームを適用する
+	/// </summary>
+	void ApplyDxLibMatrix();
+	
 private:
 	///モデルハンドル
 	int m_modelHandle;
@@ -32,5 +39,7 @@ private:
 	PlayerID m_playerID;
 	//アニメーションコントローラー
 	std::unique_ptr<AnimationController>m_animationController;
+	//バトルマネージャー
+	BattleManager* m_battleManager;
 };
 

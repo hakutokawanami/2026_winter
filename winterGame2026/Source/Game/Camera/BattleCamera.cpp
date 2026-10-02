@@ -5,13 +5,15 @@
 namespace
 {
 	// カメラの高さ
-	constexpr float kCameraHeightOffset = 100.0f; 
+	constexpr float kCameraHeightOffset = 300.0f; 
 	// カメラのオフセット
-	constexpr float kCameraDistanceOffset = 500.0f; 
+	constexpr float kCameraDistanceOffset = 1000.0f; 
 }
 
 BattleCamera::BattleCamera():
-	m_cameraState(CameraState::Battle)
+	m_cameraState(CameraState::Battle),
+	m_player1(nullptr),
+	m_player2(nullptr)
 {
 }
 

@@ -5,6 +5,7 @@
 /// </summary>
 enum class PlayerID
 {
-	P1 = 0,
-	P2 = 1
+	P1,
+	P2,
+	PlayerCount
 };

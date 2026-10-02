@@ -63,7 +63,7 @@ void InputManager::Update()
 	char keyState[256];
 	GetHitKeyStateAll(keyState);//生のキーボード情報
 
-	for (int i = 0; i < m_inputData.size(); i++)
+	for (int i = 0; i < static_cast<int>(PlayerID::PlayerCount); i++)
 	{
 		PlayerID player = static_cast<PlayerID>(i);
 
@@ -82,6 +82,9 @@ void InputManager::Update()
 		for (const auto inputInfo : m_inputTable)
 		{
 			auto& input = m_inputData[i][inputInfo.first];//inputInfo.firstには"ok"等が入っている
+
+			input = false;//初期化
+
 			//InputStateのベクタを回す
 			for (const auto& state : inputInfo.second)
 			{
@@ -106,6 +109,36 @@ void InputManager::Update()
 			}
 		}
 	}	
+
+#ifdef _DEBUG
+	DrawFormatString(
+		16, 180,
+		0xffffff,
+		L"P1 A : %d -> %d",
+		m_lastInputData[0].at("A"),
+		m_inputData[0].at("A"));
+
+	DrawFormatString(
+		16, 196,
+		0xffffff,
+		L"P2 A : %d -> %d",
+		m_lastInputData[1].at("A"),
+		m_inputData[1].at("A"));
+
+	DrawFormatString(
+		20, 100,
+		0xffffff,
+		L"P1 PadState : %d",
+		GetJoypadInputState(DX_INPUT_PAD1)
+	);
+
+	DrawFormatString(
+		20, 120,
+		0xffffff,
+		L"P2 PadState : %d",
+		GetJoypadInputState(DX_INPUT_PAD2)
+	);
+#endif
 }
 
 bool InputManager::IsPressed(PlayerID player,const char* name) const
@@ -137,10 +170,6 @@ Vector2 InputManager::GetLeftStick(PlayerID player) const
 	float y = m_stick[index].ThumbLY / 32767.0f;
 
 	Vector2 stick{ x,y };
-#ifdef _DEBUG
-	DrawFormatString(16, 64, 0xffffff, L"Input : LeftStick : %f,%f", x, y);
-	DrawFormatString(16, 80, 0xffffff, L"      : LeftStick : %f,%f", m_stick[index].ThumbLX, m_stick[index].ThumbLY);
-#endif // _DEBUG
 
 	//デッドゾーン処理
 	float len = sqrtf(x * x + y * y);
@@ -204,7 +233,7 @@ int InputManager::GetPadNo(PlayerID player) const
 	case PlayerID::P1:
 		return DX_INPUT_PAD1;
 		break;
-
+		
 	case PlayerID::P2:
 		return DX_INPUT_PAD2;
 		break;

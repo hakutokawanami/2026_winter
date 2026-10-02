@@ -3,6 +3,7 @@
 #include<memory>
 class Player;
 class BattleCamera;
+class BattleManager;
 class GameScene : public SceneBase
 {
 public:
@@ -34,10 +35,13 @@ private:
 
 	//フェード用のフレームカウンター
 	int m_frame;
-
-	std::shared_ptr<Player>m_player1;
-	std::shared_ptr<Player>m_player2;
-
-	std::shared_ptr<BattleCamera>m_camera;
+	//バトルマネージャー
+	std::unique_ptr<BattleManager>m_battleManager;
+	//プレイヤー1
+	std::unique_ptr<Player>m_player1;
+	//プレイヤー2
+	std::unique_ptr<Player>m_player2;
+	//カメラ
+	std::unique_ptr<BattleCamera>m_camera;
 };
 

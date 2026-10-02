@@ -26,6 +26,24 @@ struct  InputState
 	int id;
 };
 
+/// <summary>
+///	スティックの8方向+ニュートラルの情報
+/// </summary>
+enum class StickDirection
+{
+	neutral,
+
+	up,
+	down,
+	left,
+	right,
+
+	upLeft,
+	upRight,
+	downLeft,
+	downRight
+};
+
 
 /// <summary>
 /// 入力を抽象化するためのクラス
@@ -97,9 +115,11 @@ private:
 	//イベント名と実際の入力の対応表
 	std::map<std::string, std::vector<InputState>>m_inputTable;
 	//実際に入力されたかどうかのデータ
-	std::array<std::map<std::string, bool>,2>m_inputData;
+	std::array<std::map<std::string, bool>,static_cast<int>(PlayerID::PlayerCount)>m_inputData;
 	//前のフレームに押されたかどうか
-	std::array<std::map<std::string, bool>,2>m_lastInputData;
+	std::array<std::map<std::string, bool>, static_cast<int>(PlayerID::PlayerCount)>m_lastInputData;
+	//スティックをどの方向に倒したかの情報
+	std::array<StickDirection, static_cast<int>(PlayerID::PlayerCount)>m_stickDirection;
 
 	//GetJoypadXInputStateで取得した入力を保存する変数
 	std::array<XINPUT_STATE,2> m_stick;
