@@ -350,4 +350,11 @@ bool InputManager::IsStickTriggered(PlayerID player, StickDirection direction)
 	{
 		return false;
 	}
+	//一番新しい入力
+	StickDirection current = m_stickHistory[index].back();
+	//ひとつ前の入力
+	StickDirection previos = m_stickHistory[index][m_stickHistory.size() - 2];
+
+	//今入力された瞬間だったらtrue
+	return current == direction && previos == StickDirection::neutral;
 }
