@@ -1,4 +1,4 @@
-#include "Player.h"
+﻿#include "Player.h"
 #include"Engine/Animation/AnimationController.h"
 #include"Engine/Math/Vector3.h"
 #include"Engine/Input/InputManager.h"
@@ -87,6 +87,78 @@ void Player::Update()
 	DrawFormatString(10, 210 + static_cast<int>(m_playerID) * 20, 0xffffff, L"Player %d Left Stick: (%.2f, %.2f)", static_cast<int>(m_playerID) + 1, leftStickInput.x, leftStickInput.y);
 
 	DrawFormatString(10, 250 + static_cast<int>(m_playerID) * 20, 0xffffff, L"Player %d Move Direction: (%.2f, %.2f, %.2f)", static_cast<int>(m_playerID) + 1, moveDirection.x, moveDirection.y, moveDirection.z);
+
+	StickDirection direction = input.GetStickDirection(m_playerID);
+
+	const int x = 100 + static_cast<int>(m_playerID) * 200;
+	const int y = 500;
+
+	const int normalColor = GetColor(255, 255, 255);
+	const int activeColor = GetColor(255, 0, 0);
+
+	// 現在の方向と一致しているか
+	auto GetColorByDirection =
+		[&](StickDirection target)
+		{
+			return direction == target ? activeColor : normalColor;
+		};
+
+	// 上段
+	DrawFormatString(
+		x, y,
+		GetColorByDirection(StickDirection::upLeft),
+		L"↖"
+	);
+
+	DrawFormatString(
+		x + 20, y,
+		GetColorByDirection(StickDirection::up),
+		L"↑"
+	);
+
+	DrawFormatString(
+		x + 40, y,
+		GetColorByDirection(StickDirection::upRight),
+		L"↗"
+	);
+
+	// 中段
+	DrawFormatString(
+		x, y + 20,
+		GetColorByDirection(StickDirection::left),
+		L"←"
+	);
+
+	DrawFormatString(
+		x + 20, y + 20,
+		GetColorByDirection(StickDirection::neutral),
+		L"○"
+	);
+
+	DrawFormatString(
+		x + 40, y + 20,
+		GetColorByDirection(StickDirection::right),
+		L"→"
+	);
+
+	// 下段
+	DrawFormatString(
+		x, y + 40,
+		GetColorByDirection(StickDirection::downLeft),
+		L"↙"
+	);
+
+	DrawFormatString(
+		x + 20, y + 40,
+		GetColorByDirection(StickDirection::down),
+		L"↓"
+	);
+
+	DrawFormatString(
+		x + 40, y + 40,
+		GetColorByDirection(StickDirection::downRight),
+		L"↘"
+	);
 
 #endif // _DEBUG
 }

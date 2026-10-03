@@ -5,13 +5,18 @@ namespace
 	//GetJoypadXInputStateで取得した値を-1.0～1.0の範囲に変換するために使う
 	constexpr float kStickInitializeNum = 32767.0f;
 	//スティックのデッドゾーン
-	constexpr float kDeadZone = 0.2f;
+	constexpr float kDeadZone = 0.4f;
+	//入力を保存するフレーム数
+	constexpr int kStickHistorySize = 30;
 }
 
 InputManager::InputManager() :
 	m_inputData{},
 	m_lastInputData{},
 	m_inputTable{},
+	m_stickDirection{},
+	m_leftStick{},
+	m_stickHistory{},
 	m_stick()
 {
 	//イベント名を添え字にして、
@@ -66,22 +71,47 @@ void InputManager::Update()
 	for (int i = 0; i < static_cast<int>(PlayerID::PlayerCount); i++)
 	{
 		PlayerID player = static_cast<PlayerID>(i);
-
+		//何番目のゲームパッドを使うか取得
 		int padNo = GetPadNo(player);
-
+		//ボタン入力を取得
 		int padState = GetJoypadInputState(padNo);
-
-		m_lastInputData[i] = m_inputData[i];//直前のフレームを更新(前のフレーム情報をコピー)
+		//直前のフレームを更新(前のフレーム情報をコピー)
+		m_lastInputData[i] = m_inputData[i];
 
 		//スティックの入力を取得
 		GetJoypadXInputState(padNo, &m_stick[i]);
+		//左スティックの入力を変換
+		ConvertLeftStick(i);
+		//左スティックの入力を8方向+ニュートラルに変換
+		ConvertStickDirection(i);
+		//現在の入力方向を入力履歴に追加
+		m_stickHistory[i].push_back(m_stickDirection[i]);
+		//入力履歴が最大になったら古いものから削除
+		if (m_stickHistory[i].size() > kStickHistorySize)
+		{
+			m_stickHistory[i].pop_front();
+		}
+
+#ifdef _DEBUG
+
+		DrawFormatString(
+			10,
+			400 + i * 20,
+			GetColor(255, 255, 255),
+			L"P%d Stick History Size : %d",
+			i + 1,
+			static_cast<int>(m_stickHistory[i].size())
+		);
+
+#endif
 
 		//すべての入力イベントをチェック
 		//ここでinputData_が更新される
 		//inputTable_を回して各イベントの入力をチェック
 		for (const auto inputInfo : m_inputTable)
 		{
-			auto& input = m_inputData[i][inputInfo.first];//inputInfo.firstには"ok"等が入っている
+			//inputInfo.firstには"ok"等が入っている
+			auto& input = m_inputData[i][inputInfo.first];
 
 			input = false;//初期化
 
@@ -138,7 +168,85 @@ void InputManager::Update()
 		L"P2 PadState : %d",
 		GetJoypadInputState(DX_INPUT_PAD2)
 	);
+
 #endif
+}
+
+void InputManager::ConvertLeftStick(int id)
+{
+	float x = m_stick[id].ThumbLX / kStickInitializeNum;
+	float y = m_stick[id].ThumbLY / kStickInitializeNum;
+
+	Vector2 stick{ x,y };
+
+	if (stick.Length() < kDeadZone)
+	{
+		m_leftStick[id] = { 0.0f,0.0f };
+	}
+	else
+	{
+		m_leftStick[id] = stick;
+	}
+}
+
+void InputManager::ConvertStickDirection(int id)
+{
+	float angle = 0.0f;
+	int direction = 0;
+
+	if (m_leftStick[id].Length() < kDeadZone)
+	{
+		//動かしていないならニュートラル
+		m_stickDirection[id] = StickDirection::neutral;
+	}
+	else
+	{
+		//スティックの角度を求める
+		angle = atan2f(m_leftStick[id].y, m_leftStick[id].x);
+		//8方向の境界を22.5どずらす
+		angle += DX_PI_F / 8.0f;
+		//角度を0から2πにする
+		if (angle < 0.0f)
+		{
+			angle += DX_PI_F * 2.0f;
+		}
+		//45度ごとに8方向に分類
+		direction = static_cast<int>(angle / (DX_PI_F / 4.0f));
+
+		switch (direction)
+		{
+		case 0:
+			m_stickDirection[id] = StickDirection::right;
+			break;
+		case 1:
+			m_stickDirection[id] = StickDirection::upRight;
+			break;
+		case 2:
+			m_stickDirection[id] = StickDirection::up;
+			break;
+		case 3:
+			m_stickDirection[id] = StickDirection::upLeft;
+			break;
+		case 4:
+			m_stickDirection[id] = StickDirection::left;
+			break;
+		case 5:
+			m_stickDirection[id] = StickDirection::downLeft;
+			break;
+		case 6:
+			m_stickDirection[id] = StickDirection::down;
+			break;
+		case 7:
+			m_stickDirection[id] = StickDirection::downRight;
+			break;
+		}
+	}
+
+#ifdef _DEBUG
+	DrawFormatString(16, 300 + 20 * id, 0xffffff, L"stickAngle : %f", angle);
+	DrawFormatString(16, 340 + 20 * id, 0xffffff, L"stickDirection : %d", direction);
+#endif // _DEBUG
+
 }
 
 bool InputManager::IsPressed(PlayerID player,const char* name) const
@@ -164,21 +272,7 @@ bool InputManager::IsReleased(PlayerID player,const char* name) const
 
 Vector2 InputManager::GetLeftStick(PlayerID player) const
 {
-	int index = static_cast<int>(player);
-
-	float x = m_stick[index].ThumbLX / 32767.0f;
-	float y = m_stick[index].ThumbLY / 32767.0f;
-
-	Vector2 stick{ x,y };
-
-	//デッドゾーン処理
-	float len = sqrtf(x * x + y * y);
-	if (len < kDeadZone)
-	{
-		return { 0.0f,0.0f };
-	}
-
-	return stick;
+	return m_leftStick[static_cast<int>(player)];
 }
 
 Vector2 InputManager::GetRightStick(PlayerID player) const
@@ -240,4 +334,20 @@ int InputManager::GetPadNo(PlayerID player) const
 	}
 
 	return DX_INPUT_PAD1;
+}
+
+StickDirection InputManager::GetStickDirection(PlayerID player) const
+{
+	return m_stickDirection[static_cast<int>(player)];
+}
+
+bool InputManager::IsStickTriggered(PlayerID player, StickDirection direction)
+{
+	int index = static_cast<int>(player);
+
+	//履歴が2フレーム未満なら判定不可
+	if (m_stickHistory[index].size() < 2)
+	{
+		return false;
+	}
 }

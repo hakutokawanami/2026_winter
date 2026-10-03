@@ -6,6 +6,7 @@
 #include<vector>
 #include<DxLib.h>
 #include<array>
+#include<deque>
 /// <summary>
 /// 周辺機器種別
 /// </summary>
@@ -65,6 +66,19 @@ public:
 	/// 入力情報の更新
 	/// </summary>
 	void Update();
+
+	/// <summary>
+	/// スティックの入力値を-1から1に変換する関数
+	/// </summary>
+	/// <param name="id">何Pか</param>
+	void ConvertLeftStick(int id);
+
+	/// <summary>
+	/// スティックの入力を八方向+ニュートラルに変換する関数
+	/// </summary>
+	/// <param name="id">何Pか</param>
+	void ConvertStickDirection(int id);
+
 	/// <summary>
 	/// 特定のボタンが押されているか
 	/// </summary>
@@ -111,6 +125,21 @@ public:
 	/// <returns></returns>
 	int GetPadNo(PlayerID player)const;
 
+	/// <summary>
+	/// スティックの方向を取得
+	/// </summary>
+	/// <param name="player">何Pか</param>
+	/// <returns></returns>
+	StickDirection GetStickDirection(PlayerID player)const;
+
+	/// <summary>
+	/// スティックが今倒されたか
+	/// </summary>
+	/// <param name="player">何Pか</param>
+	/// <param name="direction">方向を指定</param>
+	/// <returns></returns>
+	bool IsStickTriggered(PlayerID player, StickDirection direction);
+
 private:
 	//イベント名と実際の入力の対応表
 	std::map<std::string, std::vector<InputState>>m_inputTable;
@@ -120,6 +149,10 @@ private:
 	std::array<std::map<std::string, bool>, static_cast<int>(PlayerID::PlayerCount)>m_lastInputData;
 	//スティックをどの方向に倒したかの情報
 	std::array<StickDirection, static_cast<int>(PlayerID::PlayerCount)>m_stickDirection;
+	//左スティックの入力を保存
+	std::array<Vector2, static_cast<int>(PlayerID::PlayerCount)>m_leftStick;
+	//入力履歴を保存
+	std::array<std::deque<StickDirection>, static_cast<int>(PlayerID::PlayerCount)>m_stickHistory;
 
 	//GetJoypadXInputStateで取得した入力を保存する変数
 	std::array<XINPUT_STATE,2> m_stick;
