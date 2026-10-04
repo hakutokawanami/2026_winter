@@ -67,7 +67,11 @@ void Player::Update()
 
 	Vector3 moveDirection = m_battleManager->GetRightDirection() * leftStickInput.x;
 
-	moveDirection += m_battleManager->GetForwardDirection() * leftStickInput.y;
+	if (input.IsStickTriggered(m_playerID, StickDirection::up))
+	{
+		// Aボタンが押されたときの処理
+		printfDx(L"Player %d: leftStickTriggered_up\n", static_cast<int>(m_playerID) + 1);
+	}
 
 	m_transform.Translate(moveDirection * kPlayerWalkSpeed);
 
