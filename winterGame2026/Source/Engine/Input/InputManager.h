@@ -1,6 +1,7 @@
 #pragma once
 #include"Engine/Math/Vector2.h"
 #include"Game/Common/PlayerID.h"
+#include"StickDirection.h"
 #include<map>
 #include<string>
 #include<vector>
@@ -26,25 +27,6 @@ struct  InputState
 	//入力情報が入る(キーボードならインデックス,パッドならビット)
 	int id;
 };
-
-/// <summary>
-///	スティックの8方向+ニュートラルの情報
-/// </summary>
-enum class StickDirection
-{
-	neutral,
-
-	up,
-	down,
-	left,
-	right,
-
-	upLeft,
-	upRight,
-	downLeft,
-	downRight
-};
-
 
 /// <summary>
 /// 入力を抽象化するためのクラス

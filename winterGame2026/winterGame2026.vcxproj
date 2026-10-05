@@ -160,8 +160,10 @@
     <ClCompile Include="Source\Game\Scene\TitleScene.cpp" />
     <ClCompile Include="Source\Engine\Math\Vector3.cpp" />
     <ClCompile Include="Source\Engine\Math\Transform.cpp" />
+    <ClCompile Include="Source\Engine\Input\StickInputAnalyzer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Engine\Input\StickDirection.h" />
     <ClInclude Include="Source\Game\Battle\BattleManager.h" />
     <ClInclude Include="Source\Engine\Core\ResourceManager.h" />
     <ClInclude Include="Source\Engine\Animation\AnimationController.h" />
@@ -184,6 +186,7 @@
     <ClInclude Include="Source\Game\Scene\TitleScene.h" />
     <ClInclude Include="Source\Engine\Math\Vector3.h" />
     <ClInclude Include="Source\Engine\Math\Transform.h" />
+    <ClInclude Include="Source\Engine\Input\StickInputAnalyzer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
