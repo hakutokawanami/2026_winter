@@ -67,6 +67,13 @@ public:
 	/// <returns></returns>
 	Vector3 GetForwardDirection()const;
 
+	/// <summary>
+	/// 相手のプレイヤーが右側にいるかどうか
+	/// </summary>
+	/// <param name="id">自分のプレイヤーID</param>
+	/// <returns></returns>
+	bool IsOpponentOnRight(PlayerID id)const;
+
 private:
 	Player* m_player1;
 	Player* m_player2;

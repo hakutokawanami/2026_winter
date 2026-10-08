@@ -16,7 +16,7 @@ InputManager::InputManager() :
 	m_inputTable{},
 	m_stickDirection{},
 	m_leftStick{},
-	m_stickHistory{},
+	m_stickAnalyzer{},
 	m_stick()
 {
 	//イベント名を添え字にして、
@@ -84,26 +84,8 @@ void InputManager::Update()
 		ConvertLeftStick(i);
 		//左スティックの入力を8方向+ニュートラルに変換
 		ConvertStickDirection(i);
-		//現在の入力方向を入力履歴に追加
-		m_stickHistory[i].push_back(m_stickDirection[i]);
-		//入力履歴が最大になったら古いものから削除
-		if (m_stickHistory[i].size() > kStickHistorySize)
-		{
-			m_stickHistory[i].pop_front();
-		}
-
-#ifdef _DEBUG
-
-		DrawFormatString(
-			10,
-			400 + i * 20,
-			GetColor(255, 255, 255),
-			L"P%d Stick History Size : %d",
-			i + 1,
-			static_cast<int>(m_stickHistory[i].size())
-		);
-
-#endif
+		//入力履歴に追加
+		m_stickAnalyzer[i].Update(m_stickDirection[i]);
 
 		//すべての入力イベントをチェック
 		//ここでinputData_が更新される
@@ -341,20 +323,17 @@ StickDirection InputManager::GetStickDirection(PlayerID player) const
 	return m_stickDirection[static_cast<int>(player)];
 }
 
-bool InputManager::IsStickTriggered(PlayerID player, StickDirection direction)
+bool InputManager::IsStickQuickInput(PlayerID player, StickDirection direction)
 {
-	int index = static_cast<int>(player);
+	return m_stickAnalyzer[static_cast<int>(player)].IsQuickInput(direction);
+}
 
-	//履歴が2フレーム未満なら判定不可
-	if (m_stickHistory[index].size() < 2)
-	{
-		return false;
-	}
-	//一番新しい入力
-	StickDirection current = m_stickHistory[index].back();
-	//ひとつ前の入力
-	StickDirection previous = m_stickHistory[index][m_stickHistory[index].size() - 2];
+bool InputManager::IsStickDoubleTapInput(PlayerID player, StickDirection direction)
+{
+	return m_stickAnalyzer[static_cast<int>(player)].IsDoubleTap(direction);
+}
 
-	//今入力された瞬間だったらtrue
-	return current == direction && previous == StickDirection::neutral;
+void InputManager::DebugDrawStickHistory(PlayerID player, int x, int y) const
+{
+	m_stickAnalyzer[static_cast<int>(player)].DebugDraw(x, y);
 }

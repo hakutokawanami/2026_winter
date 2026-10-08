@@ -2,6 +2,7 @@
 #include"Engine/Math/Vector2.h"
 #include"Game/Common/PlayerID.h"
 #include"StickDirection.h"
+#include"StickInputAnalyzer.h"
 #include<map>
 #include<string>
 #include<vector>
@@ -113,14 +114,29 @@ public:
 	/// <param name="player">何Pか</param>
 	/// <returns></returns>
 	StickDirection GetStickDirection(PlayerID player)const;
+	/// <summary>
+	/// 一瞬倒したかどうか
+	/// </summary>
+	/// <param name="player"></param>
+	/// <param name="direction"></param>
+	/// <returns></returns>
+	bool IsStickQuickInput(PlayerID player, StickDirection direction);
 
 	/// <summary>
-	/// スティックが今倒されたか
+	/// 二回連続で倒したかどうか
+	/// </summary>
+	/// <param name="player"></param>
+	/// <param name="direction"></param>
+	/// <returns></returns>
+	bool IsStickDoubleTapInput(PlayerID player, StickDirection direction);
+
+	/// <summary>
+	/// スティックの入力履歴をデバッグ表示する
 	/// </summary>
 	/// <param name="player">何Pか</param>
-	/// <param name="direction">方向を指定</param>
-	/// <returns></returns>
-	bool IsStickTriggered(PlayerID player, StickDirection direction);
+	/// <param name="x">表示位置X</param>
+	/// <param name="y">表示位置Y</param>
+	void DebugDrawStickHistory(PlayerID player, int x, int y)const;
 
 private:
 	//イベント名と実際の入力の対応表
@@ -133,8 +149,8 @@ private:
 	std::array<StickDirection, static_cast<int>(PlayerID::PlayerCount)>m_stickDirection;
 	//左スティックの入力を保存
 	std::array<Vector2, static_cast<int>(PlayerID::PlayerCount)>m_leftStick;
-	//入力履歴を保存
-	std::array<std::deque<StickDirection>, static_cast<int>(PlayerID::PlayerCount)>m_stickHistory;
+	//スティック入力履歴
+	std::array<StickInputAnalyzer, static_cast<int>(PlayerID::PlayerCount)>m_stickAnalyzer;
 
 	//GetJoypadXInputStateで取得した入力を保存する変数
 	std::array<XINPUT_STATE,2> m_stick;

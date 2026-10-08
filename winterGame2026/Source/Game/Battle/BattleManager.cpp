@@ -141,3 +141,10 @@ Vector3 BattleManager::GetForwardDirection() const
 {
 	return m_direction.Cross(Vector3::Up());
 }
+
+bool BattleManager::IsOpponentOnRight(PlayerID id) const
+{
+	const Vector3 right = m_direction;
+	
+	return GetOpponentDirection(id).Dot(right) > 0.0f;
+}

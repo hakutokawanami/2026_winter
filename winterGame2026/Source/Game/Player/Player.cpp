@@ -11,7 +11,7 @@ namespace
 	constexpr Vector3 kPlayer2InitPos = { 200.0f,0.0f,0.0f };
 	//プレイヤーのスケール
 	constexpr float kPlayer1Scale = 2.057f;
-	constexpr float kPlayer2Scale = 0.222f;
+	constexpr float kPlayer2Scale = 0.252f;
 	//プレイヤーの歩く速度
 	constexpr float kPlayerWalkSpeed = 5.0f;
 }
@@ -66,11 +66,25 @@ void Player::Update()
 	Vector2 leftStickInput = input.GetLeftStick(m_playerID);
 
 	Vector3 moveDirection = m_battleManager->GetRightDirection() * leftStickInput.x;
-
-	if (input.IsStickTriggered(m_playerID, StickDirection::up))
+	
+	if (input.IsStickDoubleTapInput(m_playerID, StickDirection::right))
 	{
-		// Aボタンが押されたときの処理
-		printfDx(L"Player %d: leftStickTriggered_up\n", static_cast<int>(m_playerID) + 1);
+		moveDirection += m_battleManager->GetRightDirection() * 50.0f;
+	}
+
+	if (input.IsStickDoubleTapInput(m_playerID, StickDirection::left))
+	{
+		moveDirection += m_battleManager->GetRightDirection() * -1.0f * 50.0f;
+	}
+	
+	if (input.IsStickQuickInput(m_playerID, StickDirection::up))
+	{
+		moveDirection += m_battleManager->GetForwardDirection() * 50;
+	}
+
+	if (input.IsStickQuickInput(m_playerID, StickDirection::down))
+	{
+		moveDirection += m_battleManager->GetForwardDirection() * -1.0f * 50;
 	}
 
 	m_transform.Translate(moveDirection * kPlayerWalkSpeed);

@@ -31,6 +31,14 @@ public:
 	/// Dxライブラリにトランスフォームを適用する
 	/// </summary>
 	void ApplyDxLibMatrix();
+
+	/// <summary>
+	/// プレイヤーIDを取得する関数
+	/// </summary>
+	/// <returns></returns>
+	const PlayerID GetPlayerID()const { return m_playerID; }
+
+	const BattleManager* GetBattleManager()const { return m_battleManager; }
 	
 private:
 	///モデルハンドル
