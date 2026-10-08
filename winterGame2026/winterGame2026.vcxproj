@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Player\State\PlayerStepState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerIdleState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerStateBase.cpp" />
     <ClCompile Include="Source\Game\Battle\BattleManager.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="Source\Game\Base\StateBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Player\State\PlayerStepState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerIdleState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerStateBase.h" />
     <ClInclude Include="Source\Engine\Input\StickDirection.h" />

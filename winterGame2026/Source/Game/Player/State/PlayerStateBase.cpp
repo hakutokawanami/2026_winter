@@ -1,7 +1,8 @@
 #include "PlayerStateBase.h"
 
-PlayerStateBase::PlayerStateBase(Player& player, AnimationController& anim):
+PlayerStateBase::PlayerStateBase(Player& player):
 	m_player(player),
-	m_animationController(anim)
+	m_animationController(player.GetAnimationController()),
+	m_battleManager(player.GetBattleManager())
 {
 }

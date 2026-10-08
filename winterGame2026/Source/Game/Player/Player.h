@@ -4,6 +4,7 @@
 #include<string>
 #include<memory>
 
+class PlayerStateBase;
 class AnimationController;
 class BattleManager;
 class Player : public GameObject
@@ -23,6 +24,12 @@ public:
 	void Draw()override;
 
 	/// <summary>
+	/// 状態を変える
+	/// </summary>
+	/// <param name="newState">次のステート</param>
+	void ChangeState(std::unique_ptr<PlayerStateBase>newState);
+
+	/// <summary>
 	/// 相手のプレイヤーの方向を向く
 	/// </summary>
 	void OpponentRotate();
@@ -38,7 +45,9 @@ public:
 	/// <returns></returns>
 	const PlayerID GetPlayerID()const { return m_playerID; }
 
-	const BattleManager* GetBattleManager()const { return m_battleManager; }
+	BattleManager* GetBattleManager()const { return m_battleManager; }
+
+	AnimationController& GetAnimationController()const { return *m_animationController; }
 	
 private:
 	///モデルハンドル
@@ -49,5 +58,7 @@ private:
 	std::unique_ptr<AnimationController>m_animationController;
 	//バトルマネージャー
 	BattleManager* m_battleManager;
+	//状態
+	std::unique_ptr<PlayerStateBase>m_state;
 };
 

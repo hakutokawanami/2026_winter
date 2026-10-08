@@ -3,6 +3,9 @@
 #include"Engine/Math/Vector3.h"
 #include"Engine/Input/InputManager.h"
 #include"Game/Battle/BattleManager.h"
+#include"State/PlayerStateBase.h"
+#include"State/PlayerIdleState.h"
+#include<cassert>
 #include<DxLib.h>
 namespace
 {
@@ -30,6 +33,9 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	m_animationController->AddAnimation(kWalkAnimName);
 	//初期アニメーション再生
 	m_animationController->Play(kIdleAnimName, true);
+
+	//ステート初期化
+	m_state = std::make_unique<PlayerIdleState>(*this);
 }
 
 Player::~Player()
@@ -61,33 +67,9 @@ void Player::End()
 
 void Player::Update()
 {
-	auto& input = InputManager::GetInstance();
+	assert(m_state);
 
-	Vector2 leftStickInput = input.GetLeftStick(m_playerID);
-
-	Vector3 moveDirection = m_battleManager->GetRightDirection() * leftStickInput.x;
-	
-	if (input.IsStickDoubleTapInput(m_playerID, StickDirection::right))
-	{
-		moveDirection += m_battleManager->GetRightDirection() * 50.0f;
-	}
-
-	if (input.IsStickDoubleTapInput(m_playerID, StickDirection::left))
-	{
-		moveDirection += m_battleManager->GetRightDirection() * -1.0f * 50.0f;
-	}
-	
-	if (input.IsStickQuickInput(m_playerID, StickDirection::up))
-	{
-		moveDirection += m_battleManager->GetForwardDirection() * 50;
-	}
-
-	if (input.IsStickQuickInput(m_playerID, StickDirection::down))
-	{
-		moveDirection += m_battleManager->GetForwardDirection() * -1.0f * 50;
-	}
-
-	m_transform.Translate(moveDirection * kPlayerWalkSpeed);
+	m_state->Update();
 
 	OpponentRotate();
 
@@ -96,16 +78,7 @@ void Player::Update()
 	m_animationController->Update();
 
 #ifdef _DEBUG
-	if (input.IsTriggered(m_playerID, "A"))
-	{
-		// Aボタンが押されたときの処理
-		printfDx(L"Player %d: A button triggered\n", static_cast<int>(m_playerID) + 1);
-	}
-
-	DrawFormatString(10, 210 + static_cast<int>(m_playerID) * 20, 0xffffff, L"Player %d Left Stick: (%.2f, %.2f)", static_cast<int>(m_playerID) + 1, leftStickInput.x, leftStickInput.y);
-
-	DrawFormatString(10, 250 + static_cast<int>(m_playerID) * 20, 0xffffff, L"Player %d Move Direction: (%.2f, %.2f, %.2f)", static_cast<int>(m_playerID) + 1, moveDirection.x, moveDirection.y, moveDirection.z);
-
+	auto& input = InputManager::GetInstance();
 	StickDirection direction = input.GetStickDirection(m_playerID);
 
 	const int x = 100 + static_cast<int>(m_playerID) * 200;
@@ -190,6 +163,18 @@ void Player::Draw()
 	DrawFormatString(10, 50 + static_cast<int>(m_playerID) * 20, 0xffffff, L"Player %d Position: (%.2f, %.2f, %.2f)", static_cast<int>(m_playerID), m_transform.GetPosition().x, m_transform.GetPosition().y, m_transform.GetPosition().z);
 #endif // _DEBUG
 
+}
+
+void Player::ChangeState(std::unique_ptr<PlayerStateBase> newState)
+{
+	if (m_state)
+	{
+		m_state->Exit();
+	}
+
+	m_state = std::move(newState);
+
+	m_state->Enter();
 }
 
 void Player::OpponentRotate()
