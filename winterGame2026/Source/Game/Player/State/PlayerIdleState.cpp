@@ -22,6 +22,17 @@ void PlayerIdleState::Update()
 			m_player.ChangeState(std::make_unique<PlayerStepState>(m_player, PlayerStepState::Type::forward));
 		}
 	}
+	else if (input.IsStickDoubleTapInput(m_player.GetPlayerID(), StickDirection::right))
+	{
+		if (m_battleManager->IsOpponentOnRight(m_player.GetPlayerID()))
+		{
+			m_player.ChangeState(std::make_unique<PlayerStepState>(m_player, PlayerStepState::Type::forward));
+		}
+		else
+		{
+			m_player.ChangeState(std::make_unique<PlayerStepState>(m_player, PlayerStepState::Type::back));
+		}
+	}
 }
 
 void PlayerIdleState::Exit()
