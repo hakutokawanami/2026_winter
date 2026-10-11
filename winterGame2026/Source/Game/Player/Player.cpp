@@ -31,6 +31,10 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	//アニメーション登録
 	m_animationController->AddAnimation(kIdleAnimName);
 	m_animationController->AddAnimation(kWalkAnimName);
+	m_animationController->AddAnimation(kForwardStepAnimName);
+	m_animationController->AddAnimation(kBackStepAnimName);
+	m_animationController->AddAnimation(kSideInStepAnimName);
+	m_animationController->AddAnimation(kSideOutStepAnimName);
 	//初期アニメーション再生
 	m_animationController->Play(kIdleAnimName, true);
 

@@ -41,15 +41,19 @@ void PlayerStepState::Enter()
 	{
 	case Type::forward:
 		m_direction = toOpponent;
+		m_animationController.Play(Player::kForwardStepAnimName);
 		break;
 	case Type::back:
 		m_direction = -toOpponent;
+		m_animationController.Play(Player::kBackStepAnimName);
 		break;
 	case Type::sideIn:
 		m_direction = side;
+		m_animationController.Play(Player::kSideInStepAnimName);
 		break;
 	case Type::sideOut:
 		m_direction = -side;
+		m_animationController.Play(Player::kSideOutStepAnimName);
 		break;
 	}
 }

@@ -13,6 +13,10 @@ public:
 	//アニメーション名たち
 	static constexpr const wchar_t* kIdleAnimName = L"Armature|Idle";
 	static constexpr const wchar_t* kWalkAnimName = L"Armature|Walk";
+	static constexpr const wchar_t* kForwardStepAnimName = L"Armature|StepForward";
+	static constexpr const wchar_t* kBackStepAnimName = L"Armature|StepBack";
+	static constexpr const wchar_t* kSideInStepAnimName = L"Armature|StepSideIn";
+	static constexpr const wchar_t* kSideOutStepAnimName = L"Armature|StepSideOut";
 
 public:
 	Player(PlayerID id, int modelHandle, BattleManager* battleManager);
