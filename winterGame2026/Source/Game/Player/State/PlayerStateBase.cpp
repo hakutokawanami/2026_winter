@@ -6,3 +6,8 @@ PlayerStateBase::PlayerStateBase(Player& player):
 	m_battleManager(player.GetBattleManager())
 {
 }
+
+StickDirection PlayerStateBase::ToScreenDirection(StickDirection direction) const
+{
+	return m_battleManager->IsOpponentOnRight(m_player.GetPlayerID()) ? direction : Mirror(direction);
+}

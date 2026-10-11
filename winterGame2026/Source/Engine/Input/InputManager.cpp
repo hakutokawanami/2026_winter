@@ -1,13 +1,17 @@
-#include "InputManager.h"
+﻿#include "InputManager.h"
 
 namespace
 {
 	//GetJoypadXInputStateで取得した値を-1.0～1.0の範囲に変換するために使う
 	constexpr float kStickInitializeNum = 32767.0f;
+	//GetJoypadDirectInputStateで取得した値を-1.0～1.0の範囲に変換するために使う
+	constexpr float kDirectInputStickMax = 1000.0f;
 	//スティックのデッドゾーン
 	constexpr float kDeadZone = 0.4f;
 	//入力を保存するフレーム数
 	constexpr int kStickHistorySize = 30;
+	//入力履歴にデバッグ表示するボタン(この順番で並べて表示する)
+	constexpr const char* kHistoryButtonNames[] = { "A","B","X","Y","START","SELECT" };
 }
 
 InputManager::InputManager() :
@@ -17,7 +21,8 @@ InputManager::InputManager() :
 	m_stickDirection{},
 	m_leftStick{},
 	m_stickAnalyzer{},
-	m_stick()
+	m_rawLeftStick{},
+	m_rawRightStick{}
 {
 	//イベント名を添え字にして、
 	// 右辺に実際の入力種別と入力コードの配列を置く
@@ -79,13 +84,11 @@ void InputManager::Update()
 		m_lastInputData[i] = m_inputData[i];
 
 		//スティックの入力を取得
-		GetJoypadXInputState(padNo, &m_stick[i]);
+		ReadStick(i, padNo);
 		//左スティックの入力を変換
 		ConvertLeftStick(i);
 		//左スティックの入力を8方向+ニュートラルに変換
 		ConvertStickDirection(i);
-		//入力履歴に追加
-		m_stickAnalyzer[i].Update(m_stickDirection[i]);
 
 		//すべての入力イベントをチェック
 		//ここでinputData_が更新される
@@ -120,7 +123,19 @@ void InputManager::Update()
 				}
 			}
 		}
-	}	
+
+		//押されているボタンを集める(履歴のデバッグ表示用)
+		std::vector<const char*> pressedButtons;
+		for (const char* name : kHistoryButtonNames)
+		{
+			if (m_inputData[i].at(name))
+			{
+				pressedButtons.push_back(name);
+			}
+		}
+		//入力履歴に追加
+		m_stickAnalyzer[i].Update(m_stickDirection[i], pressedButtons);
+	}
 
 #ifdef _DEBUG
 	DrawFormatString(
@@ -154,12 +169,33 @@ void InputManager::Update()
 #endif
 }
 
+void InputManager::ReadStick(int id, int padNo)
+{
+	if (CheckJoypadXInput(padNo))
+	{
+		//Xboxコントローラーなど、XInput対応のパッド
+		XINPUT_STATE state{};
+		GetJoypadXInputState(padNo, &state);
+
+		m_rawLeftStick[id] = { state.ThumbLX / kStickInitializeNum, state.ThumbLY / kStickInitializeNum };
+		m_rawRightStick[id] = { state.ThumbRX / kStickInitializeNum, state.ThumbRY / kStickInitializeNum };
+	}
+	else
+	{
+		//DUALSHOCKなど、DirectInputのパッド
+		DINPUT_JOYSTATE state{};
+		GetJoypadDirectInputState(padNo, &state);
+
+		//DirectInputは下方向が+なので、XInputに合わせてYを反転する
+		m_rawLeftStick[id] = { state.X / kDirectInputStickMax, -state.Y / kDirectInputStickMax };
+		//右スティックはZ軸とZ回転に割り当てられていることが多い
+		m_rawRightStick[id] = { state.Z / kDirectInputStickMax, -state.Rz / kDirectInputStickMax };
+	}
+}
+
 void InputManager::ConvertLeftStick(int id)
 {
-	float x = m_stick[id].ThumbLX / kStickInitializeNum;
-	float y = m_stick[id].ThumbLY / kStickInitializeNum;
-
-	Vector2 stick{ x,y };
+	Vector2 stick = m_rawLeftStick[id];
 
 	if (stick.Length() < kDeadZone)
 	{
@@ -261,10 +297,9 @@ Vector2 InputManager::GetRightStick(PlayerID player) const
 {
 	int index = static_cast<int>(player);
 
-	float x = m_stick[index].ThumbRX / 32767.0f;
-	float y = m_stick[index].ThumbRY / 32767.0f;
-
-	Vector2 stick{ x,y };
+	Vector2 stick = m_rawRightStick[index];
+	float x = stick.x;
+	float y = stick.y;
 
 	//デッドゾーン処理
 	float len = sqrtf(x * x + y * y);

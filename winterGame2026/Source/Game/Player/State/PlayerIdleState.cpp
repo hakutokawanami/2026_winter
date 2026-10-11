@@ -8,29 +8,25 @@ void PlayerIdleState::Enter()
 
 void PlayerIdleState::Update()
 {
-	auto& input = InputManager::GetInstance();
-	Vector2 leftStickInput = input.GetLeftStick(m_player.GetPlayerID());
+	//入力方向とステップ方向の表を作る
+	static constexpr std::pair<StickDirection, PlayerStepState::Type>stepTable[] =
+	{
+		{StickDirection::right,PlayerStepState::Type::forward},
+		{StickDirection::left,PlayerStepState::Type::back},
+		{StickDirection::up,PlayerStepState::Type::sideIn},
+		{StickDirection::down,PlayerStepState::Type::sideOut},
+	};
 
-	if (input.IsStickDoubleTapInput(m_player.GetPlayerID(), StickDirection::left))
+	auto& input = InputManager::GetInstance();
+	//どの入力か探す
+	for (auto [dir, type] : stepTable)
 	{
-		if (m_battleManager->IsOpponentOnRight(m_player.GetPlayerID()))
+		//2回連続で倒されていたら
+		if (input.IsStickDoubleTapInput(m_player.GetPlayerID(), ToScreenDirection(dir)))
 		{
-			m_player.ChangeState(std::make_unique<PlayerStepState>(m_player, PlayerStepState::Type::back));
-		}
-		else
-		{
-			m_player.ChangeState(std::make_unique<PlayerStepState>(m_player, PlayerStepState::Type::forward));
-		}
-	}
-	else if (input.IsStickDoubleTapInput(m_player.GetPlayerID(), StickDirection::right))
-	{
-		if (m_battleManager->IsOpponentOnRight(m_player.GetPlayerID()))
-		{
-			m_player.ChangeState(std::make_unique<PlayerStepState>(m_player, PlayerStepState::Type::forward));
-		}
-		else
-		{
-			m_player.ChangeState(std::make_unique<PlayerStepState>(m_player, PlayerStepState::Type::back));
+			//対応する方向にステップ
+			m_player.ChangeState(std::make_unique<PlayerStepState>(m_player, type));
+			return;
 		}
 	}
 }

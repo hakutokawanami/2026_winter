@@ -1,5 +1,7 @@
-#include "StickInputAnalyzer.h"
+﻿#include "StickInputAnalyzer.h"
 #include<DxLib.h>
+#include<string>
+#include<cstring>
 
 namespace
 {
@@ -14,6 +16,40 @@ namespace
 	constexpr float kArrowHeadSize = 5.0f;
 	//矢印の右に表示する文字のずらし幅
 	constexpr int kArrowTextOffset = 24;
+	//ボタン名の背景の左右の余白
+	constexpr int kButtonPadding = 2;
+	//ボタン同士の間隔
+	constexpr int kButtonSpacing = 3;
+	//ボタンと矢印との間隔
+	constexpr int kButtonArrowSpacing = 4;
+	//ボタン名の背景色
+	constexpr unsigned int kButtonBackColor = 0x404040;
+	//文字の高さ
+	constexpr int kTextHeight = 16;
+
+	/// <summary>
+	/// 押されているボタン名を、右端をそろえて並べて描画する
+	/// (並び順は左から buttons の順番)
+	/// </summary>
+	/// <param name="rightX">右端のX座標</param>
+	void DrawButtonNames(int rightX, int y, const std::vector<const char*>& buttons, unsigned int color)
+	{
+		int x = rightX;
+		//右端から詰めていくので後ろのボタンから描く
+		for (auto it = buttons.rbegin(); it != buttons.rend(); ++it)
+		{
+			//ボタン名は半角英字なのでそのままワイド文字に変換できる
+			std::wstring wname(*it, *it + strlen(*it));
+			int width = GetDrawStringWidth(wname.c_str(), static_cast<int>(wname.size()));
+
+			x -= width + kButtonPadding * 2;
+			//背景の箱を描いてからボタン名を描く
+			DrawBox(x, y, x + width + kButtonPadding * 2, y + kTextHeight, kButtonBackColor, true);
+			DrawString(x + kButtonPadding, y, wname.c_str(), color);
+
+			x -= kButtonSpacing;
+		}
+	}
 
 	/// <summary>
 	/// 方向を画面上の向き(右がx+、下がy+)に変換する
@@ -78,10 +114,12 @@ namespace
 	constexpr int kDoubleTapFirstMaxFrame = 10;
 }
 
-void StickInputAnalyzer::Update(StickDirection direction)
+void StickInputAnalyzer::Update(StickDirection direction, const std::vector<const char*>& buttons)
 {
 	//フレームを進める
 	++m_currentFrame;
+	//デバッグ表示用の履歴はボタンの変化でも区切るので別で更新する
+	UpdateDebugHistory(direction, buttons);
 	//前のフレームと同じ方向なら継続
 	if (direction == m_currentDirection)
 	{
@@ -103,6 +141,7 @@ void StickInputAnalyzer::Update(StickDirection direction)
 void StickInputAnalyzer::Clear()
 {
 	m_history.clear();
+	m_debugHistory.clear();
 	m_currentDirection = StickDirection::neutral;
 	m_currentFrame = 0;
 }
@@ -184,22 +223,24 @@ void StickInputAnalyzer::DebugDraw(int x, int y) const
 
 	int line = 1;
 	//新しい入力から順に表示
-	for (auto it = m_history.rbegin(); it != m_history.rend(); ++it)
+	for (auto it = m_debugHistory.rbegin(); it != m_debugHistory.rend(); ++it)
 	{
 		if (line > kDebugDrawMaxLine)
 		{
 			break;
 		}
 		//今入力中のものは黄色、それ以外は白
-		unsigned int color = (it == m_history.rbegin()) ? 0xffff00 : 0xffffff;
+		unsigned int color = (it == m_debugHistory.rbegin()) ? 0xffff00 : 0xffffff;
 
 		int lineY = y + kDebugDrawLineHeight * line;
 		//方向の矢印(文字の高さの中央に合わせる)
 		DrawDirectionArrow(static_cast<float>(x + 8), static_cast<float>(lineY + 8), it->direction, color);
+		//矢印の左に押されているボタンを並べる(フレーム数の位置がずれないように)
+		DrawButtonNames(x - kButtonArrowSpacing, lineY, it->buttons, color);
 		//継続フレームと開始～終了フレーム
 		DrawFormatString(x + kArrowTextOffset, lineY, color,
-			L"%dF (%d-%d)",
-			it->GetDuration(), it->startFrame, it->endFrame);
+			L"%dF ",
+			it->GetDuration());
 
 		++line;
 	}
@@ -221,5 +262,32 @@ void StickInputAnalyzer::RemoveOldRecords()
 	while (m_history.size() > kMaxHistorySize)
 	{
 		m_history.pop_front();
+	}
+}
+
+void StickInputAnalyzer::UpdateDebugHistory(StickDirection direction, const std::vector<const char*>& buttons)
+{
+	//方向もボタンも前のフレームと同じなら継続
+	if (!m_debugHistory.empty() &&
+		m_debugHistory.back().direction == direction &&
+		m_debugHistory.back().buttons == buttons)
+	{
+		m_debugHistory.back().endFrame = m_currentFrame;
+		return;
+	}
+
+	InputDebugRecord record;
+
+	record.direction = direction;
+	record.buttons = buttons;
+	record.startFrame = m_currentFrame;
+	record.endFrame = m_currentFrame;
+
+	m_debugHistory.push_back(record);
+
+	//表示する行数より古いものは削除
+	while (m_debugHistory.size() > static_cast<size_t>(kDebugDrawMaxLine))
+	{
+		m_debugHistory.pop_front();
 	}
 }

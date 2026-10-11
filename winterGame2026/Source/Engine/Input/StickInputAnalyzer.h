@@ -1,6 +1,7 @@
-#pragma once
+﻿#pragma once
 #include"StickDirection.h"
 #include<deque>
+#include<vector>
 
 //スティック入力一つの情報
 struct StickInputRecord
@@ -21,14 +22,36 @@ struct StickInputRecord
 	}
 };
 
+//デバッグ表示用の入力一つの情報(方向とボタンの組み合わせ)
+struct InputDebugRecord
+{
+	//方向
+	StickDirection direction;
+	//押されているボタン名
+	std::vector<const char*> buttons;
+	//入力開始フレーム
+	int startFrame;
+	//入力終了フレーム
+	int endFrame;
+	/// <summary>
+	/// 何フレーム入力されていたか
+	/// </summary>
+	/// <returns></returns>
+	int GetDuration()const
+	{
+		return endFrame - startFrame + 1;
+	}
+};
+
 class StickInputAnalyzer
 {
 public:
 	/// <summary>
 	/// 毎フレーム呼び出す
 	/// </summary>
-	/// <param name="direction"></param>
-	void Update(StickDirection direction);
+	/// <param name="direction">スティックの方向</param>
+	/// <param name="buttons">押されているボタン名(デバッグ表示用)</param>
+	void Update(StickDirection direction, const std::vector<const char*>& buttons);
 	/// <summary>
 	/// 履歴クリア
 	/// </summary>
@@ -62,11 +85,17 @@ private:
 	/// 古い履歴を削除
 	/// </summary>
 	void RemoveOldRecords();
+	/// <summary>
+	/// デバッグ表示用の履歴を更新
+	/// </summary>
+	void UpdateDebugHistory(StickDirection direction, const std::vector<const char*>& buttons);
 
 	//現在の入力方向
 	StickDirection m_currentDirection = StickDirection::neutral;
 	//入力履歴
 	std::deque<StickInputRecord>m_history;
+	//デバッグ表示用の入力履歴(方向かボタンが変わるたびに追加)
+	std::deque<InputDebugRecord>m_debugHistory;
 	//現在のフレーム数
 	int m_currentFrame = 0;
 };

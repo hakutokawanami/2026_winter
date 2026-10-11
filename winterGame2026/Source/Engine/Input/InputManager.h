@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"Engine/Math/Vector2.h"
 #include"Game/Common/PlayerID.h"
 #include"StickDirection.h"
@@ -49,6 +49,13 @@ public:
 	/// 入力情報の更新
 	/// </summary>
 	void Update();
+
+	/// <summary>
+	/// パッドの種類(XInput/DirectInput)に合わせてスティックの生の入力を読み取る関数
+	/// </summary>
+	/// <param name="id">何Pか</param>
+	/// <param name="padNo">ゲームパッドの番号</param>
+	void ReadStick(int id, int padNo);
 
 	/// <summary>
 	/// スティックの入力値を-1から1に変換する関数
@@ -152,6 +159,8 @@ private:
 	//スティック入力履歴
 	std::array<StickInputAnalyzer, static_cast<int>(PlayerID::PlayerCount)>m_stickAnalyzer;
 
-	//GetJoypadXInputStateで取得した入力を保存する変数
-	std::array<XINPUT_STATE,2> m_stick;
+	//左スティックの生の入力(-1.0～1.0、デッドゾーン処理前)
+	std::array<Vector2, static_cast<int>(PlayerID::PlayerCount)>m_rawLeftStick;
+	//右スティックの生の入力(-1.0～1.0、デッドゾーン処理前)
+	std::array<Vector2, static_cast<int>(PlayerID::PlayerCount)>m_rawRightStick;
 };

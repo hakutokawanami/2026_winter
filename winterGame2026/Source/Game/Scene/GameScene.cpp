@@ -108,8 +108,8 @@ void GameScene::NormalDraw()
 	DrawFormatString(static_cast<int>(wsize.w / 2.0f), static_cast<int>(wsize.h / 2.0f), 0xffffff, L"GAMESCENE");
 	//スティック入力履歴(P1は左上、P2は右上)
 	auto& input = InputManager::GetInstance();
-	input.DebugDrawStickHistory(PlayerID::P1, wsize.w - 400, 16);
-	input.DebugDrawStickHistory(PlayerID::P2, wsize.w - 200, 16);
+	input.DebugDrawStickHistory(PlayerID::P1, wsize.w - 260, 16);
+	input.DebugDrawStickHistory(PlayerID::P2, wsize.w - 120, 16);
 #endif // _DEBUG
 }
 
