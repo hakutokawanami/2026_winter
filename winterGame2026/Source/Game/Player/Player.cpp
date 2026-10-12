@@ -15,8 +15,6 @@ namespace
 	//プレイヤーのスケール
 	constexpr float kPlayer1Scale = 2.057f;
 	constexpr float kPlayer2Scale = 0.252f;
-	//プレイヤーの歩く速度
-	constexpr float kPlayerWalkSpeed = 5.0f;
 }
 
 Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
@@ -28,13 +26,21 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	m_modelHandle = MV1DuplicateModel(modelHandle);
 	//アニメーションコントローラー生成
 	m_animationController = std::make_unique<AnimationController>(m_modelHandle);
-	//アニメーション登録
+	//================アニメーション登録======================
 	m_animationController->AddAnimation(kIdleAnimName);
-	m_animationController->AddAnimation(kWalkAnimName);
-	m_animationController->AddAnimation(kForwardStepAnimName);
-	m_animationController->AddAnimation(kBackStepAnimName);
-	m_animationController->AddAnimation(kSideInStepAnimName);
-	m_animationController->AddAnimation(kSideOutStepAnimName);
+
+	m_animationController->AddAnimation(kWalkForwardAnimName);
+	m_animationController->AddAnimation(kWalkBackAnimName);
+	m_animationController->AddAnimation(kWalkSideInAnimName);
+	m_animationController->AddAnimation(kWalkSideOutAnimName);
+
+	m_animationController->AddAnimation(kStepForwardAnimName);
+	m_animationController->AddAnimation(kStepBackAnimName);
+	m_animationController->AddAnimation(kStepSideInAnimName);
+	m_animationController->AddAnimation(kStepSideOutAnimName);
+
+	//========================================================
+	
 	//初期アニメーション再生
 	m_animationController->Play(kIdleAnimName, true);
 

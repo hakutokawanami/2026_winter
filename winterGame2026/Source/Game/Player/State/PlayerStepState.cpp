@@ -13,7 +13,7 @@ namespace
 	constexpr StepParam kStepParams[] =
 	{
 		{16,250.0f},//forward
-		{20,220.0f},//back
+		{18,200.0f},//back
 		{14,150.0f},//sideIn
 		{14,150.0f},//sideOut
 	};
@@ -34,34 +34,46 @@ PlayerStepState::PlayerStepState(Player& player, Type type):
 
 void PlayerStepState::Enter()
 {
-	Vector3 toOpponent = m_battleManager->GetOpponentDirection(m_player.GetPlayerID());
-	Vector3 side = m_battleManager->GetForwardDirection();
-	//ステップの方向を決める
+	//アニメション再生
 	switch (m_type)
 	{
 	case Type::forward:
-		m_direction = toOpponent;
-		m_animationController.Play(Player::kForwardStepAnimName);
+		m_animationController.Play(Player::kStepForwardAnimName);
 		break;
 	case Type::back:
-		m_direction = -toOpponent;
-		m_animationController.Play(Player::kBackStepAnimName);
+		m_animationController.Play(Player::kStepBackAnimName);
 		break;
 	case Type::sideIn:
-		m_direction = side;
-		m_animationController.Play(Player::kSideInStepAnimName);
+		m_animationController.Play(Player::kStepSideInAnimName);
 		break;
 	case Type::sideOut:
-		m_direction = -side;
-		m_animationController.Play(Player::kSideOutStepAnimName);
+		m_animationController.Play(Player::kStepSideOutAnimName);
 		break;
 	}
 }
 
 void PlayerStepState::Update()
 {
-	//横移動は回り込むような動きにするために毎フレーム向きを更新
+	//毎フレーム向きを更新
+	Vector3 toOpponent = m_battleManager->GetOpponentDirection(m_player.GetPlayerID());
 	Vector3 side = m_battleManager->GetForwardDirection();
+
+	switch (m_type)
+	{
+	case Type::forward:
+		m_direction = toOpponent;
+		break;
+	case Type::back:
+		m_direction = -toOpponent;
+		break;
+	case Type::sideIn:
+		m_direction = side;
+		break;
+	case Type::sideOut:
+		m_direction = -side;
+		break;
+	}
+
 	//ステップのパラメータ取得
 	const auto& param = GetStepParam(m_type);
 	//移動量計算

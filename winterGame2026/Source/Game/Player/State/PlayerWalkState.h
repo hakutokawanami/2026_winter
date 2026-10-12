@@ -15,7 +15,7 @@ public:
 		sideOut,//画面手前への移動
 	};
 
-	PlayerWalkState(Player& player, Type type);
+	using PlayerStateBase::PlayerStateBase;
 
 	void Enter()override;
 	void Update()override;

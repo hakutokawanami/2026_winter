@@ -12,11 +12,16 @@ class Player : public GameObject
 public:
 	//アニメーション名たち
 	static constexpr const wchar_t* kIdleAnimName = L"Armature|Idle";
-	static constexpr const wchar_t* kWalkAnimName = L"Armature|Walk";
-	static constexpr const wchar_t* kForwardStepAnimName = L"Armature|StepForward";
-	static constexpr const wchar_t* kBackStepAnimName = L"Armature|StepBack";
-	static constexpr const wchar_t* kSideInStepAnimName = L"Armature|StepSideIn";
-	static constexpr const wchar_t* kSideOutStepAnimName = L"Armature|StepSideOut";
+
+	static constexpr const wchar_t* kWalkForwardAnimName = L"Armature|WalkForward";
+	static constexpr const wchar_t* kWalkBackAnimName = L"Armature|WalkBack";
+	static constexpr const wchar_t* kWalkSideInAnimName = L"Armature|WalkSideIn";
+	static constexpr const wchar_t* kWalkSideOutAnimName = L"Armature|WalkSideOut";
+
+	static constexpr const wchar_t* kStepForwardAnimName = L"Armature|StepForward";
+	static constexpr const wchar_t* kStepBackAnimName = L"Armature|StepBack";
+	static constexpr const wchar_t* kStepSideInAnimName = L"Armature|StepSideIn";
+	static constexpr const wchar_t* kStepSideOutAnimName = L"Armature|StepSideOut";
 
 public:
 	Player(PlayerID id, int modelHandle, BattleManager* battleManager);
