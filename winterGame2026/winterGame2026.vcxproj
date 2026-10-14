@@ -139,6 +139,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Collision\CapsuleCollider.cpp" />
+    <ClCompile Include="Source\Engine\Collision\ColliderBase.cpp" />
+    <ClCompile Include="Source\Engine\Collision\ICollidable.cpp" />
+    <ClCompile Include="Source\Engine\Collision\CollisionManager.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerWalkState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerStepState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerIdleState.cpp" />
@@ -168,6 +172,11 @@
     <ClCompile Include="Source\Game\Base\StateBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Engine\Collision\CapsuleCollider.h" />
+    <ClInclude Include="Source\Engine\Collision\ColliderBase.h" />
+    <ClInclude Include="Source\Engine\Collision\ICollidable.h" />
+    <ClInclude Include="Source\Engine\Collision\CollisionManager.h" />
+    <ClInclude Include="Source\Engine\Collision\CollisionLayers.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerWalkState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerStepState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerIdleState.h" />

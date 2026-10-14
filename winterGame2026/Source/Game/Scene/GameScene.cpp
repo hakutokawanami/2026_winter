@@ -75,10 +75,10 @@ void GameScene::NormalUpdate()
 	auto& input = InputManager::GetInstance();
 	input.Update();
 
-	m_battleManager->Update();
-
 	m_player1->Update();
 	m_player2->Update();
+
+	m_battleManager->Update();
 
 	m_camera->Update();
 }
