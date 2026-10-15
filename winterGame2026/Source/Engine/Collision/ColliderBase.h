@@ -20,14 +20,12 @@ class ColliderBase
 public:
 	virtual ~ColliderBase() = default;
 
-	virtual void Update(const Vector3& pos)abstract;
-
 	virtual void Draw()abstract;
 	/// <summary>
 	/// コライダーの種類を返す
 	/// </summary>
 	/// <returns></returns>
-	virtual ColliderType GetType()const = 0;
+	virtual ColliderType GetType()const abstract;
 	/// <summary>
 	/// 当たり判定を行うかどうか
 	/// </summary>
