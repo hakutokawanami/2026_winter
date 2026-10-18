@@ -96,16 +96,7 @@
     <ClCompile Include="Source\Game\Player\State\PlayerWalkState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Collision\CollisionManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Collision\ICollidable.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Collision\ColliderBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Collision\CapsuleCollider.cpp">
+    <ClCompile Include="Source\Engine\Collision\Collision.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -197,19 +188,13 @@
     <ClInclude Include="Source\Game\Player\State\PlayerWalkState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Collision\CollisionLayers.h">
+    <ClInclude Include="Source\Engine\Collision\Shape.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Collision\CollisionManager.h">
+    <ClInclude Include="Source\Engine\Collision\Collision.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Collision\ICollidable.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Collision\ColliderBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Collision\CapsuleCollider.h">
+    <ClInclude Include="Source\Game\Battle\HitBox.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
