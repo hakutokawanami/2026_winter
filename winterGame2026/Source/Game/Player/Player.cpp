@@ -5,6 +5,7 @@
 #include"Game/Battle/BattleManager.h"
 #include"State/PlayerStateBase.h"
 #include"State/PlayerIdleState.h"
+#include"Game/Battle/HitBoxSet.h"
 #include<cassert>
 #include<DxLib.h>
 namespace
@@ -15,6 +16,11 @@ namespace
 	//プレイヤーのスケール
 	constexpr float kPlayer1Scale = 2.057f;
 	constexpr float kPlayer2Scale = 0.252f;
+
+	//押し出し判定のカプセルの半径
+	constexpr float kPushRadius = 70.0f;
+	//押し出し判定のカプセルの高さ
+	constexpr float kPushHeight = 400.0f;
 }
 
 Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
@@ -46,6 +52,11 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 
 	//ステート初期化
 	m_state = std::make_unique<PlayerIdleState>(*this);
+
+	//当たり判定生成
+	m_hitBoxes = std::make_unique<HitBoxSet>(m_playerID);
+	//押し出し判定の大きさを設定
+	m_hitBoxes->SetPushBox(kPushRadius, kPushHeight);
 }
 
 Player::~Player()
@@ -171,6 +182,8 @@ void Player::Draw()
 #ifdef _DEBUG
 	//プレイヤーのポジションのデバッグ表示
 	DrawFormatString(10, 50 + static_cast<int>(m_playerID) * 20, 0xffffff, L"Player %d Position: (%.2f, %.2f, %.2f)", static_cast<int>(m_playerID), m_transform.GetPosition().x, m_transform.GetPosition().y, m_transform.GetPosition().z);
+	//当たり判定のデバッグ表示
+	m_hitBoxes->Draw();
 #endif // _DEBUG
 
 }

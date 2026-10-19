@@ -1,6 +1,7 @@
 #pragma once
 #include"Game/Common/PlayerID.h"
 #include"Engine/Math/Vector3.h"
+#include"BattleCollision.h"
 
 class Player;
 class BattleManager
@@ -83,5 +84,7 @@ private:
 	Vector3 m_direction;
 	// プレイヤー間の距離
 	float m_distance;
+	//プレイヤー同士の当たり判定の処理
+	BattleCollision m_collision;
 };
 

@@ -1,6 +1,6 @@
 #include "BattleManager.h"
 #include "Game/Player/Player.h"
-
+#include"HitBoxSet.h"
 BattleManager::BattleManager():
 	m_centerPosition({}),
 	m_direction({}),
@@ -38,6 +38,18 @@ void BattleManager::Update()
 	{
 		return;
 	}
+	//移動後の位置に判定を合わせる
+	m_player1->GetHitBoxes().Update(m_player1->GetTransform().GetPosition());
+	m_player2->GetHitBoxes().Update(m_player2->GetTransform().GetPosition());
+	//押し戻し
+	m_collision.ResolvePush(*m_player1, *m_player2);
+
+	//押し戻し後の位置に合わせる
+	m_player1->GetHitBoxes().Update(m_player1->GetTransform().GetPosition());
+	m_player2->GetHitBoxes().Update(m_player2->GetTransform().GetPosition());
+	m_player1->ApplyDxLibMatrix();
+	m_player2->ApplyDxLibMatrix();
+
 	// プレイヤーの位置を取得
 	const Vector3 pos1 = m_player1->GetTransform().GetPosition();
 	const Vector3 pos2 = m_player2->GetTransform().GetPosition();

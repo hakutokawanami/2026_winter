@@ -7,6 +7,7 @@
 class PlayerStateBase;
 class AnimationController;
 class BattleManager;
+class HitBoxSet;
 class Player : public GameObject
 {
 public:
@@ -54,9 +55,23 @@ public:
 	/// <returns></returns>
 	const PlayerID GetPlayerID()const { return m_playerID; }
 
+	/// <summary>
+	/// ステートからバトルマネージャーを使うときに取得するための関数
+	/// </summary>
+	/// <returns></returns>
 	BattleManager* GetBattleManager()const { return m_battleManager; }
 
+	/// <summary>
+	/// ステートからアニメーションコントローラーを使うときに取得するための関数
+	/// </summary>
+	/// <returns></returns>
 	AnimationController& GetAnimationController()const { return *m_animationController; }
+
+	/// <summary>
+	/// 当たり判定を取得する関数
+	/// </summary>
+	/// <returns></returns>
+	HitBoxSet& GetHitBoxes()const { return *m_hitBoxes; }
 	
 private:
 	///モデルハンドル
@@ -69,5 +84,7 @@ private:
 	BattleManager* m_battleManager;
 	//状態
 	std::unique_ptr<PlayerStateBase>m_state;
+	//当たり判定
+	std::unique_ptr<HitBoxSet>m_hitBoxes;
 };
 
