@@ -171,6 +171,7 @@
     <ClCompile Include="Source\Game\Base\StateBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Battle\AttackData.h" />
     <ClInclude Include="Source\Game\Battle\BattleCollision.h" />
     <ClInclude Include="Source\Game\Battle\HitBoxSet.h" />
     <ClInclude Include="Source\Engine\Collision\Collision.h" />

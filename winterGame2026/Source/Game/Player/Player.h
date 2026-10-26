@@ -24,6 +24,12 @@ public:
 	static constexpr const wchar_t* kStepSideInAnimName = L"Armature|StepSideIn";
 	static constexpr const wchar_t* kStepSideOutAnimName = L"Armature|StepSideOut";
 
+	static constexpr const wchar_t* kJabAnimName = L"Armature|Jab";
+	static constexpr const wchar_t* kLungeJabAnimName = L"Armature|LungeJab";
+
+	static constexpr const wchar_t* kHitHeadLightAnimName = L"Armature|HitHeadLight";
+	static constexpr const wchar_t* kHitHeadHeavyAnimName = L"Armature|HitHeadHeavy";
+
 public:
 	Player(PlayerID id, int modelHandle, BattleManager* battleManager);
 	~Player();

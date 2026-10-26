@@ -44,7 +44,7 @@ void BattleCollision::ResolvePush(Player& p1, Player& p2)
 		}
 	}
 	//正規化
-	normal.Normalized();
+	normal.Normalize();
 	//めり込み量の半分
 	float half = contact.penetration * 0.5f;
 	//半分ずつ押し戻す

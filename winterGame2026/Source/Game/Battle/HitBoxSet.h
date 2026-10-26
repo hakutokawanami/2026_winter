@@ -14,6 +14,20 @@ public:
 	/// <param name="radius">半径</param>
 	/// <param name="height">高さ</param>
 	void SetPushBox(float radius,float height);
+
+	/// <summary>
+	/// やられ判定をボーンにつける
+	/// </summary>
+	/// <param name="def">判定の場所と半径</param>
+	void AddHurtBox(const BoneCapsuleDef& def);
+	/// <summary>
+	/// 攻撃判定を出す
+	/// </summary>
+	/// <param name="def">判定の場所と半径</param>
+	/// <param name="data"></param>
+	/// <param name="instanceID"></param>
+	void StartAttack(const BoneCapsuleDef& def, const AttackData& data, int instanceID);
+
 	/// <summary>
 	/// プレイヤーの位置に合わせて判定を更新する
 	/// </summary>

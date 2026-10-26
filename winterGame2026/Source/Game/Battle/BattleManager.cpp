@@ -45,11 +45,11 @@ void BattleManager::Update()
 	m_collision.ResolvePush(*m_player1, *m_player2);
 
 	//押し戻し後の位置に合わせる
-	m_player1->GetHitBoxes().Update(m_player1->GetTransform().GetPosition());
-	m_player2->GetHitBoxes().Update(m_player2->GetTransform().GetPosition());
 	m_player1->ApplyDxLibMatrix();
 	m_player2->ApplyDxLibMatrix();
-
+	m_player1->GetHitBoxes().Update(m_player1->GetTransform().GetPosition());
+	m_player2->GetHitBoxes().Update(m_player2->GetTransform().GetPosition());
+	
 	// プレイヤーの位置を取得
 	const Vector3 pos1 = m_player1->GetTransform().GetPosition();
 	const Vector3 pos2 = m_player2->GetTransform().GetPosition();
