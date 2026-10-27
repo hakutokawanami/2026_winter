@@ -1,4 +1,4 @@
-#include "AnimationController.h"
+﻿#include "AnimationController.h"
 #include<DxLib.h>
 
 AnimationController::AnimationController(int modelHandle) :
@@ -12,7 +12,9 @@ AnimationController::AnimationController(int modelHandle) :
 	m_prevAttachNo(-1),
 	m_prevTime(0.0f),
 	m_blendTime(0.0f),
-	m_blendTimer(0.0f)
+	m_blendTimer(0.0f),
+	m_speed(0.5f),
+	m_prevSpeed(0.5f)
 {
 }
 
@@ -24,7 +26,7 @@ void AnimationController::Update()
 		return;
 	}
 	//アニメーション時間の更新
-	m_currentTime += 0.5f;
+	m_currentTime += m_speed;
 
 	//アニメーション全体の時間を取得
 	float totalTime = MV1GetAnimTotalTime(m_modelHandle, m_currentAnimNo);
@@ -59,7 +61,7 @@ void AnimationController::Update()
 	if (m_prevAnimNo >= 0)
 	{
 		//前のアニメーションの時間更新
-		m_prevTime += 0.5f;
+		m_prevTime += m_prevSpeed;
 		MV1SetAttachAnimTime(m_modelHandle, m_prevAttachNo, m_prevTime);
 		//ブレンド時間の更新
 		m_blendTimer += 1.0f;
@@ -98,7 +100,7 @@ void AnimationController::Update()
 	}
 }
 
-void AnimationController::Play(const std::wstring& name, bool loop, float blendTime)
+void AnimationController::Play(const std::wstring& name, bool loop, float blendTime,float speed)
 {
 	//アニメーション名で探す
 	auto it = m_animTable.find(name);
@@ -115,36 +117,41 @@ void AnimationController::Play(const std::wstring& name, bool loop, float blendT
 		return;
 	}
 
-	//// ブレンド中
-	//if (m_prevAnimNo >= 0)
-	//{
-	//	// currentだけ差し替える
-	//	MV1DetachAnim(m_modelHandle, m_currentAttachNo);
-	//	m_currentAnimNo = newAnim;
-	//	m_currentTime = 0.0f;
-	//	m_isLoop = loop;
-
-	//	m_currentAttachNo = MV1AttachAnim(m_modelHandle, m_currentAttachNo);
-	//	m_blendTime = blendTime;
-	//	m_blendTimer = 0.0f;
-	//	return;
-	//}
-
 	//現在のアニメーションを前のアニメーションとして保存
 	MV1DetachAnim(m_modelHandle, m_prevAttachNo);
 	m_prevAnimNo = m_currentAnimNo;
 	m_prevAttachNo = m_currentAttachNo;
 	m_prevTime = m_currentTime;
-
+	m_prevSpeed = m_speed;
 	//新しいアニメーションを設定
 	m_currentAnimNo = newAnim;
 	m_currentTime = 0.0f;
 	m_isLoop = loop;
+	m_speed = speed;
 	//新しいアニメーションのアタッチ番号を取得
 	m_currentAttachNo = MV1AttachAnim(m_modelHandle, m_currentAnimNo);
 	//ブレンド時間のセット
 	m_blendTime = blendTime;
 	m_blendTimer = 0.0f;
+}
+
+void AnimationController::SetTime(float time)
+{
+	if (m_currentAnimNo < 0)
+	{
+		return;
+	}
+	m_currentTime = time;
+	MV1SetAttachAnimTime(m_modelHandle, m_currentAttachNo, m_currentTime);
+}
+
+float AnimationController::GetTotalTime() const
+{
+	if (m_currentAnimNo < 0)
+	{
+		return 0.0f;
+	}
+	return MV1GetAnimTotalTime(m_modelHandle, m_currentAnimNo);
 }
 
 void AnimationController::AddAnimation(const std::wstring& name)

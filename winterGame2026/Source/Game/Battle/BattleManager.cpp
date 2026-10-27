@@ -160,3 +160,13 @@ bool BattleManager::IsOpponentOnRight(PlayerID id) const
 	
 	return GetOpponentDirection(id).Dot(right) > 0.0f;
 }
+
+void BattleManager::ResolveHits(const std::vector<HitEvent>& events)
+{
+	for (const HitEvent& event : events)
+	{
+		Player* defender = GetPlayer(event.defender);
+		//最後に受けた攻撃の番号を記録
+		defender->GetHitBoxes().SetLastReceivedAttackID(event.attackInstanceId);
+	}
+}

@@ -7,7 +7,7 @@
 #include "GameScene.h"
 //#include "ResultScene.h"
 //#include "CollisionTestScene.h"
-//#include "AnimationTestScene.h"
+#include "AttackEditorScene.h"
 
 namespace
 {
@@ -97,9 +97,9 @@ void DebugScene::NormalUpdate()
 			break;
 
 		case 4:
-			//m_controller.ChangeScene(
-			//	std::make_shared<AnimationTestScene>(m_controller)
-			//);
+			m_controller.ChangeScene(
+				std::make_shared<AttackEditorScene>(m_controller)
+			);
 			break;
 		}
 	}
@@ -164,7 +164,7 @@ void DebugScene::NormalDraw()
 		kStartX,
 		kStartY + kLineHeight * 4,
 		m_selectScene == 4 ? 0xffff00 : 0xffffff,
-		L"[5] AnimationTestScene"
+		L"[5] AttackEditorScene"
 	);
 
 #endif // _DEBUG

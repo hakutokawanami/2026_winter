@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include<string>
 #include<map>
 
@@ -15,7 +15,7 @@ public:
 	/// <param name="name">アニメーション名</param>
 	/// <param name="loop">ループフラグ(デフォルトはtrue)</param>
 	/// <param name="blendTime">blendにかかるフレーム数(デフォルトは15.0f)</param>
-	void Play(const std::wstring& name, bool loop = true, float blendTime = 15.0f);
+	void Play(const std::wstring& name, bool loop = true, float blendTime = 15.0f,float speed = 0.5f);
 	/// <summary>
 	/// アニメーション登録
 	/// </summary>
@@ -26,6 +26,16 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool IsEnd() { return m_isEnd; }
+	/// <summary>
+	/// 再生時間を直接指定する(攻撃エディタのコマ送り用)
+	/// </summary>
+	/// <param name="time">アニメーション時間</param>
+	void SetTime(float time);
+	/// <summary>
+	/// 再生中のアニメーション全体の時間を取得する
+	/// </summary>
+	/// <returns></returns>
+	float GetTotalTime()const;
 private:
 	//モデルハンドル
 	int m_modelHandle;
@@ -54,4 +64,9 @@ private:
 	float m_blendTime;
 	//経過時間
 	float m_blendTimer;
+
+	//再生速度
+	float m_speed;
+	//前のアニメーションの再生速度
+	float m_prevSpeed;
 };

@@ -19,15 +19,21 @@ enum class HitBoxType
 
 /// <summary>
 /// ボーンにつけるカプセル
+/// <param name="bone">ボーンの名前</param>
+/// <param name="length">長さ</param>
+/// <param name="radius">半径</param>
+/// <param name="offsetY">ボーンの位置からのオフセット</param>
 /// </summary>
 struct BoneCapsuleDef
 {
-	//カプセルの始点のボーンの名前
-	const wchar_t* startBone;
-	//カプセルの終点のボーンの名前
-	const wchar_t* endBone;
+	//カプセルの中心のボーンの名前
+	const wchar_t* bone;
+	//長さ
+	float length;
 	//半径
 	float radius;
+	//ボーンの位置からのオフセット
+	float offsetY = 0.0f;
 };
 
 /// <summary>
@@ -43,9 +49,8 @@ struct HitBox
 	Shape shape;
 	//判定を行うかどうか
 	bool isActive = true;
-
 	//技の性能
-	const AttackData* kAttack = nullptr;
+	const AttackData* attack = nullptr;
 	//技を出すたびに代わる番号
-	int m_attackInstanceID = 0;
+	int attackInstanceID = 0;
 };

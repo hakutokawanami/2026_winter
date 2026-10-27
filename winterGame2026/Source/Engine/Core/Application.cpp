@@ -4,6 +4,7 @@
 #include"Game/Scene/SceneController.h"
 #include"Game/Scene/TitleScene.h"
 #include"Game/Scene/DebugScene.h"
+#include"Game/Battle/AttackData.h"
 #include<DxLib.h>
 
 Application::Application() :
@@ -70,6 +71,8 @@ void Application::Run()
 
 	auto& resourceManager = ResourceManager::GetInstance();
 	resourceManager.LoadResources();
+	//技の情報を読み込む
+	AttackTable::GetInstance().Load();
 
 	//シーンの作成
 	SceneController SceneController;

@@ -21,6 +21,28 @@ namespace
 	constexpr float kPushRadius = 70.0f;
 	//押し出し判定のカプセルの高さ
 	constexpr float kPushHeight = 400.0f;
+
+	//やられ判定
+	constexpr BoneCapsuleDef kHurtBoxes[] =
+	{
+		//頭
+		{ L"mixamorig:Head",         20.0f, 30.0f, 20.0f },
+		//胴体
+		{ L"mixamorig:Spine2",       40.0f, 50.0f },
+		{ L"mixamorig:Hips",         30.0f, 50.0f },
+		//腕(肘と手)
+		{ L"mixamorig:LeftForeArm",  20.0f, 20.0f },
+		{ L"mixamorig:LeftHand",     10.0f, 18.0f },
+		{ L"mixamorig:RightForeArm", 20.0f, 20.0f },
+		{ L"mixamorig:RightHand",    10.0f, 18.0f },
+		//脚(太もも・膝・足首)
+		{ L"mixamorig:LeftUpLeg",    40.0f, 30.0f, -40.0f },
+		{ L"mixamorig:LeftLeg",      30.0f, 25.0f },
+		{ L"mixamorig:LeftFoot",     10.0f, 22.0f },
+		{ L"mixamorig:RightUpLeg",   40.0f, 30.0f, -40.0f },
+		{ L"mixamorig:RightLeg",     30.0f, 25.0f },
+		{ L"mixamorig:RightFoot",    10.0f, 22.0f },
+	};
 }
 
 Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
@@ -33,18 +55,13 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	//アニメーションコントローラー生成
 	m_animationController = std::make_unique<AnimationController>(m_modelHandle);
 	//================アニメーション登録======================
-	m_animationController->AddAnimation(kIdleAnimName);
-
-	m_animationController->AddAnimation(kWalkForwardAnimName);
-	m_animationController->AddAnimation(kWalkBackAnimName);
-	m_animationController->AddAnimation(kWalkSideInAnimName);
-	m_animationController->AddAnimation(kWalkSideOutAnimName);
-
-	m_animationController->AddAnimation(kStepForwardAnimName);
-	m_animationController->AddAnimation(kStepBackAnimName);
-	m_animationController->AddAnimation(kStepSideInAnimName);
-	m_animationController->AddAnimation(kStepSideOutAnimName);
-
+	//モデルに入っているアニメーションをすべて登録する
+	//(技を追加したときにここを書き足さなくていいように)
+	const int animNum = MV1GetAnimNum(m_modelHandle);
+	for (int i = 0; i < animNum; i++)
+	{
+		m_animationController->AddAnimation(MV1GetAnimName(m_modelHandle, i));
+	}
 	//========================================================
 	
 	//初期アニメーション再生
@@ -54,9 +71,14 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	m_state = std::make_unique<PlayerIdleState>(*this);
 
 	//当たり判定生成
-	m_hitBoxes = std::make_unique<HitBoxSet>(m_playerID);
-	//押し出し判定の大きさを設定
+	m_hitBoxes = std::make_unique<HitBoxSet>(m_playerID,m_modelHandle);
+	//押し出し判定を設定
 	m_hitBoxes->SetPushBox(kPushRadius, kPushHeight);
+	//やられ判定を設定
+	for (const auto& def : kHurtBoxes)
+	{
+		m_hitBoxes->AddHurtBox(def);
+	}
 }
 
 Player::~Player()

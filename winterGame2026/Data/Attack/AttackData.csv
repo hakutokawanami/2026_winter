@@ -1,0 +1,3 @@
+# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,blockStun
+Jab,Armature|Jab,1.00,3,mixamorig:LeftHand,0.0,25.0,0.0,10,10,12,10,15,10
+LungeJab,Armature|LungeJab,0.85,3,mixamorig:RightHand,0.0,25.0,0.0,20,12,39,10,15,8

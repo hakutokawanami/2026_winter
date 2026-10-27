@@ -1,6 +1,8 @@
-#include "PlayerIdleState.h"
+﻿#include "PlayerIdleState.h"
 #include"PlayerStepState.h"
 #include"PlayerWalkState.h"
+#include"PlayerAttackState.h"
+#include"Game/Battle/AttackData.h"
 void PlayerIdleState::Enter()
 {
 	m_animationController.Play(Player::kIdleAnimName);
@@ -25,6 +27,21 @@ void PlayerIdleState::Update()
 	};
 
 	auto& input = InputManager::GetInstance();
+
+	//攻撃
+	if (input.IsTriggered(m_player.GetPlayerID(), "Y"))
+	{
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("LungeJab")));
+		return;
+	}
+
+	//攻撃
+	if (input.IsTriggered(m_player.GetPlayerID(), "X"))
+	{
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Jab")));
+		return;
+	}
+
 	//どの入力か探す
 	for (auto [dir, type] : stepTable)
 	{

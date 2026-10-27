@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"Game/Base/GameObject.h"
 #include"Game/Common/PlayerID.h"
 #include<string>
@@ -78,7 +78,13 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	HitBoxSet& GetHitBoxes()const { return *m_hitBoxes; }
-	
+
+	/// <summary>
+	/// モデルハンドルを取得する関数
+	/// </summary>
+	/// <returns></returns>
+	int GetModelHandle()const { return m_modelHandle; }
+
 private:
 	///モデルハンドル
 	int m_modelHandle;

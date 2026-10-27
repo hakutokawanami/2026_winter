@@ -74,6 +74,17 @@ public:
 	/// <param name="id">自分のプレイヤーID</param>
 	/// <returns></returns>
 	bool IsOpponentOnRight(PlayerID id)const;
+	/// <summary>
+	/// 新しい攻撃の番号を渡す
+	/// </summary>
+	/// <returns></returns>
+	int IssueAttackInstanceID() { return ++m_attackInstanceCounter; }
+
+	/// <summary>
+	/// 攻撃の当たった処理をまとめて行う
+	/// </summary>
+	/// <param name="events"></param>
+	void ResolveHits(const std::vector<HitEvent>& events);
 
 private:
 	Player* m_player1;
@@ -86,5 +97,7 @@ private:
 	float m_distance;
 	//プレイヤー同士の当たり判定の処理
 	BattleCollision m_collision;
+	//攻撃の番号のカウンター
+	int m_attackInstanceCounter = 0;
 };
 
