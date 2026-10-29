@@ -50,6 +50,10 @@ void BattleManager::Update()
 	m_player1->GetHitBoxes().Update(m_player1->GetTransform().GetPosition());
 	m_player2->GetHitBoxes().Update(m_player2->GetTransform().GetPosition());
 	
+	//攻撃の当たった処理
+	auto events = m_collision.DetectHits(*m_player1, *m_player2);
+	ResolveHits(events);
+
 	// プレイヤーの位置を取得
 	const Vector3 pos1 = m_player1->GetTransform().GetPosition();
 	const Vector3 pos2 = m_player2->GetTransform().GetPosition();
@@ -168,5 +172,7 @@ void BattleManager::ResolveHits(const std::vector<HitEvent>& events)
 		Player* defender = GetPlayer(event.defender);
 		//最後に受けた攻撃の番号を記録
 		defender->GetHitBoxes().SetLastReceivedAttackID(event.attackInstanceId);
+		//当たった処理
+		defender->OnHit(*event.attack);
 	}
 }

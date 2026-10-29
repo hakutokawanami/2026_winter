@@ -6,6 +6,7 @@
 #include"State/PlayerStateBase.h"
 #include"State/PlayerIdleState.h"
 #include"Game/Battle/HitBoxSet.h"
+#include"Game/Battle/AttackData.h"
 #include<cassert>
 #include<DxLib.h>
 namespace
@@ -48,7 +49,8 @@ namespace
 Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	m_playerID(id),
 	m_modelHandle(-1),
-	m_battleManager(battleManager)
+	m_battleManager(battleManager),
+	m_hp(kMaxHp)
 {
 	//モデル複製
 	m_modelHandle = MV1DuplicateModel(modelHandle);
@@ -232,4 +234,14 @@ void Player::OpponentRotate()
 void Player::ApplyDxLibMatrix()
 {
 	MV1SetMatrix(m_modelHandle, m_transform.GetWorldMatrix().ChangeDxMat());
+}
+
+void Player::OnHit(const AttackData& attack)
+{
+	//HPを減らす
+	m_hp -= attack.damage;
+	if (m_hp < 0)
+	{
+		m_hp = 0;
+	}
 }

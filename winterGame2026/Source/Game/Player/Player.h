@@ -8,9 +8,13 @@ class PlayerStateBase;
 class AnimationController;
 class BattleManager;
 class HitBoxSet;
+struct AttackData;
 class Player : public GameObject
 {
 public:
+	//最大HP
+	static constexpr int kMaxHp = 1000;
+
 	//アニメーション名たち
 	static constexpr const wchar_t* kIdleAnimName = L"Armature|Idle";
 
@@ -85,6 +89,16 @@ public:
 	/// <returns></returns>
 	int GetModelHandle()const { return m_modelHandle; }
 
+	/// <summary>
+	/// 攻撃を受けたときの処理
+	/// </summary>
+	/// <param name="attack">受けた技の性能</param>
+	void OnHit(const AttackData& attack);
+	//体力を取得する
+	int GetHp()const { return m_hp; }
+	//体力がゼロになったかどうか
+	bool IsDead()const { return m_hp <= 0; }
+
 private:
 	///モデルハンドル
 	int m_modelHandle;
@@ -98,5 +112,7 @@ private:
 	std::unique_ptr<PlayerStateBase>m_state;
 	//当たり判定
 	std::unique_ptr<HitBoxSet>m_hitBoxes;
+	//体力
+	int m_hp;
 };
 

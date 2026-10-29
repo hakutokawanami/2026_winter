@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Player\State\PlayerHitState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerAttackState.cpp" />
     <ClCompile Include="Source\Game\Battle\BattleCollision.cpp" />
     <ClCompile Include="Source\Game\Battle\HitBoxSet.cpp" />
@@ -174,6 +175,7 @@
     <ClCompile Include="Source\Game\Base\StateBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Player\State\PlayerHitState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerAttackState.h" />
     <ClInclude Include="Source\Game\Battle\AttackData.h" />
     <ClInclude Include="Source\Game\Battle\BattleCollision.h" />

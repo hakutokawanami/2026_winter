@@ -110,6 +110,9 @@ void GameScene::NormalDraw()
 	auto& input = InputManager::GetInstance();
 	input.DebugDrawStickHistory(PlayerID::P1, wsize.w - 260, 16);
 	input.DebugDrawStickHistory(PlayerID::P2, wsize.w - 120, 16);
+	//HP表示
+	DebugDrawHpBar(*m_player1, m_battleManager->IsOpponentOnRight(m_player1->GetPlayerID()));
+	DebugDrawHpBar(*m_player2, m_battleManager->IsOpponentOnRight(m_player2->GetPlayerID()));
 #endif // _DEBUG
 }
 
@@ -143,4 +146,31 @@ void GameScene::DrawGrid()
 		endPos = VGet(static_cast<float>(x), 0.0f, 500.0f);
 		DrawLine3D(startPos, endPos, 0x0000ff);
 	}
+}
+
+void GameScene::DebugDrawHpBar(const Player& player, bool isLeft)
+{
+	auto& wsize = Application::GetInstance().GetWindowSize();
+	constexpr int kBarWidth = 500;
+	constexpr int kBarHeight = 24;
+	constexpr int kMarginX = 40;
+	constexpr int kBarY = 30;
+
+	const float rate = static_cast<float>(player.GetHp()) / Player::kMaxHp;
+	const int fill = static_cast<int>(kBarWidth * rate);
+	const int x = isLeft ? kMarginX : wsize.w - kMarginX - kBarWidth;
+
+	//背景(減った部分)
+	DrawBox(x, kBarY, x + kBarWidth, kBarY + kBarHeight, 0x502020, true);
+	//残りHP(画面の中央側から減っていく)
+	if (isLeft)
+	{
+		DrawBox(x, kBarY, x + fill, kBarY + kBarHeight, 0xffd040, true);
+	}
+	else
+	{
+		DrawBox(x + kBarWidth - fill, kBarY, x + kBarWidth, kBarY + kBarHeight, 0xffd040, true);
+	}
+	//枠
+	DrawBox(x, kBarY, x + kBarWidth, kBarY + kBarHeight, 0xffffff, false);
 }

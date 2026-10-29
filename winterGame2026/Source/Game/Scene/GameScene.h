@@ -14,6 +14,9 @@ public:
 
 	void DrawGrid();
 
+	//HPバーの表示(仮)
+	void DebugDrawHpBar(const Player& player, bool isLeft);
+
 private:
 	//フェードイン更新
 	void FadeInUpdate();
