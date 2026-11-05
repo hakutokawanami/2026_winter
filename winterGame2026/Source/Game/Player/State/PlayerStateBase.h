@@ -11,6 +11,12 @@ class PlayerStateBase : public StateBase
 public:
 	PlayerStateBase(Player& player);
 
+	/// <summary>
+	/// ガード中かどうか
+	/// </summary>
+	/// <returns></returns>
+	virtual bool IsGuarding()const { return false; }
+
 protected:
 	/// <summary>
 	/// プレイヤーの向いている方向に応じて入力を反転させる関数
@@ -18,6 +24,17 @@ protected:
 	/// <param name="direction"></param>
 	/// <returns></returns>
 	StickDirection ToScreenDirection(StickDirection direction)const;
+
+	/// <summary>
+	/// スティックを後ろに倒しているか
+	/// </summary>
+	/// <returns></returns>
+	bool IsBackInput()const;
+	/// <summary>
+	/// ガードの入力をしているか
+	/// </summary>
+	/// <returns></returns>
+	bool IsGuardInput()const;
 
 	Player& m_player;
 

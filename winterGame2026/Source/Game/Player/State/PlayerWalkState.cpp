@@ -1,5 +1,8 @@
 #include "PlayerWalkState.h"
 #include"PlayerIdleState.h"
+#include"PlayerAttackState.h"
+#include"Game/Battle/AttackData.h"
+
 namespace
 {
 	constexpr float kSpeed = 5.0f;
@@ -44,6 +47,20 @@ void PlayerWalkState::Update()
 		m_direction = -toOpponent;
 		m_animationController.Play(Player::kWalkBackAnimName);
 		break;
+	}
+
+	//攻撃
+	if (input.IsTriggered(m_player.GetPlayerID(), "Y"))
+	{
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("LungeJab")));
+		return;
+	}
+
+	//攻撃
+	if (input.IsTriggered(m_player.GetPlayerID(), "X"))
+	{
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Jab")));
+		return;
 	}
 
 	//ニュートラルに入っていたらIdleへ

@@ -15,7 +15,7 @@ public:
 	/// <param name="name">アニメーション名</param>
 	/// <param name="loop">ループフラグ(デフォルトはtrue)</param>
 	/// <param name="blendTime">blendにかかるフレーム数(デフォルトは15.0f)</param>
-	void Play(const std::wstring& name, bool loop = true, float blendTime = 15.0f,float speed = 0.5f);
+	void Play(const std::wstring& name, bool loop = true, float blendTime = 15.0f,float speed = 0.5f,bool replay = false);
 	/// <summary>
 	/// アニメーション登録
 	/// </summary>
@@ -27,10 +27,15 @@ public:
 	/// <returns></returns>
 	bool IsEnd() { return m_isEnd; }
 	/// <summary>
-	/// 再生時間を直接指定する(攻撃エディタのコマ送り用)
+	/// 再生時間を直接指定する
 	/// </summary>
 	/// <param name="time">アニメーション時間</param>
 	void SetTime(float time);
+	/// <summary>
+	/// 再生スピードを直接指定する
+	/// </summary>
+	/// <param name="speed"></param>
+	void SetSpeed(float speed) { m_speed = speed; }
 	/// <summary>
 	/// 再生中のアニメーション全体の時間を取得する
 	/// </summary>

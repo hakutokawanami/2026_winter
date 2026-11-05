@@ -5,6 +5,7 @@
 #include"Game/Battle/BattleManager.h"
 #include"State/PlayerStateBase.h"
 #include"State/PlayerIdleState.h"
+#include"State/PlayerHitState.h"
 #include"Game/Battle/HitBoxSet.h"
 #include"Game/Battle/AttackData.h"
 #include<cassert>
@@ -244,4 +245,6 @@ void Player::OnHit(const AttackData& attack)
 	{
 		m_hp = 0;
 	}
+	//のけぞりステートに変更
+	ChangeState(std::make_unique<PlayerHitState>(*this, attack));
 }

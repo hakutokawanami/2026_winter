@@ -100,7 +100,7 @@ void AnimationController::Update()
 	}
 }
 
-void AnimationController::Play(const std::wstring& name, bool loop, float blendTime,float speed)
+void AnimationController::Play(const std::wstring& name, bool loop, float blendTime,float speed,bool replay)
 {
 	//アニメーション名で探す
 	auto it = m_animTable.find(name);
@@ -112,7 +112,7 @@ void AnimationController::Play(const std::wstring& name, bool loop, float blendT
 	//アニメーション番号をセット
 	int newAnim = it->second;
 	//同じアニメーションなら再生しない
-	if (newAnim == m_currentAnimNo)
+	if (newAnim == m_currentAnimNo && !replay)
 	{
 		return;
 	}
@@ -130,6 +130,9 @@ void AnimationController::Play(const std::wstring& name, bool loop, float blendT
 	m_speed = speed;
 	//新しいアニメーションのアタッチ番号を取得
 	m_currentAttachNo = MV1AttachAnim(m_modelHandle, m_currentAnimNo);
+	//アニメーションの時間を0にする
+	MV1SetAttachAnimTime(m_modelHandle, m_currentAttachNo, 0.0f);
+	MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAttachNo, 0.0f);
 	//ブレンド時間のセット
 	m_blendTime = blendTime;
 	m_blendTimer = 0.0f;

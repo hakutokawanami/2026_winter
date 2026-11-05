@@ -11,3 +11,15 @@ StickDirection PlayerStateBase::ToScreenDirection(StickDirection direction) cons
 {
 	return m_battleManager->IsOpponentOnRight(m_player.GetPlayerID()) ? direction : Mirror(direction);
 }
+
+bool PlayerStateBase::IsBackInput() const
+{
+	const auto direction = InputManager::GetInstance().GetStickDirection(m_player.GetPlayerID());
+	return direction == ToScreenDirection(StickDirection::left) || 
+		direction == ToScreenDirection(StickDirection::downLeft);
+}
+
+bool PlayerStateBase::IsGuardInput() const
+{
+	return IsBackInput();
+}
