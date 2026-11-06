@@ -15,7 +15,12 @@ public:
 	/// <param name="radius">半径</param>
 	/// <param name="height">高さ</param>
 	void SetPushBox(float radius,float height);
-
+	/// <summary>
+	/// 投げられ判定の大きさを設定する
+	/// </summary>
+	/// <param name="radius"></param>
+	/// <param name="height"></param>
+	void SetThrowedBox(float radius, float height);
 	/// <summary>
 	/// やられ判定をボーンにつける
 	/// </summary>
@@ -32,6 +37,17 @@ public:
 	/// 攻撃判定を消す
 	/// </summary>
 	void EndAttack();
+	/// <summary>
+	/// 投げ攻撃判定を出す
+	/// </summary>
+	/// <param name="position">判定の位置</param>
+	/// <param name="data">投げ攻撃のデータ</param>
+	/// <param name="instanceID"></param>
+	void StartThrowAttack(const BoneCapsuleDef& def, const AttackData& data, int instanceID);
+	/// <summary>
+	/// 投げ攻撃判定を消す
+	/// </summary>
+	void EndThrowAttack();	
 
 	/// <summary>
 	/// プレイヤーの位置に合わせて判定を更新する
@@ -58,6 +74,16 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	const std::vector<HitBox>& GetHurtBoxes()const { return m_hurtBoxes; }
+	/// <summary>
+	/// 投げ攻撃判定を取得する関数
+	/// </summary>
+	/// <returns></returns>
+	const HitBox& GetThrowAttackBox()const { return m_throwAttackBox; }
+	/// <summary>
+	/// 投げられ判定を取得する関数
+	/// </summary>
+	/// <returns></returns>
+	const HitBox& GetThrowedBox()const { return m_throwedBox; }
 	/// <summary>
 	/// 最後に受けた攻撃の番号を取得する関数
 	/// </summary>
@@ -105,7 +131,12 @@ private:
 	std::vector<HitBox>m_hurtBoxes;
 	//やられ判定がついているボーン
 	std::vector<BoneAttachment>m_hurtAttachments;
-
+	//投げ攻撃判定
+	HitBox m_throwAttackBox;
+	//投げられ判定
+	HitBox m_throwedBox;
+	//投げられ判定の高さ
+	float m_throwedBoxHeight;
 	//攻撃判定
 	HitBox m_attackBox;
 	//攻撃判定のカプセルの情報

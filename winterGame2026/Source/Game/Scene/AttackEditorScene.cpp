@@ -87,6 +87,7 @@ namespace
 		L"ダメージ",
 		L"ヒット硬直",
 		L"ガード硬直",
+		L"投げ",
 		L"相手との距離(保存しない)",
 	};
 
@@ -529,6 +530,10 @@ void AttackEditorScene::ChangeParam(int dir, bool isFast)
 	case Param::guardStun:
 		def.data.guardStun = std::max(0, def.data.guardStun + dir * step);
 		break;
+	case Param::isThrow:
+		//左右どちらを押しても切り替える
+		def.isThrow = !def.isThrow;
+		break;
 	case Param::distance:
 		m_distance = std::clamp(m_distance + dir * (isFast ? 100.0f : 10.0f), 0.0f, kMaxDistance);
 		PlacePlayers();
@@ -780,6 +785,7 @@ void AttackEditorScene::DrawParams()
 		case Param::damage:		swprintf_s(value, L"%d", def.data.damage);	break;
 		case Param::hitStun:	swprintf_s(value, L"%dF", def.data.hitStun);	break;
 		case Param::guardStun:	swprintf_s(value, L"%dF", def.data.guardStun);	break;
+		case Param::isThrow:	swprintf_s(value, L"%s", def.isThrow ? L"ON" : L"OFF");	break;
 		case Param::distance:	swprintf_s(value, L"%.0f", m_distance);	break;
 		default:	break;
 		}

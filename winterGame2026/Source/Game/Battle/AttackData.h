@@ -43,6 +43,8 @@ struct AttackDef
 	float radius = 25.0f;
 	//攻撃判定のボーンの位置からのオフセット
 	float offsetY = 0.0f;
+	//投げ攻撃かどうか
+	bool isThrow = false;	
 	//技性能
 	AttackData data = {};
 

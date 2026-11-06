@@ -62,6 +62,16 @@ std::vector<HitEvent> BattleCollision::DetectHits(const Player& p1, const Player
 	return events;
 }
 
+std::vector<ThrowHitEvent> BattleCollision::DetectThrowHits(const Player& p1, const Player& p2) const
+{
+	std::vector<ThrowHitEvent>events;
+	//P1の投げ攻撃 → P2
+	DetectOneWayThrow(p1.GetHitBoxes(), p2.GetHitBoxes(), events);
+	//P2の投げ攻撃 → P1
+	DetectOneWayThrow(p2.GetHitBoxes(), p1.GetHitBoxes(), events);
+	return events;
+}
+
 void BattleCollision::DetectOneWay(const HitBoxSet& attacker, const HitBoxSet& defender, std::vector<HitEvent>& events) const
 {
 	//攻撃判定
@@ -106,4 +116,40 @@ void BattleCollision::DetectOneWay(const HitBoxSet& attacker, const HitBoxSet& d
 		//やられ判定のどれか一つに当たれば終わる
 		break;
 	}
+}
+
+void BattleCollision::DetectOneWayThrow(const HitBoxSet& attacker, const HitBoxSet& defender, std::vector<ThrowHitEvent>& events) const
+{
+	//投げ攻撃判定
+	const HitBox& throwAttackBox = attacker.GetThrowAttackBox();
+	//投げ攻撃判定が出ていないなら何もしない
+	if (!throwAttackBox.isActive)
+	{
+		return;
+	}
+	//すでに当たっていたら何もしない
+	if (throwAttackBox.attackInstanceID == defender.GetLastReceivedAttackID())
+	{
+		return;
+	}
+	//すべての投げられ判定分調べる
+	const HitBox& throwedBox = defender.GetThrowedBox();
+	//判定を行わないなら何もしない
+	if (!throwedBox.isActive)
+	{
+		return;
+	}
+	//当たってるか調べる
+	Contact contact = Collision::Intersect(throwAttackBox.shape, throwedBox.shape);
+	//当たっていないなら何もしない
+	if (!contact.isHit)
+	{
+		return;
+	}
+	//当たった情報
+	ThrowHitEvent event;
+	event.attacker = throwAttackBox.owner;
+	event.defender = throwedBox.owner;
+	event.attack = throwAttackBox.attack;
+	events.push_back(event);
 }

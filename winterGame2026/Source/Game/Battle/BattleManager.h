@@ -84,7 +84,12 @@ public:
 	/// 攻撃の当たった処理をまとめて行う
 	/// </summary>
 	/// <param name="events"></param>
-	void ResolveHits(const std::vector<HitEvent>& events);
+	void ResolveHits(const std::vector<HitEvent>& hitEvents);
+	/// <summary>
+	/// 投げ攻撃の当たった処理をまとめて行う
+	/// </summary>
+	/// <param name="events"></param>
+	void ResolveThrowHits(const std::vector<ThrowHitEvent>& throwEvents,const std::vector<HitEvent>& hitEvents);
 
 private:
 	Player* m_player1;

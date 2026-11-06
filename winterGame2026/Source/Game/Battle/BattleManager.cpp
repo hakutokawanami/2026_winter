@@ -51,8 +51,12 @@ void BattleManager::Update()
 	m_player2->GetHitBoxes().Update(m_player2->GetTransform().GetPosition());
 	
 	//攻撃の当たった処理
-	auto events = m_collision.DetectHits(*m_player1, *m_player2);
-	ResolveHits(events);
+	auto hitEvents = m_collision.DetectHits(*m_player1, *m_player2);
+	ResolveHits(hitEvents);
+
+	//投げの当たった処理
+	auto throwEvents = m_collision.DetectThrowHits(*m_player1, *m_player2);
+	ResolveThrowHits(throwEvents, hitEvents);
 
 	// プレイヤーの位置を取得
 	const Vector3 pos1 = m_player1->GetTransform().GetPosition();
@@ -165,14 +169,51 @@ bool BattleManager::IsOpponentOnRight(PlayerID id) const
 	return GetOpponentDirection(id).Dot(right) > 0.0f;
 }
 
-void BattleManager::ResolveHits(const std::vector<HitEvent>& events)
+void BattleManager::ResolveHits(const std::vector<HitEvent>& hitEvents)
 {
-	for (const HitEvent& event : events)
+	for (const HitEvent& event : hitEvents)
 	{
 		Player* defender = GetPlayer(event.defender);
 		//最後に受けた攻撃の番号を記録
 		defender->GetHitBoxes().SetLastReceivedAttackID(event.attackInstanceId);
 		//当たった処理
 		defender->OnHit(*event.attack);
+	}
+}
+
+void BattleManager::ResolveThrowHits(const std::vector<ThrowHitEvent>& throwEvents, const std::vector<HitEvent>& hitEvents)
+{
+	if(throwEvents.empty())
+	{
+		return;
+	}
+
+	if (throwEvents.size() >= 2)
+	{
+		//投げぬけの処理
+		return;
+	}
+
+	//投げようとした側が攻撃を受けていたら攻撃を受けた処理を優先する
+	for (const HitEvent& event : hitEvents)
+	{
+		if (event.defender == throwEvents.front().attacker)
+		{
+			return;
+		}
+	}
+
+	for (const ThrowHitEvent& event : throwEvents)
+	{
+		Player* attacker = GetPlayer(event.attacker);
+		Player* defender = GetPlayer(event.defender);
+		//投げられる状態かどうか
+		if (defender->IsThrowable())
+		{
+			//投げる処理
+			attacker->OnThrowSuccess(*event.attack);
+			//投げられる処理
+			defender->OnThrowHit(*event.attack);
+		}
 	}
 }

@@ -7,6 +7,8 @@
 #include"State/PlayerIdleState.h"
 #include"State/PlayerHitState.h"
 #include"State/PlayerGuardHitState.h"
+#include"State/PlayerThrowHitState.h"
+#include"State/PlayerThrowSuccessState.h"
 #include"Game/Battle/HitBoxSet.h"
 #include"Game/Battle/AttackData.h"
 #include<cassert>
@@ -24,6 +26,10 @@ namespace
 	constexpr float kPushRadius = 70.0f;
 	//押し出し判定のカプセルの高さ
 	constexpr float kPushHeight = 400.0f;
+	//投げられ判定のカプセルの半径
+	constexpr float kThrowedRadius = 70.0f;
+	//投げられ判定のカプセルの高さ
+	constexpr float kThrowedHeight = 300.0f;	
 
 	//やられ判定
 	constexpr BoneCapsuleDef kHurtBoxes[] =
@@ -84,6 +90,8 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	{
 		m_hitBoxes->AddHurtBox(def);
 	}
+	//投げられ判定を設定
+	m_hitBoxes->SetThrowedBox(kPushRadius, kPushHeight);
 }
 
 Player::~Player()
@@ -260,4 +268,23 @@ void Player::OnHit(const AttackData& attack)
 		ChangeState(std::make_unique<PlayerHitState>(*this, attack));
 		return;
 	}
+}
+
+bool Player::IsThrowable() const
+{
+	return m_state->IsThrowable();
+}
+
+void Player::OnThrowHit(const AttackData& attack)
+{
+	ChangeState(std::make_unique<PlayerThrowHitState>(*this, attack));
+	m_hitBoxes->EndThrowAttack();
+	return;
+}
+
+void Player::OnThrowSuccess(const AttackData& attack)
+{
+	ChangeState(std::make_unique<PlayerThrowSuccessState>(*this, attack));
+	m_hitBoxes->EndThrowAttack();
+	return;
 }

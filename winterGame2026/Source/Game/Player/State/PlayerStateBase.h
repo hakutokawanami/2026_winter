@@ -16,6 +16,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual bool IsGuarding()const { return false; }
+	/// <summary>
+	/// 投げられる状態かどうか
+	/// </summary>
+	/// <returns></returns>
+	virtual bool IsThrowable()const { return true; }
 
 protected:
 	/// <summary>

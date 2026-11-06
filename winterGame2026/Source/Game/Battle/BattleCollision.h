@@ -23,6 +23,20 @@ struct HitEvent
 	//当たった位置
 	Vector3 point;
 };
+
+/// <summary>
+/// 投げ攻撃が当たったという情報
+/// </summary>
+struct ThrowHitEvent
+{
+	//攻撃した側
+	PlayerID attacker;
+	//攻撃を受けた側
+	PlayerID defender;
+	//技の性能
+	const AttackData* attack;
+};
+
 /// <summary>
 /// プレイヤー同士の当たり判定の処理
 /// </summary>
@@ -42,6 +56,13 @@ public:
 	/// <param name="p2">プレイヤー2</param>
 	/// <returns></returns>
 	std::vector<HitEvent> DetectHits(const Player& p1, const Player& p2)const;
+	/// <summary>
+	/// 両方の投げ攻撃を調べて当たったものを返す
+	/// </summary>
+	/// <param name="p1">プレイヤー1</param>
+	/// <param name="p2">プレイヤー2</param>
+	/// <returns></returns>
+	std::vector<ThrowHitEvent>DetectThrowHits(const Player& p1, const Player& p2)const;
 
 private:
 	/// <summary>
@@ -51,5 +72,12 @@ private:
 	/// <param name="defender">受ける側</param>
 	/// <param name="events">当たった情報</param>
 	void DetectOneWay(const HitBoxSet& attacker, const HitBoxSet& defender, std::vector<HitEvent>& events)const;
+	/// <summary>
+	/// 投げ攻撃が当たっているかどうかを調べる
+	/// </summary>
+	/// <param name="attacker">攻撃側</param>
+	/// <param name="defender">受ける側</param>
+	/// <param name="events">当たった情報</param>
+	void DetectOneWayThrow(const HitBoxSet& attacker, const HitBoxSet& defender, std::vector<ThrowHitEvent>& events)const;
 };
 

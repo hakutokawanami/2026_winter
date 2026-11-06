@@ -12,7 +12,10 @@ HitBoxSet::HitBoxSet(PlayerID owner,int modelHandle):
 	m_pushBoxHeight(0.0f),
 	m_attackBox(),
 	m_attackAttachment(-1,{}),
-	m_lastReceivedAttackID(0)
+	m_lastReceivedAttackID(0),
+	m_throwAttackBox(),
+	m_throwedBox(),
+	m_throwedBoxHeight(0.0f)
 {
 	//押し出し判定を設定
 	m_pushBox.type = HitBoxType::push;
@@ -24,6 +27,17 @@ HitBoxSet::HitBoxSet(PlayerID owner,int modelHandle):
 	m_attackBox.owner = owner;
 	m_attackBox.shape = Capsule{};
 	m_attackBox.isActive = false;
+
+	//投げ攻撃判定
+	m_throwAttackBox.type = HitBoxType::throwAttack;
+	m_throwAttackBox.owner = owner;
+	m_throwAttackBox.shape = Capsule{};
+	m_throwAttackBox.isActive = false;
+
+	//投げられ判定
+	m_throwedBox.type = HitBoxType::throwed;
+	m_throwedBox.owner = owner;
+	m_throwedBox.shape = Capsule{};
 }
 
 void HitBoxSet::SetPushBox(float radius, float height)
@@ -31,6 +45,13 @@ void HitBoxSet::SetPushBox(float radius, float height)
 	//カプセルの半径と高さを設定
 	std::get<Capsule>(m_pushBox.shape).radius = radius;
 	m_pushBoxHeight = height;
+}
+
+void HitBoxSet::SetThrowedBox(float radius, float height)
+{
+	//カプセルの半径と高さを設定
+	std::get<Capsule>(m_throwedBox.shape).radius = radius;
+	m_throwedBoxHeight = height;
 }
 
 void HitBoxSet::AddHurtBox(const BoneCapsuleDef& def)
@@ -61,6 +82,23 @@ void HitBoxSet::EndAttack()
 	m_attackBox.attack = nullptr;
 }
 
+void HitBoxSet::StartThrowAttack(const BoneCapsuleDef& def, const AttackData& data, int instanceID)
+{
+	m_throwAttackBox.shape = Capsule{ {} ,{}, def.radius};
+	m_throwAttackBox.attack = &data;
+	m_throwAttackBox.attackInstanceID = instanceID;
+	m_throwAttackBox.isActive = true;
+	m_attackAttachment = { FindBones(def.bone),def };
+
+	UpdateBoneCapsule(m_throwAttackBox, m_attackAttachment);
+}
+
+void HitBoxSet::EndThrowAttack()
+{
+	m_throwAttackBox.isActive = false;
+	m_throwAttackBox.attack = nullptr;
+}
+
 void HitBoxSet::Update(const Vector3& playerPos)
 {
 	auto& capsule = std::get<Capsule>(m_pushBox.shape);
@@ -71,6 +109,14 @@ void HitBoxSet::Update(const Vector3& playerPos)
 	float top = std::max(capsule.radius, m_pushBoxHeight - capsule.radius);
 	capsule.end = playerPos + Vector3::Up() * top;
 
+	auto& throwedCapsule = std::get<Capsule>(m_throwedBox.shape);
+	//カプセルの下の端を半径分上にあげておく
+	throwedCapsule.start = playerPos + Vector3::Up() * throwedCapsule.radius;
+	//カプセルの上の端を半径分下に下げておく
+	//半径よりも小さいなら半径の長さにする
+	float throwedTop = std::max(throwedCapsule.radius, m_throwedBoxHeight - throwedCapsule.radius);
+	throwedCapsule.end = playerPos + Vector3::Up() * throwedTop;
+
 	//やられ判定をボーンに合わせる
 	for (size_t i = 0; i < m_hurtBoxes.size(); i++)
 	{
@@ -80,6 +126,11 @@ void HitBoxSet::Update(const Vector3& playerPos)
 	if (m_attackBox.isActive)
 	{
 		UpdateBoneCapsule(m_attackBox, m_attackAttachment);
+	}
+	//投げ攻撃判定をボーンに合わせる
+	if (m_throwAttackBox.isActive)
+	{
+		UpdateBoneCapsule(m_throwAttackBox, m_attackAttachment);
 	}
 }
 
@@ -105,6 +156,10 @@ void HitBoxSet::Draw()
 		DrawCapsule(box, 0x40ff40);
 	}
 	DrawCapsule(m_attackBox, 0xff4040);
+
+	DrawCapsule(m_throwedBox, 0xff4040);
+
+	DrawCapsule(m_throwAttackBox, 0xff4040);
 #endif // _DEBUG
 }
 

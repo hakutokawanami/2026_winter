@@ -139,6 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Player\State\PlayerGrabState.cpp" />
+    <ClCompile Include="Source\Game\Player\State\PlayerThrowHitState.cpp" />
+    <ClCompile Include="Source\Game\Player\State\PlayerThrowSuccessState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerGuardHitState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerHitState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerAttackState.cpp" />
@@ -176,6 +179,9 @@
     <ClCompile Include="Source\Game\Base\StateBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Player\State\PlayerGrabState.h" />
+    <ClInclude Include="Source\Game\Player\State\PlayerThrowHitState.h" />
+    <ClInclude Include="Source\Game\Player\State\PlayerThrowSuccessState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerGuardHitState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerHitState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerAttackState.h" />

@@ -14,7 +14,11 @@ enum class HitBoxType
 	//やられ
 	hurt,
 	//攻撃
-	attack
+	attack,
+	//投げ
+	throwAttack,
+	//投げられ
+	throwed
 };
 
 /// <summary>

@@ -17,24 +17,29 @@ public:
 
 	//アニメーション名たち
 	static constexpr const wchar_t* kIdleAnimName = L"Armature|Idle";
-
+	//歩きアニメーション
 	static constexpr const wchar_t* kWalkForwardAnimName = L"Armature|WalkForward";
 	static constexpr const wchar_t* kWalkBackAnimName = L"Armature|WalkBack";
 	static constexpr const wchar_t* kWalkSideInAnimName = L"Armature|WalkSideIn";
 	static constexpr const wchar_t* kWalkSideOutAnimName = L"Armature|WalkSideOut";
-
+	//ステップアニメーション
 	static constexpr const wchar_t* kStepForwardAnimName = L"Armature|StepForward";
 	static constexpr const wchar_t* kStepBackAnimName = L"Armature|StepBack";
 	static constexpr const wchar_t* kStepSideInAnimName = L"Armature|StepSideIn";
 	static constexpr const wchar_t* kStepSideOutAnimName = L"Armature|StepSideOut";
-
+	//攻撃アニメーション
 	static constexpr const wchar_t* kJabAnimName = L"Armature|Jab";
 	static constexpr const wchar_t* kLungeJabAnimName = L"Armature|LungeJab";
-
+	//ヒットアニメーション
 	static constexpr const wchar_t* kHitHeadLightAnimName = L"Armature|HitHeadLight";
 	static constexpr const wchar_t* kHitHeadHeavyAnimName = L"Armature|HitHeadHeavy";
-
+	//ガードヒットアニメーション
 	static constexpr const wchar_t* kGuardHitAnimName = L"Armature|GuardHit";
+	//つかみアニメーション
+	static constexpr const wchar_t* kGrabAnimName = L"Armature|Grab";
+	//投げアニメーション
+	static constexpr const wchar_t* kThrowAnimName = L"Armature|Throw";
+	static constexpr const wchar_t* kThrownAnimName = L"Armature|Thrown";
 
 public:
 	Player(PlayerID id, int modelHandle, BattleManager* battleManager);
@@ -96,10 +101,31 @@ public:
 	/// </summary>
 	/// <param name="attack">受けた技の性能</param>
 	void OnHit(const AttackData& attack);
-	//体力を取得する
+	/// <summary>
+	/// 体力を取得する
+	/// </summary>
+	/// <returns></returns>
 	int GetHp()const { return m_hp; }
-	//体力がゼロになったかどうか
+	/// <summary>
+	/// 体力がゼロになったかどうか
+	/// </summary>
+	/// <returns></returns>
 	bool IsDead()const { return m_hp <= 0; }
+	/// <summary>
+	/// 投げられる状態かどうか
+	/// </summary>
+	/// <returns></returns>
+	bool IsThrowable()const;
+	/// <summary>
+	/// 投げられる処理
+	/// </summary>
+	/// <param name="attack"></param>
+	void OnThrowHit(const AttackData& attack);
+	/// <summary>
+	/// 投げる処理
+	/// </summary>
+	/// <param name="attack"></param>
+	void OnThrowSuccess(const AttackData& attack);
 
 private:
 	///モデルハンドル

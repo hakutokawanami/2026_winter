@@ -41,6 +41,7 @@ private:
 		damage,
 		hitStun,
 		guardStun,
+		isThrow,
 		distance,
 		count
 	};
