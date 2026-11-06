@@ -21,6 +21,8 @@ public:
 	void Update()override;
 	void Exit()override;
 
+	bool IsGuarding()const override { return IsGuardInput(); }
+
 private:
 	//移動の種類
 	Type m_type;

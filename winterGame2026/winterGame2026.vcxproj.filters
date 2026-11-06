@@ -117,7 +117,7 @@
     <ClCompile Include="Source\Game\Player\State\PlayerHitState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Player\State\PlayerGuardState.cpp">
+    <ClCompile Include="Source\Game\Player\State\PlayerGuardHitState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -236,7 +236,7 @@
     <ClInclude Include="Source\Game\Player\State\PlayerHitState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Player\State\PlayerGuardState.h">
+    <ClInclude Include="Source\Game\Player\State\PlayerGuardHitState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

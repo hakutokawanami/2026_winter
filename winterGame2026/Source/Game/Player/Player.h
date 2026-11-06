@@ -34,6 +34,8 @@ public:
 	static constexpr const wchar_t* kHitHeadLightAnimName = L"Armature|HitHeadLight";
 	static constexpr const wchar_t* kHitHeadHeavyAnimName = L"Armature|HitHeadHeavy";
 
+	static constexpr const wchar_t* kGuardHitAnimName = L"Armature|GuardHit";
+
 public:
 	Player(PlayerID id, int modelHandle, BattleManager* battleManager);
 	~Player();

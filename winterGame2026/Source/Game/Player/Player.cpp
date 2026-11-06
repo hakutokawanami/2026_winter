@@ -6,6 +6,7 @@
 #include"State/PlayerStateBase.h"
 #include"State/PlayerIdleState.h"
 #include"State/PlayerHitState.h"
+#include"State/PlayerGuardHitState.h"
 #include"Game/Battle/HitBoxSet.h"
 #include"Game/Battle/AttackData.h"
 #include<cassert>
@@ -57,6 +58,7 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	m_modelHandle = MV1DuplicateModel(modelHandle);
 	//アニメーションコントローラー生成
 	m_animationController = std::make_unique<AnimationController>(m_modelHandle);
+
 	//================アニメーション登録======================
 	//モデルに入っているアニメーションをすべて登録する
 	//(技を追加したときにここを書き足さなくていいように)
@@ -239,12 +241,23 @@ void Player::ApplyDxLibMatrix()
 
 void Player::OnHit(const AttackData& attack)
 {
-	//HPを減らす
-	m_hp -= attack.damage;
-	if (m_hp < 0)
+	if(m_state->IsGuarding())
 	{
-		m_hp = 0;
+		//ガード入力をしていたらガード
+		ChangeState(std::make_unique<PlayerGuardHitState>(*this, attack));
+		return;
 	}
-	//のけぞりステートに変更
-	ChangeState(std::make_unique<PlayerHitState>(*this, attack));
+	else
+	{
+		// 通常の攻撃
+		m_hp -= attack.damage;
+
+		if (m_hp < 0)
+		{
+			m_hp = 0;
+		}
+		//のけぞりステートに変更
+		ChangeState(std::make_unique<PlayerHitState>(*this, attack));
+		return;
+	}
 }

@@ -8,5 +8,7 @@ public:
 	void Enter()override;
 	void Update()override;
 	void Exit()override;
+
+	bool IsGuarding()const override { return IsGuardInput(); }
 };
 

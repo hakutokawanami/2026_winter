@@ -14,7 +14,7 @@ namespace
 	constexpr size_t kColumnCount = 14;
 	//ファイルの先頭に書く説明
 	constexpr const char* kHeader =
-		"# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,blockStun";
+		"# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,guardStun";
 
 	/// <summary>
 	/// UTF-8の文字列をワイド文字列に変換する
@@ -113,7 +113,7 @@ bool AttackTable::Load()
 		def.data.recovery = std::stoi(items[10]);
 		def.data.damage = std::stoi(items[11]);
 		def.data.hitStun = std::stoi(items[12]);
-		def.data.blockStun = std::stoi(items[13]);
+		def.data.guardStun = std::stoi(items[13]);
 		m_attacks.push_back(def);
 	}
 	return true;
@@ -148,7 +148,7 @@ bool AttackTable::Save() const
 			def.data.recovery,
 			def.data.damage,
 			def.data.hitStun,
-			def.data.blockStun);
+			def.data.guardStun);
 		file << line << "\n";
 	}
 	return true;

@@ -40,7 +40,7 @@ private:
 		recovery,
 		damage,
 		hitStun,
-		blockStun,
+		guardStun,
 		distance,
 		count
 	};

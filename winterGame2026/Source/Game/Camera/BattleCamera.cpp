@@ -8,6 +8,12 @@ namespace
 	constexpr float kCameraHeightOffset = 300.0f; 
 	// カメラのオフセット
 	constexpr float kCameraDistanceOffset = 1000.0f; 
+	// カメラの最小距離
+	constexpr float kCameraDistanceMin = 650.0f; 
+	// カメラの最大距離	
+	constexpr float kCameraDistanceMax = 1500.0f; 
+	//カメラの距離に使うプレイヤー同士の距離に掛ける倍率
+	constexpr float kDistanceRate = 0.6f;
 }
 
 BattleCamera::BattleCamera():
@@ -67,9 +73,20 @@ void BattleCamera::CalculateCameraPositionAndTarget()
 	//カメラの方向を計算
 	Vector3 cameraOffsetDirection = playerToPlayerDirection.Cross(Vector3::Up()).Normalized();
 	//カメラの距離を計算
-	m_calculatedPosition = m_calculatedTarget - cameraOffsetDirection * kCameraDistanceOffset;
+	float cameraDistance = playerToPlayerDirection.Length() * kDistanceRate;
+	//カメラの距離の最小値と最大値を制限
+	if (cameraDistance < kCameraDistanceMin)
+	{
+		cameraDistance = kCameraDistanceMin;
+	}
+	else if (cameraDistance > kCameraDistanceMax)
+	{
+		cameraDistance = kCameraDistanceMax;
+	}
+	//カメラの位置を計算
+	m_calculatedPosition = m_calculatedTarget - cameraOffsetDirection * cameraDistance;
 	//カメラの高さを設定
-	m_calculatedTarget.y = kCameraHeightOffset;
+	m_calculatedTarget.y = kCameraHeightOffset; 
 	m_calculatedPosition.y = kCameraHeightOffset;
 }
 

@@ -526,8 +526,8 @@ void AttackEditorScene::ChangeParam(int dir, bool isFast)
 	case Param::hitStun:
 		def.data.hitStun = std::max(0, def.data.hitStun + dir * step);
 		break;
-	case Param::blockStun:
-		def.data.blockStun = std::max(0, def.data.blockStun + dir * step);
+	case Param::guardStun:
+		def.data.guardStun = std::max(0, def.data.guardStun + dir * step);
 		break;
 	case Param::distance:
 		m_distance = std::clamp(m_distance + dir * (isFast ? 100.0f : 10.0f), 0.0f, kMaxDistance);
@@ -779,7 +779,7 @@ void AttackEditorScene::DrawParams()
 		case Param::recovery:	swprintf_s(value, L"%dF", def.data.recovery);	break;
 		case Param::damage:		swprintf_s(value, L"%d", def.data.damage);	break;
 		case Param::hitStun:	swprintf_s(value, L"%dF", def.data.hitStun);	break;
-		case Param::blockStun:	swprintf_s(value, L"%dF", def.data.blockStun);	break;
+		case Param::guardStun:	swprintf_s(value, L"%dF", def.data.guardStun);	break;
 		case Param::distance:	swprintf_s(value, L"%.0f", m_distance);	break;
 		default:	break;
 		}

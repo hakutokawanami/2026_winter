@@ -19,7 +19,7 @@ struct AttackData
 	//ヒット時に相手が動けないフレーム
 	int hitStun;
 	//ガード時に相手が動けないフレーム
-	int blockStun;
+	int guardStun;
 };
 
 /// <summary>
