@@ -127,7 +127,14 @@ void Player::Update()
 
 	m_state->Update();
 
-	OpponentRotate();
+	if (m_state->IsFacingOpponent())
+	{
+		OpponentRotateSmooth();
+	}
+	else
+	{
+		OpponentRotate();
+	}
 
 	ApplyDxLibMatrix();
 
@@ -240,6 +247,15 @@ void Player::OpponentRotate()
 	m_transform.SetRotate(
 		Quaternion::LookRotation(m_battleManager->GetOpponentDirection(m_playerID),
 			Vector3::Up()) * Quaternion::AngleAxis(DX_PI_F, Vector3::Up()));
+}
+
+void Player::OpponentRotateSmooth()
+{
+	const Quaternion target = Quaternion::LookRotation(
+		m_battleManager->GetOpponentDirection(m_playerID), Vector3::Up())
+		* Quaternion::AngleAxis(DX_PI_F, Vector3::Up());
+
+	m_transform.SetRotate(Quaternion::Slerp(m_transform.GetRotation(), target, 0.2f));
 }
 
 void Player::ApplyDxLibMatrix()

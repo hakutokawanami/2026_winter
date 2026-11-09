@@ -12,6 +12,7 @@ public:
 
 	bool IsThrowable()const override { return false; }
 	bool IsThrowing()const override { return true; }
+	bool IsFacingOpponent()const override { return false; }
 private:
 	const AttackData& m_attack;
 

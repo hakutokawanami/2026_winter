@@ -19,7 +19,9 @@ namespace
 BattleCamera::BattleCamera():
 	m_cameraState(CameraState::Battle),
 	m_player1(nullptr),
-	m_player2(nullptr)
+	m_player2(nullptr),
+	m_thrower(nullptr),
+	m_isThrow(false)
 {
 	
 }
@@ -44,22 +46,24 @@ void BattleCamera::Init(Player* player1, Player*player2)
 
 void BattleCamera::Update()
 {
-	Player* thrower = nullptr;
+	m_isThrow = false;
 	if (m_player1->IsThrowing())
 	{
-		thrower = m_player1;
+		m_thrower = m_player1;
+		m_isThrow = true;
 	}
 	else if (m_player2->IsThrowing())
 	{
-		thrower = m_player2;
+		m_thrower = m_player2;
+		m_isThrow = true;
 	}
 	//投げられているプレイヤーがいてカメラがバトル状態なら投げ状態に切り替える
-	if(thrower != nullptr && m_cameraState == CameraState::Battle)
+	if(m_isThrow && m_cameraState == CameraState::Battle)
 	{
 		m_cameraState = CameraState::Throw;
 	}
 	//投げられているプレイヤーがいなくてカメラが投げ状態ならバトル状態に切り替える
-	else if(thrower == nullptr && m_cameraState == CameraState::Throw)
+	else if(!m_isThrow && m_cameraState == CameraState::Throw)
 	{
 		m_cameraState = CameraState::Battle;
 	}
@@ -70,7 +74,7 @@ void BattleCamera::Update()
 	}
 	else if (m_cameraState == CameraState::Throw)
 	{
-		CalculateThrowCamera(thrower, thrower->GetPlayerID());
+		CalculateThrowCamera(m_thrower, m_thrower->GetPlayerID());
 	}
 
 	LerpCamera();
@@ -159,6 +163,20 @@ void BattleCamera::CalculateThrowCamera(Player* thrower,PlayerID id)
 		// プレイヤーの位置を取得してカメラのターゲットを設定
 		player1Pos = pos;
 		player2Pos = m_player2->GetTransform().GetPosition();
+	}
+	else if(id == PlayerID::P2)
+	{
+		const int model = thrower->GetModelHandle();
+		const VECTOR hips = MV1GetFramePosition(model, MV1SearchFrame(model, L"mixamorig:Hips"));
+
+		Vector3 pos = thrower->GetTransform().GetPosition();
+
+		pos.x = hips.x;
+		pos.z = hips.z;
+
+		// プレイヤーの位置を取得してカメラのターゲットを設定
+		player2Pos = pos;
+		player1Pos = m_player1->GetTransform().GetPosition();
 	}
 	m_calculatedTarget = (player1Pos + player2Pos) * 0.5f;
 	//プレイヤー間の距離を計算

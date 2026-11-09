@@ -40,6 +40,8 @@ public:
 	//投げアニメーション
 	static constexpr const wchar_t* kThrowAnimName = L"Armature|Throw";
 	static constexpr const wchar_t* kThrownAnimName = L"Armature|Thrown";
+	//起き上がりアニメーション
+	static constexpr const wchar_t* kGettingUpAnimName = L"Armature|GetUp";
 
 public:
 	Player(PlayerID id, int modelHandle, BattleManager* battleManager);
@@ -60,6 +62,11 @@ public:
 	/// 相手のプレイヤーの方向を向く
 	/// </summary>
 	void OpponentRotate();
+
+	/// <summary>
+	/// 少しずつ相手のプレイヤーの方向を向く
+	/// </summary>
+	void OpponentRotateSmooth();
 
 	/// <summary>
 	/// Dxライブラリにトランスフォームを適用する

@@ -43,6 +43,10 @@ private:
 	Player* m_player1;
 	Player* m_player2;
 
+	Player* m_thrower;
+
+	bool m_isThrow;
+
 	CameraState m_cameraState;
 };
 

@@ -17,6 +17,11 @@ public:
 	/// <returns></returns>
 	virtual bool IsGuarding()const { return false; }
 	/// <summary>
+	/// 攻撃が当たる状態かどうか
+	/// </summary>
+	/// <returns></returns>
+	virtual bool IsHittable()const { return true; }
+	/// <summary>
 	/// 投げられる状態かどうか
 	/// </summary>
 	/// <returns></returns>
@@ -26,6 +31,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual bool IsThrowing()const { return false; }
+	/// <summary>
+	/// 体の向きを固定するかどうか
+	/// </summary>
+	/// <returns></returns>
+	virtual bool IsFacingOpponent()const { return true; }
 
 protected:
 	/// <summary>
