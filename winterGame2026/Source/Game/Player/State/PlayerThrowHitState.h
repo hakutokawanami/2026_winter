@@ -10,6 +10,8 @@ public:
 	void Update() override;
 	void Exit() override;
 
+	bool IsThrowable()const override { return false; }
+	bool IsThrowing()const override { return true; }
 private:
 	const AttackData& m_attack;
 

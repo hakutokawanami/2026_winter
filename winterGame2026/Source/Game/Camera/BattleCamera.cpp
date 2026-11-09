@@ -21,6 +21,7 @@ BattleCamera::BattleCamera():
 	m_player1(nullptr),
 	m_player2(nullptr)
 {
+	
 }
 
 BattleCamera::~BattleCamera()
@@ -43,7 +44,35 @@ void BattleCamera::Init(Player* player1, Player*player2)
 
 void BattleCamera::Update()
 {
-	CalculateCameraPositionAndTarget();
+	Player* thrower = nullptr;
+	if (m_player1->IsThrowing())
+	{
+		thrower = m_player1;
+	}
+	else if (m_player2->IsThrowing())
+	{
+		thrower = m_player2;
+	}
+	//投げられているプレイヤーがいてカメラがバトル状態なら投げ状態に切り替える
+	if(thrower != nullptr && m_cameraState == CameraState::Battle)
+	{
+		m_cameraState = CameraState::Throw;
+	}
+	//投げられているプレイヤーがいなくてカメラが投げ状態ならバトル状態に切り替える
+	else if(thrower == nullptr && m_cameraState == CameraState::Throw)
+	{
+		m_cameraState = CameraState::Battle;
+	}
+
+	if (m_cameraState == CameraState::Battle)
+	{
+		CalculateCameraPositionAndTarget();
+	}
+	else if (m_cameraState == CameraState::Throw)
+	{
+		CalculateThrowCamera(thrower, thrower->GetPlayerID());
+	}
+
 	LerpCamera();
 	Apply();
 
@@ -111,4 +140,46 @@ void BattleCamera::Apply()
 {
 	// カメラの位置とターゲットをDxLibに設定
 	SetCameraPositionAndTarget_UpVecY(m_position, m_target);
+}
+
+void BattleCamera::CalculateThrowCamera(Player* thrower,PlayerID id)
+{
+	Vector3 player1Pos = {0.0f,0.0f,0.0f};
+	Vector3 player2Pos = {0.0f,0.0f,0.0f};
+	if (id == PlayerID::P1)
+	{
+		const int model = thrower->GetModelHandle();
+		const VECTOR hips = MV1GetFramePosition(model, MV1SearchFrame(model, L"mixamorig:Hips"));
+
+		Vector3 pos = thrower->GetTransform().GetPosition();
+
+		pos.x = hips.x;
+		pos.z = hips.z;
+
+		// プレイヤーの位置を取得してカメラのターゲットを設定
+		player1Pos = pos;
+		player2Pos = m_player2->GetTransform().GetPosition();
+	}
+	m_calculatedTarget = (player1Pos + player2Pos) * 0.5f;
+	//プレイヤー間の距離を計算
+	Vector3 playerToPlayerDirection = player2Pos - player1Pos;
+	playerToPlayerDirection.y = 0.0f; // 水平方向の距離のみを考慮
+	//カメラの方向を計算
+	Vector3 cameraOffsetDirection = playerToPlayerDirection.Cross(Vector3::Up()).Normalized();
+	//カメラの距離を計算
+	float cameraDistance = playerToPlayerDirection.Length() * kDistanceRate;
+	//カメラの距離の最小値と最大値を制限
+	if (cameraDistance < kCameraDistanceMin)
+	{
+		cameraDistance = kCameraDistanceMin;
+	}
+	else if (cameraDistance > kCameraDistanceMax)
+	{
+		cameraDistance = kCameraDistanceMax;
+	}
+	//カメラの位置を計算
+	m_calculatedPosition = m_calculatedTarget - cameraOffsetDirection * cameraDistance;
+	//カメラの高さを設定
+	m_calculatedTarget.y = kCameraHeightOffset;
+	m_calculatedPosition.y = kCameraHeightOffset;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "CameraBase.h"
+#include"Game/Common/PlayerID.h"
 #include<memory>
 
 /// <summary>
@@ -9,6 +10,8 @@ enum class CameraState
 {
 	// バトルカメラ
 	Battle,
+	//投げ状態のカメラ
+	Throw
 };
 
 class Player;
@@ -31,7 +34,11 @@ public:
 	void SetCameraPositionAndTarget();
 	//DXライブラリにカメラの位置とターゲットを適用する関数
 	void Apply();
-
+	/// <summary>
+	/// 投げ状態のカメラの位置とターゲットを計算する関数
+	/// </summary>
+	/// <param name="thrower"></param>
+	void CalculateThrowCamera(Player* thrower,PlayerID id);
 private:
 	Player* m_player1;
 	Player* m_player2;

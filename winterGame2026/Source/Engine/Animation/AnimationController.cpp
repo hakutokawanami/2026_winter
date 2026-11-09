@@ -136,6 +136,8 @@ void AnimationController::Play(const std::wstring& name, bool loop, float blendT
 	//ブレンド時間のセット
 	m_blendTime = blendTime;
 	m_blendTimer = 0.0f;
+
+	m_isEnd = false;
 }
 
 void AnimationController::SetTime(float time)

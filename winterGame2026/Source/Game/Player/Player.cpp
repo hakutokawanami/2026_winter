@@ -288,3 +288,8 @@ void Player::OnThrowSuccess(const AttackData& attack)
 	m_hitBoxes->EndThrowAttack();
 	return;
 }
+
+bool Player::IsThrowing() const
+{
+	return m_state->IsThrowing();
+}

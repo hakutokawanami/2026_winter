@@ -126,6 +126,11 @@ public:
 	/// </summary>
 	/// <param name="attack"></param>
 	void OnThrowSuccess(const AttackData& attack);
+	/// <summary>
+	/// 投げられているかどうか
+	/// </summary>
+	/// <returns></returns>
+	bool IsThrowing()const;
 
 private:
 	///モデルハンドル

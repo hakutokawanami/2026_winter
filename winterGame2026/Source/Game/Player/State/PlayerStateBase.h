@@ -21,6 +21,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual bool IsThrowable()const { return true; }
+	/// <summary>
+	/// 投げられているかどうか
+	/// </summary>
+	/// <returns></returns>
+	virtual bool IsThrowing()const { return false; }
 
 protected:
 	/// <summary>
