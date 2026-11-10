@@ -11,10 +11,10 @@ namespace
 	//技の情報のファイル
 	constexpr const char* kAttackDataPath = "Data/Attack/AttackData.csv";
 	//1行に必要な項目数
-	constexpr size_t kColumnCount = 15;
+	constexpr size_t kColumnCount = 16;
 	//ファイルの先頭に書く説明
 	constexpr const char* kHeader =
-		"# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,guardStun,isThrow";
+		"# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,guardStun,isThrow,takeDamageFrame";
 
 	/// <summary>
 	/// UTF-8の文字列をワイド文字列に変換する
@@ -115,6 +115,7 @@ bool AttackTable::Load()
 		def.data.hitStun = std::stoi(items[12]);
 		def.data.guardStun = std::stoi(items[13]);
 		def.isThrow = (std::stoi(items[14]) != 0);
+		def.takeDamageFrame = (std::stoi(items[15]));
 		m_attacks.push_back(def);
 	}
 	return true;
@@ -135,7 +136,7 @@ bool AttackTable::Save() const
 	for (const auto& def : m_attacks)
 	{
 		char line[512];
-		snprintf(line, sizeof(line), "%s,%s,%.2f,%.0f,%s,%.1f,%.1f,%.1f,%d,%d,%d,%d,%d,%d,%d",
+		snprintf(line, sizeof(line), "%s,%s,%.2f,%.0f,%s,%.1f,%.1f,%.1f,%d,%d,%d,%d,%d,%d,%d,%d",
 			def.name.c_str(),
 			ToUtf8(def.animName).c_str(),
 			def.animSpeed,
@@ -150,7 +151,8 @@ bool AttackTable::Save() const
 			def.data.damage,
 			def.data.hitStun,
 			def.data.guardStun,
-			def.isThrow ? 1 : 0);
+			def.isThrow ? 1 : 0),
+			def.takeDamageFrame;
 		file << line << "\n";
 	}
 	return true;

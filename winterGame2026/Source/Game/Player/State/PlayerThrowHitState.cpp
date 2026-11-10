@@ -22,6 +22,10 @@ void PlayerThrowHitState::Enter()
 void PlayerThrowHitState::Update()
 {
 	m_frame++;
+	if (m_frame == AttackTable::GetInstance().Get("Grab").takeDamageFrame)
+	{
+		m_player.TakeDamage(m_attack);
+	}
 
 	if (m_animationController.IsEnd())
 	{

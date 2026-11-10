@@ -1,4 +1,6 @@
-# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,guardStun,isThrow
-Jab,Armature|Jab,1,3,mixamorig:LeftHand,0,25,0,10,10,12,50,30,20,0
-LungeJab,Armature|LungeJab,0.85,3,mixamorig:RightHand,0,25,0,20,12,39,100,60,40,0
-Grab,Armature|Grab,1,6,mixamorig:RightHand,0,40,0,15,4,17,100,0,0,1
+# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,guardStun,isThrow,takeDamageFrame
+Jab,Armature|Jab,1,3,mixamorig:LeftHand,0,25,0,10,10,12,50,30,20,0,0
+LungeJab,Armature|LungeJab,0.85,3,mixamorig:RightHand,0,25,0,20,12,39,100,60,40,0,0
+Grab,Armature|Grab,1,6,mixamorig:RightHand,0,40,0,15,4,17,100,0,0,1,160
+Punch,Armature|FS_Punch,0.45,3,mixamorig:LeftHand,0,25,0,10,11,12,50,30,20,0,0
+Kick,Armature|FS_Kick,0.6,3,mixamorig:RightToeBase,50,50,0,16,16,21,100,60,40,0,0

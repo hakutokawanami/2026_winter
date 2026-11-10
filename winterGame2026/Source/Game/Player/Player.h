@@ -30,6 +30,10 @@ public:
 	//攻撃アニメーション
 	static constexpr const wchar_t* kJabAnimName = L"Armature|Jab";
 	static constexpr const wchar_t* kLungeJabAnimName = L"Armature|LungeJab";
+
+	static constexpr const wchar_t* kPunchAnimName = L"Armature|FS_Punch";
+	static constexpr const wchar_t* kKickAnimName = L"Armature|FS_Kick";
+
 	//ヒットアニメーション
 	static constexpr const wchar_t* kHitHeadLightAnimName = L"Armature|HitHeadLight";
 	static constexpr const wchar_t* kHitHeadHeavyAnimName = L"Armature|HitHeadHeavy";
@@ -138,6 +142,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool IsThrowing()const;
+	/// <summary>
+	/// ダメージを受ける関数
+	/// </summary>
+	/// <param name="attack"></param>
+	void TakeDamage(const AttackData& attack);
 
 private:
 	///モデルハンドル

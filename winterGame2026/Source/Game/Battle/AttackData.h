@@ -44,7 +44,9 @@ struct AttackDef
 	//攻撃判定のボーンの位置からのオフセット
 	float offsetY = 0.0f;
 	//投げ攻撃かどうか
-	bool isThrow = false;	
+	bool isThrow = false;
+	//ダメージを受けるフレーム
+	int takeDamageFrame = 0;
 	//技性能
 	AttackData data = {};
 

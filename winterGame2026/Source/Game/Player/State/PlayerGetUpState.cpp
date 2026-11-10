@@ -3,7 +3,7 @@
 
 void PlayerGetUpState::Enter()
 {
-	m_animationController.Play(Player::kGettingUpAnimName);
+	m_animationController.Play(Player::kGettingUpAnimName, false, 0.0f, 1.0f);
 }
 
 void PlayerGetUpState::Update()

@@ -39,7 +39,14 @@ void PlayerIdleState::Update()
 	//攻撃
 	if (input.IsTriggered(m_player.GetPlayerID(), "X"))
 	{
-		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Jab")));
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Punch")));
+		return;
+	}
+
+	//攻撃
+	if (input.IsTriggered(m_player.GetPlayerID(), "A"))
+	{
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Kick")));
 		return;
 	}
 

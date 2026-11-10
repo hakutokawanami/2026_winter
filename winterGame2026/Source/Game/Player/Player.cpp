@@ -127,13 +127,18 @@ void Player::Update()
 
 	m_state->Update();
 
-	if (m_state->IsFacingOpponent())
+	//起き上がり中などは向きを変えない
+	//(原点を軸に回すと、原点から離れた位置にある体が振り回されるため)
+	if (!m_state->IsRotationLocked())
 	{
-		OpponentRotateSmooth();
-	}
-	else
-	{
-		OpponentRotate();
+		if (m_state->IsFacingOpponent())
+		{
+			OpponentRotateSmooth();
+		}
+		else
+		{
+			OpponentRotate();
+		}
 	}
 
 	ApplyDxLibMatrix();
@@ -274,12 +279,8 @@ void Player::OnHit(const AttackData& attack)
 	else
 	{
 		// 通常の攻撃
-		m_hp -= attack.damage;
+		TakeDamage(attack);
 
-		if (m_hp < 0)
-		{
-			m_hp = 0;
-		}
 		//のけぞりステートに変更
 		ChangeState(std::make_unique<PlayerHitState>(*this, attack));
 		return;
@@ -308,4 +309,14 @@ void Player::OnThrowSuccess(const AttackData& attack)
 bool Player::IsThrowing() const
 {
 	return m_state->IsThrowing();
+}
+
+void Player::TakeDamage(const AttackData& attack)
+{
+	m_hp -= attack.damage;
+
+	if (m_hp < 0)
+	{
+		m_hp = 0;
+	}
 }

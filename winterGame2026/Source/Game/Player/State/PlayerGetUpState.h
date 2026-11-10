@@ -12,5 +12,6 @@ public:
 	bool IsThrowable()const override{ return false; }
 	bool IsGuarding()const override{ return IsGuardInput(); }
 	bool IsFacingOpponent()const override{ return false; }
+	bool IsRotationLocked()const override{ return true; }
 };
 

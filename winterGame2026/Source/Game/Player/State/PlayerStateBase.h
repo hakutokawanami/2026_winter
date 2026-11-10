@@ -37,6 +37,13 @@ public:
 	/// <returns></returns>
 	virtual bool IsFacingOpponent()const { return true; }
 
+	/// <summary>
+	/// 体の向きを変えないようにするかどうか
+	/// (アニメーションの位置合わせ中など、回転させると体が振り回される時にtrue)
+	/// </summary>
+	/// <returns></returns>
+	virtual bool IsRotationLocked()const { return false; }
+
 protected:
 	/// <summary>
 	/// プレイヤーの向いている方向に応じて入力を反転させる関数
