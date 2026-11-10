@@ -1,6 +1,7 @@
 #include "PlayerWalkState.h"
 #include"PlayerIdleState.h"
 #include"PlayerAttackState.h"
+#include"PlayerGrabState.h"
 #include"Game/Battle/AttackData.h"
 
 namespace
@@ -60,6 +61,13 @@ void PlayerWalkState::Update()
 	if (input.IsTriggered(m_player.GetPlayerID(), "X"))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Jab")));
+		return;
+	}
+
+	//掴み
+	if (input.IsTriggered(m_player.GetPlayerID(), "B"))
+	{
+		m_player.ChangeState(std::make_unique<PlayerGrabState>(m_player, AttackTable::GetInstance().Get("Grab")));
 		return;
 	}
 
