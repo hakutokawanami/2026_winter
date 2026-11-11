@@ -4,6 +4,7 @@
 class Player;
 class BattleCamera;
 class BattleManager;
+class RoundManager;
 class GameScene : public SceneBase
 {
 public:
@@ -40,6 +41,8 @@ private:
 	int m_frame;
 	//バトルマネージャー
 	std::unique_ptr<BattleManager>m_battleManager;
+	//ラウンドマネージャー
+	std::unique_ptr<RoundManager>m_roundManager;
 	//プレイヤー1
 	std::unique_ptr<Player>m_player1;
 	//プレイヤー2

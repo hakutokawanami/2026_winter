@@ -7,6 +7,7 @@
 #include"Game/Camera/BattleCamera.h"
 #include"Game/Battle/BattleManager.h"
 #include"Engine/Input/InputManager.h"
+#include"Game/Battle/RoundManager.h"
 #include<DxLib.h>
 
 namespace
@@ -44,6 +45,10 @@ GameScene::GameScene(SceneController& controller) :
 	//カメラ生成
 	m_camera = std::make_unique<BattleCamera>();
 	m_camera->Init(m_player1.get(), m_player2.get());
+	//ラウンドマネージャー生成
+	m_roundManager = std::make_unique<RoundManager>();
+	//ラウンドマネージャー初期化
+	m_roundManager->Init();
 }
 
 GameScene::~GameScene()
@@ -74,13 +79,20 @@ void GameScene::NormalUpdate()
 {
 	auto& input = InputManager::GetInstance();
 	input.Update();
-
+	//プレイヤー更新
 	m_player1->Update();
 	m_player2->Update();
-
+	//バトルマネージャー更新
 	m_battleManager->Update();
-
+	//カメラ更新
 	m_camera->Update();
+	//ラウンドマネージャー更新
+	m_roundManager->Update(*m_player1, *m_player2);
+
+	if (m_roundManager->IsResetRequest())
+	{
+	
+	}
 }
 
 void GameScene::FadeOutUpdate()

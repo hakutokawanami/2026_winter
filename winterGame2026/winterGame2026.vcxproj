@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Battle\RoundManager.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerDeadState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerGetUpState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerGrabState.cpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="Source\Game\Base\StateBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Battle\RoundManager.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerDeadState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerGetUpState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerGrabState.h" />

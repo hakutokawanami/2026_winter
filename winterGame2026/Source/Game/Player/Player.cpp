@@ -281,7 +281,12 @@ void Player::OnHit(const AttackData& attack)
 	{
 		// 通常の攻撃
 		TakeDamage(attack);
-
+		if (m_hp <= 0)
+		{
+			m_hp = 0;
+			ChangeState(std::make_unique<PlayerDeadState>(*this));
+			return;
+		}
 		//のけぞりステートに変更
 		ChangeState(std::make_unique<PlayerHitState>(*this, attack));
 		return;
@@ -315,10 +320,4 @@ bool Player::IsThrowing() const
 void Player::TakeDamage(const AttackData& attack)
 {
 	m_hp -= attack.damage;
-
-	if (m_hp < 0)
-	{
-		m_hp = 0;
-		ChangeState(std::make_unique<PlayerHitState>(*this));
-	}
 }

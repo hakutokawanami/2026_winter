@@ -2,7 +2,7 @@
 
 void PlayerDeadState::Enter()
 {
-	m_animationController.Play(Player::kDeadAnimName, false);
+	m_animationController.Play(Player::kDeadAnimName, false,15.0f,0.7f);
 }
 
 void PlayerDeadState::Update()
