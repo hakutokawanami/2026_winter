@@ -3,6 +3,7 @@
 #include"ResourceManager.h"
 #include"Game/Scene/SceneController.h"
 #include"Game/Scene/TitleScene.h"
+#include"Game/Scene/GameScene.h"
 #include"Game/Scene/DebugScene.h"
 #include"Game/Battle/AttackData.h"
 #include<DxLib.h>
@@ -37,7 +38,7 @@ bool Application::Init()
 	m_windowSize.w = 1920;
 	m_windowSize.h = 1080;
 	//ウィンドウサイズ設定
-	SetGraphMode(m_windowSize.w, m_windowSize.h, Config::kColorBitNum);
+	SetGraphMode(m_windowSize.w, m_windowSize.h, Game::kColorBitNum);
 #endif // _DEBUG
 
 	//ウィンドウのタイトル設定
@@ -80,7 +81,7 @@ void Application::Run()
 #ifdef _DEBUG
 	SceneController.ChangeScene(std::make_shared<DebugScene>(SceneController));
 #else
-	SceneController.ChangeScene(std::make_shared<TitleScene>(SceneController));
+	SceneController.ChangeScene(std::make_shared<GameScene>(SceneController));
 #endif // _DEBUG
 
 	while (ProcessMessage() != -1)
