@@ -9,6 +9,7 @@
 #include"State/PlayerGuardHitState.h"
 #include"State/PlayerThrowHitState.h"
 #include"State/PlayerThrowSuccessState.h"
+#include"State/PlayerDeadState.h"
 #include"Game/Battle/HitBoxSet.h"
 #include"Game/Battle/AttackData.h"
 #include<cassert>
@@ -318,5 +319,6 @@ void Player::TakeDamage(const AttackData& attack)
 	if (m_hp < 0)
 	{
 		m_hp = 0;
+		ChangeState(std::make_unique<PlayerHitState>(*this));
 	}
 }

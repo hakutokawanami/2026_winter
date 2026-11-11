@@ -30,10 +30,8 @@ public:
 	//攻撃アニメーション
 	static constexpr const wchar_t* kJabAnimName = L"Armature|Jab";
 	static constexpr const wchar_t* kLungeJabAnimName = L"Armature|LungeJab";
-
 	static constexpr const wchar_t* kPunchAnimName = L"Armature|FS_Punch";
 	static constexpr const wchar_t* kKickAnimName = L"Armature|FS_Kick";
-
 	//ヒットアニメーション
 	static constexpr const wchar_t* kHitHeadLightAnimName = L"Armature|HitHeadLight";
 	static constexpr const wchar_t* kHitHeadHeavyAnimName = L"Armature|HitHeadHeavy";
@@ -46,6 +44,8 @@ public:
 	static constexpr const wchar_t* kThrownAnimName = L"Armature|Thrown";
 	//起き上がりアニメーション
 	static constexpr const wchar_t* kGettingUpAnimName = L"Armature|GetUp";
+	//死亡アニメーション
+	static constexpr const wchar_t* kDeadAnimName = L"Armature|Death";
 
 public:
 	Player(PlayerID id, int modelHandle, BattleManager* battleManager);
