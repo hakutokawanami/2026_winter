@@ -18,8 +18,10 @@ void PlayerWalkState::Update()
 	//入力方向と移動方向の表を作る
 	static constexpr std::pair<StickDirection, PlayerWalkState::Type>walkTable[] =
 	{
-		{StickDirection::right,PlayerWalkState::Type::forward},
-		{StickDirection::left,PlayerWalkState::Type::back}
+		{ StickDirection::right,PlayerWalkState::Type::forward },
+		{ StickDirection::left,PlayerWalkState::Type::back },
+		{ StickDirection::downRight,PlayerWalkState::Type::forward },
+		{ StickDirection::downLeft,PlayerWalkState::Type::back }
 	};
 
 	auto& input = InputManager::GetInstance();
@@ -64,6 +66,13 @@ void PlayerWalkState::Update()
 		return;
 	}
 
+	//攻撃
+	if (input.IsTriggered(m_player.GetPlayerID(), "A"))
+	{
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Kick")));
+		return;
+	}
+
 	//掴み
 	if (input.IsTriggered(m_player.GetPlayerID(), "B"))
 	{
@@ -72,7 +81,9 @@ void PlayerWalkState::Update()
 	}
 
 	//ニュートラルに入っていたらIdleへ
-	if (input.GetStickDirection(m_player.GetPlayerID()) == StickDirection::neutral)
+	if (input.GetStickDirection(m_player.GetPlayerID()) == StickDirection::neutral || 
+		input.GetStickDirection(m_player.GetPlayerID()) == StickDirection::up || 
+		input.GetStickDirection(m_player.GetPlayerID()) == StickDirection::down  )
 	{
 		m_player.ChangeState(std::make_unique<PlayerIdleState>(m_player));
 		return;

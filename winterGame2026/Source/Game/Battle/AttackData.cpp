@@ -151,8 +151,8 @@ bool AttackTable::Save() const
 			def.data.damage,
 			def.data.hitStun,
 			def.data.guardStun,
-			def.isThrow ? 1 : 0),
-			def.takeDamageFrame;
+			def.isThrow ? 1 : 0,
+			def.takeDamageFrame);
 		file << line << "\n";
 	}
 	return true;
