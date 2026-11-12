@@ -1,4 +1,5 @@
 #pragma once
+#include"Game/Common/PlayerID.h"
 
 class Player;
 /// <summary>
@@ -57,6 +58,30 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool IsResetRequest();
+	/// <summary>
+	/// マッチを終了するかどうか
+	/// </summary>
+	/// <returns></returns>
+	bool IsMatchEnd();
+	/// <summary>
+	/// タイマーの秒数を取得する
+	/// </summary>
+	/// <returns></returns>
+	int GetTimer()const { return m_roundTimer; }
+	/// <summary>
+	/// 勝利ラウンド数を取得する
+	/// </summary>
+	/// <param name="id">プレイヤー</param>
+	/// <returns></returns>
+	int GetWins(PlayerID id)const { return m_wins[static_cast<int>(id)]; }
+	/// <summary>
+	/// 今のフェーズに入ってからのフレーム数を取得する
+	/// </summary>
+	/// <returns></returns>
+	int GetPhaseFrame()const { return m_frame; }
+
+	//勝利に必要なラウンド数
+	static constexpr int kWinRounds = 2;
 
 private:
 	//現在のフェーズ
@@ -71,5 +96,7 @@ private:
 	int m_frame;
 	//プレイヤーなどのリセットをしてもらうリクエスト
 	bool m_resetRequest;
+	//マッチを終了するか
+	bool m_isMatchEnd;
 };
 

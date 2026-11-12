@@ -4,8 +4,6 @@ namespace
 {
 	//タイマーの初期値
 	constexpr int kStartTime = 99;
-	//2ラウンド勝利
-	constexpr int kWinRounds = 2;
 	//ラウンド開始フェーズに使うフレーム数
 	constexpr int kRoundStartFrame = 120;
 	//KOフェーズに使うフレーム数
@@ -20,7 +18,8 @@ RoundManager::RoundManager():
 	m_roundTimer(),
 	m_frame(),
 	m_wins(),
-	m_resetRequest(false)
+	m_resetRequest(false),
+	m_isMatchEnd(false)
 {
 }
 
@@ -146,7 +145,8 @@ void RoundManager::Update(const Player& player1, const Player& player2)
 		break;
 
 	case Phase::MatchEnd:
-
+		m_resetRequest = true;
+		m_isMatchEnd = true;
 		break;
 	}
 }
@@ -156,5 +156,13 @@ bool RoundManager::IsResetRequest()
 	//trueを受け取ったらすぐfalseに戻す
 	const bool request = m_resetRequest;
 	m_resetRequest = false;
+	return request;
+}
+
+bool RoundManager::IsMatchEnd()
+{
+	//trueを受け取ったらすぐfalseに戻す
+	const bool request = m_isMatchEnd;
+	m_isMatchEnd = false;
 	return request;
 }
