@@ -14,7 +14,7 @@ StickDirection PlayerStateBase::ToScreenDirection(StickDirection direction) cons
 
 bool PlayerStateBase::IsBackInput() const
 {
-	const auto direction = InputManager::GetInstance().GetStickDirection(m_player.GetPlayerID());
+	const auto direction = GetStickDirection();
 	return direction == ToScreenDirection(StickDirection::left) || 
 		direction == ToScreenDirection(StickDirection::downLeft);
 }
@@ -22,4 +22,34 @@ bool PlayerStateBase::IsBackInput() const
 bool PlayerStateBase::IsGuardInput() const
 {
 	return IsBackInput();
+}
+
+bool PlayerStateBase::IsTriggered(const char* button)const
+{
+	if (!m_player.CanControl())
+	{
+		return false;
+	}
+
+	return InputManager::GetInstance().IsTriggered(m_player.GetPlayerID(), button);
+}
+
+StickDirection PlayerStateBase::GetStickDirection()const
+{
+	if (!m_player.CanControl())
+	{
+		return StickDirection::neutral;
+	}
+
+	return InputManager::GetInstance().GetStickDirection(m_player.GetPlayerID());
+}
+
+bool PlayerStateBase::IsStickDoubleTap(StickDirection dir) const
+{
+	if (!m_player.CanControl())
+	{
+		return false;
+	}
+
+	return InputManager::GetInstance().IsStickDoubleTapInput(m_player.GetPlayerID(), dir);
 }

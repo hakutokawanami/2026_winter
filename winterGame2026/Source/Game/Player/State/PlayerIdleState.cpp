@@ -27,31 +27,29 @@ void PlayerIdleState::Update()
 		StickDirection::left,
 	};
 
-	auto& input = InputManager::GetInstance();
-
 	//攻撃
-	if (input.IsTriggered(m_player.GetPlayerID(), "Y"))
+	if (IsTriggered("Y"))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("LungeJab")));
 		return;
 	}
 
 	//攻撃
-	if (input.IsTriggered(m_player.GetPlayerID(), "X"))
+	if (IsTriggered("X"))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Jab")));
 		return;
 	}
 
 	//攻撃
-	if (input.IsTriggered(m_player.GetPlayerID(), "A"))
+	if (IsTriggered("A"))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Kick")));
 		return;
 	}
 
 	//掴み
-	if (input.IsTriggered(m_player.GetPlayerID(), "B"))
+	if (IsTriggered("B"))
 	{
 		m_player.ChangeState(std::make_unique<PlayerGrabState>(m_player, AttackTable::GetInstance().Get("Grab")));
 		return;
@@ -61,7 +59,7 @@ void PlayerIdleState::Update()
 	for (auto [dir, type] : stepTable)
 	{
 		//2回連続で倒されていたら
-		if (input.IsStickDoubleTapInput(m_player.GetPlayerID(), ToScreenDirection(dir)))
+		if (IsStickDoubleTap(ToScreenDirection(dir)))
 		{
 			//対応する方向にステップ
 			m_player.ChangeState(std::make_unique<PlayerStepState>(m_player, type));
@@ -72,7 +70,7 @@ void PlayerIdleState::Update()
 	for (auto dir : dirTable)
 	{
 		//倒されている方向をチェック
-		if (input.GetStickDirection(m_player.GetPlayerID()) == ToScreenDirection(dir))
+		if (GetStickDirection() == ToScreenDirection(dir))
 		{
 			//移動
 			m_player.ChangeState(std::make_unique<PlayerWalkState>(m_player));

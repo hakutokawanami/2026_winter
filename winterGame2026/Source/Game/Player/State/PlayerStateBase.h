@@ -62,6 +62,24 @@ protected:
 	/// </summary>
 	/// <returns></returns>
 	bool IsGuardInput()const;
+	/// <summary>
+	/// ステートから使う
+	/// </summary>
+	/// <param name="button"></param>
+	/// <returns></returns>
+	bool IsTriggered(const char* button)const;
+	/// <summary>
+	/// ステートから使う
+	/// </summary>
+	/// <returns></returns>
+	StickDirection GetStickDirection()const;
+
+	/// <summary>
+	/// ステートから使う
+	/// </summary>
+	/// <param name="dir"></param>
+	/// <returns></returns>
+	bool IsStickDoubleTap(StickDirection dir)const;
 
 	Player& m_player;
 

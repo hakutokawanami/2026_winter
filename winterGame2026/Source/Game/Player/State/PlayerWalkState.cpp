@@ -24,12 +24,12 @@ void PlayerWalkState::Update()
 		{ StickDirection::downLeft,PlayerWalkState::Type::back }
 	};
 
-	auto& input = InputManager::GetInstance();
+	const StickDirection stick = GetStickDirection();
 
 	for (auto [dir,type] : walkTable)
 	{
 		//倒されている方向をチェック
-		if (input.GetStickDirection(m_player.GetPlayerID()) == ToScreenDirection(dir))
+		if (stick == ToScreenDirection(dir))
 		{
 			m_type = type;
 			break;
@@ -53,37 +53,37 @@ void PlayerWalkState::Update()
 	}
 
 	//攻撃
-	if (input.IsTriggered(m_player.GetPlayerID(), "Y"))
+	if (IsTriggered("Y"))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("LungeJab")));
 		return;
 	}
 
 	//攻撃
-	if (input.IsTriggered(m_player.GetPlayerID(), "X"))
+	if (IsTriggered("X"))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Jab")));
 		return;
 	}
 
 	//攻撃
-	if (input.IsTriggered(m_player.GetPlayerID(), "A"))
+	if (IsTriggered("A"))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Kick")));
 		return;
 	}
 
 	//掴み
-	if (input.IsTriggered(m_player.GetPlayerID(), "B"))
+	if (IsTriggered("B"))
 	{
 		m_player.ChangeState(std::make_unique<PlayerGrabState>(m_player, AttackTable::GetInstance().Get("Grab")));
 		return;
 	}
 
 	//ニュートラルに入っていたらIdleへ
-	if (input.GetStickDirection(m_player.GetPlayerID()) == StickDirection::neutral || 
-		input.GetStickDirection(m_player.GetPlayerID()) == StickDirection::up || 
-		input.GetStickDirection(m_player.GetPlayerID()) == StickDirection::down  )
+	if (stick == StickDirection::neutral ||
+		stick == StickDirection::up ||
+		stick == StickDirection::down  )
 	{
 		m_player.ChangeState(std::make_unique<PlayerIdleState>(m_player));
 		return;
