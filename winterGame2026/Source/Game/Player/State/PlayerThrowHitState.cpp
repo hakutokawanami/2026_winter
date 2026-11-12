@@ -1,6 +1,7 @@
 #include "PlayerThrowHitState.h"
 #include"PlayerIdleState.h"
 #include"PlayerGetUpState.h"
+#include"PlayerDeadState.h"
 namespace
 {
 	//アニメーションのブレンドにかけるフレーム数
@@ -27,22 +28,25 @@ void PlayerThrowHitState::Update()
 		m_player.TakeDamage(m_attack);
 	}
 
-	if (m_animationController.IsEnd())
+	if (m_player.GetHp() > 0)
 	{
-		const int model = m_player.GetModelHandle();
-		const int hipsFrame = MV1SearchFrame(model, L"mixamorig:Hips");
-		const VECTOR before = MV1GetFramePosition(model, hipsFrame);
+		if (m_animationController.IsEnd())
+		{
+			const int model = m_player.GetModelHandle();
+			const int hipsFrame = MV1SearchFrame(model, L"mixamorig:Hips");
+			const VECTOR before = MV1GetFramePosition(model, hipsFrame);
 
-		m_animationController.Play(Player::kGettingUpAnimName, false, 0.0f, 1.0f);
-		m_animationController.Update();
-		const VECTOR after = MV1GetFramePosition(model, hipsFrame);
+			m_animationController.Play(Player::kGettingUpAnimName, false, 0.0f, 1.0f);
+			m_animationController.Update();
+			const VECTOR after = MV1GetFramePosition(model, hipsFrame);
 
-		Vector3 pos = m_player.GetTransform().GetPosition();
-		pos.x += before.x - after.x;
-		pos.z += before.z - after.z;
-		m_player.GetTransform().SetPosition(pos);
+			Vector3 pos = m_player.GetTransform().GetPosition();
+			pos.x += before.x - after.x;
+			pos.z += before.z - after.z;
+			m_player.GetTransform().SetPosition(pos);
 
-		m_player.ChangeState(std::make_unique<PlayerGetUpState>(m_player));
+			m_player.ChangeState(std::make_unique<PlayerGetUpState>(m_player));
+		}
 	}
 }
 

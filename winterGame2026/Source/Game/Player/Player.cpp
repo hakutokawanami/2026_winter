@@ -284,7 +284,6 @@ void Player::OnHit(const AttackData& attack)
 		TakeDamage(attack);
 		if (m_hp <= 0)
 		{
-			m_hp = 0;
 			ChangeState(std::make_unique<PlayerDeadState>(*this));
 			return;
 		}
@@ -321,6 +320,10 @@ bool Player::IsThrowing() const
 void Player::TakeDamage(const AttackData& attack)
 {
 	m_hp -= attack.damage;
+	if (m_hp <= 0)
+	{
+		m_hp = 0;
+	}
 }
 
 void Player::RoundReset()
