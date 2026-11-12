@@ -337,6 +337,27 @@ bool InputManager::AnyPressButtonInput(PlayerID player) const
 	return false;
 }
 
+bool InputManager::AnyPressButtonInput() const
+{
+	for (int i = 0; i < 2; i++)
+	{
+		for (const auto& input : m_inputData[i])
+		{
+			if (input.first == "A" || input.first == "B" ||
+				input.first == "X" || input.first == "Y" ||
+				input.first == "START")
+			{
+				if (input.second)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
 int InputManager::GetPadNo(PlayerID player) const
 {
 	switch (player)

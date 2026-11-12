@@ -109,6 +109,12 @@ public:
 	/// <returns>どれか一つでも入力されている:true / すべて入力されていない:false</returns>
 	bool AnyPressButtonInput(PlayerID player)const;
 	/// <summary>
+	/// InputManagerが管理しているすべての入力イベントのうち、どれか一つでも入力されているか
+	/// </summary>
+	/// <returns></returns>
+	bool AnyPressButtonInput()const;
+
+	/// <summary>
 	/// どのゲームパッドを使うか
 	/// </summary>
 	/// <param name="player">何Pか</param>
