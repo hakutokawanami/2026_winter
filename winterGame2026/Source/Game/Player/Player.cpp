@@ -59,7 +59,8 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	m_playerID(id),
 	m_modelHandle(-1),
 	m_battleManager(battleManager),
-	m_hp(kMaxHp)
+	m_hp(kMaxHp),
+	m_canControl(false)
 {
 	//モデル複製
 	m_modelHandle = MV1DuplicateModel(modelHandle);
@@ -320,4 +321,27 @@ bool Player::IsThrowing() const
 void Player::TakeDamage(const AttackData& attack)
 {
 	m_hp -= attack.damage;
+}
+
+void Player::RoundReset()
+{
+	m_animationController->Play(kIdleAnimName, true, 0.0f);
+	ChangeState(std::make_unique<PlayerIdleState>(*this));
+
+	if (m_playerID == PlayerID::P1)
+	{
+		// 1Pの初期化処理
+		m_transform.SetPosition(kPlayer1InitPos);
+		m_transform.SetScale({ kPlayer1Scale, kPlayer1Scale, kPlayer1Scale });
+		MV1SetMatrix(m_modelHandle, m_transform.GetWorldMatrix().ChangeDxMat());
+	}
+	else
+	{
+		// 2Pの初期化処理
+		m_transform.SetPosition(kPlayer2InitPos);
+		m_transform.SetScale({ kPlayer2Scale, kPlayer2Scale, kPlayer2Scale });
+		MV1SetMatrix(m_modelHandle, m_transform.GetWorldMatrix().ChangeDxMat());
+	}
+
+	m_hp = kMaxHp;
 }

@@ -13,7 +13,8 @@ class Player : public GameObject
 {
 public:
 	//最大HP
-	static constexpr int kMaxHp = 1000;
+//	static constexpr int kMaxHp = 1000;
+	static constexpr int kMaxHp = 100;
 
 	//アニメーション名たち
 	static constexpr const wchar_t* kIdleAnimName = L"Armature|Idle";
@@ -147,6 +148,20 @@ public:
 	/// </summary>
 	/// <param name="attack"></param>
 	void TakeDamage(const AttackData& attack);
+	/// <summary>
+	/// ラウンド開始時の処理
+	/// </summary>
+	void RoundReset();
+	/// <summary>
+	/// 操作していいかをセットする
+	/// </summary>
+	/// <param name="canControl"></param>
+	void SetCanControl(bool canControl) { m_canControl = canControl; }
+	/// <summary>
+	/// 操作していいかどうか
+	/// </summary>
+	/// <returns></returns>
+	bool CanControl() const { return m_canControl; }
 
 private:
 	///モデルハンドル
@@ -163,5 +178,7 @@ private:
 	std::unique_ptr<HitBoxSet>m_hitBoxes;
 	//体力
 	int m_hp;
+	//操作していいかどうか
+	bool m_canControl;
 };
 
