@@ -1,5 +1,7 @@
 ﻿#include "TitleScene.h"
+#include"GameScene.h"
 #include"SceneController.h"
+#include"Engine/Input/InputManager.h"
 #include"Engine/Core/Application.h"
 #include"DxLib.h"
 
@@ -46,7 +48,13 @@ void TitleScene::FadeInUpdate()
 
 void TitleScene::NormalUpdate()
 {
-	
+	auto& input = InputManager::GetInstance();
+	input.Update();
+	if (input.AnyPressButtonInput())
+	{
+		m_update = &TitleScene::FadeOutUpdate;
+		m_draw = &TitleScene::FadeDraw;
+	}
 }
 
 void TitleScene::FadeOutUpdate()
@@ -54,7 +62,7 @@ void TitleScene::FadeOutUpdate()
 	if (++m_frame >= kFadeInterval)
 	{
 		//シーンの切り替え
-//		m_controller.ChangeScene(std::make_shared<GameScene>(m_controller));
+		m_controller.ChangeScene(std::make_shared<GameScene>(m_controller));
 		return;
 	}
 }
