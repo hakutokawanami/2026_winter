@@ -8,6 +8,7 @@ class PlayerStateBase;
 class AnimationController;
 class BattleManager;
 class HitBoxSet;
+class InputBuffer;
 struct AttackData;
 class Player : public GameObject
 {
@@ -162,6 +163,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool CanControl() const { return m_canControl; }
+	/// <summary>
+	/// インプットバッファを取得する
+	/// </summary>
+	/// <returns></returns>
+	InputBuffer& GetInputBuffer()const { return *m_InputBuffer; }
 
 private:
 	///モデルハンドル
@@ -180,5 +186,7 @@ private:
 	int m_hp;
 	//操作していいかどうか
 	bool m_canControl;
+	//ボタンの先行入力
+	std::unique_ptr<InputBuffer>m_InputBuffer;
 };
 

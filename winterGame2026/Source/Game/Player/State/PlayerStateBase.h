@@ -5,6 +5,7 @@
 #include"Engine/Input/InputManager.h"
 #include"Game/Battle/BattleManager.h"
 #include <Engine/Input/StickDirection.h>
+#include"Engine/Input/Button.h"
 
 class PlayerStateBase : public StateBase
 {
@@ -62,24 +63,30 @@ protected:
 	/// </summary>
 	/// <returns></returns>
 	bool IsGuardInput()const;
+
 	/// <summary>
-	/// ステートから使う
+	/// ステートから使うIsTriggerd
 	/// </summary>
 	/// <param name="button"></param>
 	/// <returns></returns>
 	bool IsTriggered(const char* button)const;
 	/// <summary>
-	/// ステートから使う
+	/// ステートから使うGetStickDirection
 	/// </summary>
 	/// <returns></returns>
 	StickDirection GetStickDirection()const;
-
 	/// <summary>
-	/// ステートから使う
+	/// ステートから使うIsStickDoubleTap
 	/// </summary>
 	/// <param name="dir"></param>
 	/// <returns></returns>
 	bool IsStickDoubleTap(StickDirection dir)const;
+	/// <summary>
+	/// ステートから使うIsBufferd
+	/// </summary>
+	/// <param name="button"></param>
+	/// <returns></returns>
+	bool IsBufferd(Button button,int frame)const;
 
 	Player& m_player;
 

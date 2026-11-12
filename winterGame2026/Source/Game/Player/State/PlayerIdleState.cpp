@@ -4,6 +4,13 @@
 #include"PlayerAttackState.h"
 #include"PlayerGrabState.h"
 #include"Game/Battle/AttackData.h"
+
+namespace
+{
+	//先行入力を受け付けるフレーム数(この数以内に押されていたら技を出す)
+	constexpr int kBufferFrame = 6;
+}
+
 void PlayerIdleState::Enter()
 {
 	m_animationController.Play(Player::kIdleAnimName);
@@ -28,28 +35,28 @@ void PlayerIdleState::Update()
 	};
 
 	//攻撃
-	if (IsTriggered("Y"))
+	if (IsBufferd(Button::Y, kBufferFrame))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("LungeJab")));
 		return;
 	}
 
 	//攻撃
-	if (IsTriggered("X"))
+	if (IsBufferd(Button::X, kBufferFrame))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Jab")));
 		return;
 	}
 
 	//攻撃
-	if (IsTriggered("A"))
+	if (IsBufferd(Button::A, kBufferFrame))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Kick")));
 		return;
 	}
 
 	//掴み
-	if (IsTriggered("B"))
+	if (IsBufferd(Button::B, kBufferFrame))
 	{
 		m_player.ChangeState(std::make_unique<PlayerGrabState>(m_player, AttackTable::GetInstance().Get("Grab")));
 		return;

@@ -2,6 +2,7 @@
 #include"Engine/Animation/AnimationController.h"
 #include"Engine/Math/Vector3.h"
 #include"Engine/Input/InputManager.h"
+#include"Engine/Input/InputBuffer.h"
 #include"Game/Battle/BattleManager.h"
 #include"State/PlayerStateBase.h"
 #include"State/PlayerIdleState.h"
@@ -94,6 +95,8 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	}
 	//投げられ判定を設定
 	m_hitBoxes->SetThrowedBox(kPushRadius, kPushHeight);
+	//先行入力判定生成
+	m_InputBuffer = std::make_unique<InputBuffer>();
 }
 
 Player::~Player()
@@ -126,6 +129,12 @@ void Player::End()
 void Player::Update()
 {
 	assert(m_state);
+
+	if (CanControl())
+	{
+		//先行入力用履歴更新
+		m_InputBuffer->Update(m_playerID);
+	}
 
 	m_state->Update();
 
@@ -347,4 +356,6 @@ void Player::RoundReset()
 	}
 
 	m_hp = kMaxHp;
+
+	m_InputBuffer->AllClear();
 }

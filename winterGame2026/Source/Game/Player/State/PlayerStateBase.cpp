@@ -1,4 +1,6 @@
 #include "PlayerStateBase.h"
+#include"Engine/Input/Button.h"
+#include"Engine/Input/InputBuffer.h"
 
 PlayerStateBase::PlayerStateBase(Player& player):
 	m_player(player),
@@ -52,4 +54,14 @@ bool PlayerStateBase::IsStickDoubleTap(StickDirection dir) const
 	}
 
 	return InputManager::GetInstance().IsStickDoubleTapInput(m_player.GetPlayerID(), dir);
+}
+
+bool PlayerStateBase::IsBufferd(const Button button,int frame) const
+{
+	if (!m_player.CanControl())
+	{
+		return false;
+	}
+
+	return m_player.GetInputBuffer().IsBuffered(button, frame);
 }
