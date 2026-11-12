@@ -790,8 +790,7 @@ void AttackEditorScene::DrawParams()
 		case Param::hitStun:	swprintf_s(value, L"%dF", def.data.hitStun);	break;
 		case Param::guardStun:	swprintf_s(value, L"%dF", def.data.guardStun);	break;
 		case Param::isThrow:	swprintf_s(value, L"%s", def.isThrow ? L"ON" : L"OFF");	break;
-		case Param::takeDamageFrame:	swprintf_s(value, L"%dF", def.takeDamageFrame);	break;
-		case Param::distance:	swprintf_s(value, L"%.0f", m_distance);	break;
+		case Param::takeDamageFrame:	swprintf_s(value, L"%dF", def.takeDamageFrame);	break;		case Param::distance:	swprintf_s(value, L"%.0f", m_distance);	break;
 		default:	break;
 		}
 
