@@ -5,6 +5,7 @@ class Player;
 class BattleCamera;
 class BattleManager;
 class RoundManager;
+class BattleUI;
 class GameScene : public SceneBase
 {
 public:
@@ -49,5 +50,7 @@ private:
 	std::unique_ptr<Player>m_player2;
 	//カメラ
 	std::unique_ptr<BattleCamera>m_camera;
+	//バトルUI
+	std::unique_ptr<BattleUI>m_battleUI;
 };
 

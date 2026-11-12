@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include"TitleScene.h"
 #include"SceneController.h"
 #include"Engine/Core/Application.h"
 #include"Game/Player/Player.h"
@@ -8,6 +9,7 @@
 #include"Game/Battle/BattleManager.h"
 #include"Engine/Input/InputManager.h"
 #include"Game/Battle/RoundManager.h"
+#include"Game/Battle/BattleUI.h"
 #include<DxLib.h>
 
 namespace
@@ -49,6 +51,8 @@ GameScene::GameScene(SceneController& controller) :
 	m_roundManager = std::make_unique<RoundManager>();
 	//ラウンドマネージャー初期化
 	m_roundManager->Init();
+	//バトルUI生成
+	m_battleUI = std::make_unique<BattleUI>();
 }
 
 GameScene::~GameScene()
@@ -73,12 +77,24 @@ void GameScene::FadeInUpdate()
 		m_draw = &GameScene::NormalDraw;
 		return;
 	}
+
+	//プレイヤー更新
+	m_player1->Update();
+	m_player2->Update();
+	//バトルマネージャー更新
+	m_battleManager->Update();
+	//カメラ更新
+	m_camera->Update();
 }
 
 void GameScene::NormalUpdate()
 {
 	auto& input = InputManager::GetInstance();
 	input.Update();
+
+	//操作していいかをセットする
+	m_player1->SetCanControl(m_roundManager->CanControl());
+	m_player2->SetCanControl(m_roundManager->CanControl());
 	//プレイヤー更新
 	m_player1->Update();
 	m_player2->Update();
@@ -88,10 +104,13 @@ void GameScene::NormalUpdate()
 	m_camera->Update();
 	//ラウンドマネージャー更新
 	m_roundManager->Update(*m_player1, *m_player2);
-
+	//ラウンド間のプレイヤーのリセット
 	if (m_roundManager->IsResetRequest())
 	{
-	
+		//フェードアウト
+		m_update = &GameScene::FadeOutUpdate;
+		//フェード用描画
+		m_draw = &GameScene::FadeDraw;
 	}
 }
 
@@ -99,10 +118,25 @@ void GameScene::FadeOutUpdate()
 {
 	if (++m_frame >= kFadeInterval)
 	{
-		//シーンの切り替え
-//		m_controller.ChangeScene(std::make_shared<GameScene>(m_controller));
+		if (m_roundManager->IsMatchEnd())
+		{
+			m_controller.ChangeScene(std::make_unique<TitleScene>(m_controller));
+			return;
+		}
+		m_player1->RoundReset();
+		m_player2->RoundReset();
+
+		m_update = &GameScene::FadeInUpdate;
 		return;
 	}
+
+	//プレイヤー更新
+	m_player1->Update();
+	m_player2->Update();
+	//バトルマネージャー更新
+	m_battleManager->Update();
+	//カメラ更新
+	m_camera->Update();
 }
 
 void GameScene::NormalDraw()
@@ -116,15 +150,14 @@ void GameScene::NormalDraw()
 
 	DrawGrid();
 
+	m_battleUI->Draw(*m_roundManager,*m_player1,*m_player2);
+
 #ifdef _DEBUG
 	DrawFormatString(static_cast<int>(wsize.w / 2.0f), static_cast<int>(wsize.h / 2.0f), 0xffffff, L"GAMESCENE");
 	//スティック入力履歴(P1は左上、P2は右上)
 	auto& input = InputManager::GetInstance();
 	input.DebugDrawStickHistory(PlayerID::P1, wsize.w - 260, 16);
 	input.DebugDrawStickHistory(PlayerID::P2, wsize.w - 120, 16);
-	//HP表示
-	DebugDrawHpBar(*m_player1, m_battleManager->IsOpponentOnRight(m_player1->GetPlayerID()));
-	DebugDrawHpBar(*m_player2, m_battleManager->IsOpponentOnRight(m_player2->GetPlayerID()));
 #endif // _DEBUG
 }
 
