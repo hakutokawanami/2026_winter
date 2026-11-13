@@ -43,6 +43,9 @@ private:
 		guardStun,
 		isThrow,
 		takeDamageFrame,
+		next,
+		bufferFrame,
+		cancelFrame,
 		distance,
 		count
 	};

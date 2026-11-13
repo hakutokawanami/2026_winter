@@ -8,7 +8,7 @@
 namespace
 {
 	//先行入力を受け付けるフレーム数(この数以内に押されていたら技を出す)
-	constexpr int kBufferFrame = 6;
+	constexpr int kBufferFrame = 10;
 }
 
 void PlayerIdleState::Enter()

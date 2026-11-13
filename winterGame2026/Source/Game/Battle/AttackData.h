@@ -47,6 +47,13 @@ struct AttackDef
 	bool isThrow = false;
 	//ダメージを受けるフレーム
 	int takeDamageFrame = 0;
+	//コンボで次に出す攻撃の名前
+	std::string next;
+	//先行入力のフレーム
+	int bufferFrame = 0;
+	//次の技に切り替えるフレーム
+	int cancelFrame = 0;
+
 	//技性能
 	AttackData data = {};
 

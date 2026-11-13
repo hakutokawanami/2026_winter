@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Player\State\PlayerThrowBreakState.cpp" />
     <ClCompile Include="Source\Engine\Input\InputBuffer.cpp" />
     <ClCompile Include="Source\Game\Battle\BattleUI.cpp" />
     <ClCompile Include="Source\Game\Battle\RoundManager.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="Source\Game\Base\StateBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Player\State\PlayerThrowBreakState.h" />
     <ClInclude Include="Source\Engine\Input\Button.h" />
     <ClInclude Include="Source\Engine\Input\InputBuffer.h" />
     <ClInclude Include="Source\Game\Battle\BattleUI.h" />

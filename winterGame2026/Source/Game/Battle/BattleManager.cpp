@@ -188,9 +188,14 @@ void BattleManager::ResolveThrowHits(const std::vector<ThrowHitEvent>& throwEven
 		return;
 	}
 
+	//投げぬけ
 	if (throwEvents.size() >= 2)
 	{
-		//投げぬけの処理
+		Player* attacker = GetPlayer(throwEvents[0].attacker);
+		Player* defender = GetPlayer(throwEvents[0].defender);
+
+		attacker->OnThrowBreak(true);
+		defender->OnThrowBreak(false);
 		return;
 	}
 

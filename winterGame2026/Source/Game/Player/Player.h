@@ -14,8 +14,8 @@ class Player : public GameObject
 {
 public:
 	//最大HP
-//	static constexpr int kMaxHp = 1000;
-	static constexpr int kMaxHp = 100;
+	static constexpr int kMaxHp = 1000;
+//	static constexpr int kMaxHp = 100;
 
 	//アニメーション名たち
 	static constexpr const wchar_t* kIdleAnimName = L"Armature|Idle";
@@ -34,6 +34,10 @@ public:
 	static constexpr const wchar_t* kLungeJabAnimName = L"Armature|LungeJab";
 	static constexpr const wchar_t* kPunchAnimName = L"Armature|FS_Punch";
 	static constexpr const wchar_t* kKickAnimName = L"Armature|FS_Kick";
+	//コンボアニメーション
+	static constexpr const wchar_t* kCombo01_1Name = L"Armature|Combo01_1";
+	static constexpr const wchar_t* kCombo01_2Name = L"Armature|Combo01_2";
+	static constexpr const wchar_t* kCombo01_3Name = L"Armature|Combo01_3";
 	//ヒットアニメーション
 	static constexpr const wchar_t* kHitHeadLightAnimName = L"Armature|HitHeadLight";
 	static constexpr const wchar_t* kHitHeadHeavyAnimName = L"Armature|HitHeadHeavy";
@@ -44,6 +48,9 @@ public:
 	//投げアニメーション
 	static constexpr const wchar_t* kThrowAnimName = L"Armature|Throw";
 	static constexpr const wchar_t* kThrownAnimName = L"Armature|Thrown";
+	//投げぬけアニメーション
+	static constexpr const wchar_t* kThrowBreakAttackerAnimName = L"Armature|ThrowBreakAttacker";
+	static constexpr const wchar_t* kThrowBreakDefenderAnimName = L"Armature|ThrowBreakDefender";
 	//起き上がりアニメーション
 	static constexpr const wchar_t* kGettingUpAnimName = L"Armature|GetUp";
 	//死亡アニメーション
@@ -139,6 +146,10 @@ public:
 	/// </summary>
 	/// <param name="attack"></param>
 	void OnThrowSuccess(const AttackData& attack);
+	/// <summary>
+	/// 投げぬけ
+	/// </summary>
+	void OnThrowBreak(bool attacker);
 	/// <summary>
 	/// 投げられているかどうか
 	/// </summary>

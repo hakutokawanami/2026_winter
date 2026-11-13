@@ -157,7 +157,7 @@ void HitBoxSet::Draw()
 	}
 	DrawCapsule(m_attackBox, 0xff4040);
 
-	DrawCapsule(m_throwedBox, 0xff4040);
+	DrawCapsule(m_throwedBox, 0xffff00);
 
 	DrawCapsule(m_throwAttackBox, 0xff4040);
 #endif // _DEBUG

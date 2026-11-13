@@ -13,6 +13,8 @@
 #include <cmath>
 #include <iterator>
 #include <string_view>
+#include <string>
+#include <vector>
 #undef min
 #undef max
 
@@ -44,7 +46,8 @@ namespace
 	constexpr int kParamX = 24;
 	constexpr int kParamY = 70;
 	constexpr int kParamValueX = 190;
-	constexpr int kParamLineHeight = 22;
+	//(720pxの画面で下のタイムラインと重ならないように詰めている)
+	constexpr int kParamLineHeight = 20;
 	//項目のグループの間の隙間
 	constexpr int kParamGroupGap = 8;
 
@@ -89,6 +92,9 @@ namespace
 		L"ガード硬直",
 		L"投げ",
 		L"ダメージを受けるF",
+		L"コンボの次の技",
+		L"先行入力の受付開始",
+		L"次の技へ切り替え",
 		L"相手との距離(保存しない)",
 	};
 
@@ -124,11 +130,12 @@ namespace
 	/// </summary>
 	int GetParamY(int index)
 	{
-		//アニメ / 攻撃判定 / 技性能 / ツール の4つに分ける
+		//アニメ / 攻撃判定 / 技性能 / コンボ / ツール の5つに分ける
 		int gap = 0;
 		if (index >= 3) gap += kParamGroupGap;
 		if (index >= 7) gap += kParamGroupGap;
 		if (index >= 15) gap += kParamGroupGap;
+		if (index >= 18) gap += kParamGroupGap;
 		return kParamY + index * kParamLineHeight + gap;
 	}
 
@@ -538,6 +545,28 @@ void AttackEditorScene::ChangeParam(int dir, bool isFast)
 	case Param::takeDamageFrame:
 		def.takeDamageFrame = std::max(0, def.takeDamageFrame + dir * step);
 		break;
+	case Param::next:
+	{
+		//「なし」と、自分以外の技を順番に切り替える
+		auto& table = AttackTable::GetInstance();
+		std::vector<std::string> names = { "" };
+		for (size_t i = 0; i < table.GetCount(); i++)
+		{
+			const std::string& name = table.GetAt(i).name;
+			if (name != def.name)
+			{
+				names.push_back(name);
+			}
+		}
+		def.next = names[NextIndex(names, def.next, dir)];
+		break;
+	}
+	case Param::bufferFrame:
+		def.bufferFrame = std::max(0, def.bufferFrame + dir * step);
+		break;
+	case Param::cancelFrame:
+		def.cancelFrame = std::max(0, def.cancelFrame + dir * step);
+		break;
 	case Param::distance:
 		m_distance = std::clamp(m_distance + dir * (isFast ? 100.0f : 10.0f), 0.0f, kMaxDistance);
 		PlacePlayers();
@@ -754,7 +783,7 @@ void AttackEditorScene::DrawParams()
 {
 	auto& table = AttackTable::GetInstance();
 	const AttackDef& def = Current();
-	const int panelBottom = GetParamY(static_cast<int>(Param::count)) + 70;
+	const int panelBottom = GetParamY(static_cast<int>(Param::count)) + 50;
 
 	//背景
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 170);
@@ -790,7 +819,17 @@ void AttackEditorScene::DrawParams()
 		case Param::hitStun:	swprintf_s(value, L"%dF", def.data.hitStun);	break;
 		case Param::guardStun:	swprintf_s(value, L"%dF", def.data.guardStun);	break;
 		case Param::isThrow:	swprintf_s(value, L"%s", def.isThrow ? L"ON" : L"OFF");	break;
-		case Param::takeDamageFrame:	swprintf_s(value, L"%dF", def.takeDamageFrame);	break;		case Param::distance:	swprintf_s(value, L"%.0f", m_distance);	break;
+		case Param::takeDamageFrame:	swprintf_s(value, L"%dF", def.takeDamageFrame);	break;
+		case Param::next:
+		{
+			//技の名前は半角英数字なのでそのまま広げる
+			const std::wstring next(def.next.begin(), def.next.end());
+			swprintf_s(value, L"%s", def.next.empty() ? L"なし" : next.c_str());
+			break;
+		}
+		case Param::bufferFrame:	swprintf_s(value, L"%dF", def.bufferFrame);	break;
+		case Param::cancelFrame:	swprintf_s(value, L"%dF", def.cancelFrame);	break;
+		case Param::distance:	swprintf_s(value, L"%.0f", m_distance);	break;
 		default:	break;
 		}
 

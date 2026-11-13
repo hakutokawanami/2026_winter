@@ -3,14 +3,15 @@
 #include"Engine/Math/Vector3.h"
 #include"Engine/Input/InputManager.h"
 #include"Engine/Input/InputBuffer.h"
-#include"Game/Battle/BattleManager.h"
 #include"State/PlayerStateBase.h"
 #include"State/PlayerIdleState.h"
 #include"State/PlayerHitState.h"
 #include"State/PlayerGuardHitState.h"
 #include"State/PlayerThrowHitState.h"
 #include"State/PlayerThrowSuccessState.h"
+#include"State/PlayerThrowBreakState.h"
 #include"State/PlayerDeadState.h"
+#include"Game/Battle/BattleManager.h"
 #include"Game/Battle/HitBoxSet.h"
 #include"Game/Battle/AttackData.h"
 #include<cassert>
@@ -242,6 +243,17 @@ void Player::Draw()
 	DrawFormatString(10, 50 + static_cast<int>(m_playerID) * 20, 0xffffff, L"Player %d Position: (%.2f, %.2f, %.2f)", static_cast<int>(m_playerID), m_transform.GetPosition().x, m_transform.GetPosition().y, m_transform.GetPosition().z);
 	//当たり判定のデバッグ表示
 	m_hitBoxes->Draw();
+
+	if (m_state->IsHittable())
+	{
+		DrawSphere3D(m_transform.position + Vector3{0.0f,kPushHeight + 30.0f,0.0f}, 15.0f, 8.0f, 0xff0000, 0xff0000, true);
+	}
+
+	if (m_state->IsThrowable())
+	{
+		DrawSphere3D(m_transform.position + Vector3{ 0.0f,kPushHeight + 60.0f,0.0f }, 15.0f, 8.0f, 0x00ff00, 0x00ff00, true);
+	}
+
 #endif // _DEBUG
 
 }
@@ -317,6 +329,13 @@ void Player::OnThrowHit(const AttackData& attack)
 void Player::OnThrowSuccess(const AttackData& attack)
 {
 	ChangeState(std::make_unique<PlayerThrowSuccessState>(*this, attack));
+	m_hitBoxes->EndThrowAttack();
+	return;
+}
+
+void Player::OnThrowBreak(bool attacker)
+{
+	ChangeState(std::make_unique<PlayerThrowBreakState>(*this,attacker));
 	m_hitBoxes->EndThrowAttack();
 	return;
 }
