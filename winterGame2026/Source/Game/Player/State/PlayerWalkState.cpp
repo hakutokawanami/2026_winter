@@ -62,7 +62,7 @@ void PlayerWalkState::Update()
 	//攻撃
 	if (IsTriggered("X"))
 	{
-		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Jab")));
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Combo01_1")));
 		return;
 	}
 

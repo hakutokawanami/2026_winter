@@ -38,6 +38,8 @@ struct BoneCapsuleDef
 	float radius;
 	//ボーンの位置からのオフセット
 	float offsetY = 0.0f;
+
+	const wchar_t* endBone = nullptr;
 };
 
 /// <summary>

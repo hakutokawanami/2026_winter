@@ -103,6 +103,8 @@ private:
 	{
 		//ボーンのフレーム番号
 		int frame;
+		//二つ目のボーンのフレーム番号
+		int endFrame = -1;
 		//カプセルの定義
 		BoneCapsuleDef def;
 	};
@@ -112,6 +114,13 @@ private:
 	/// <param name="def"></param>
 	/// <returns></returns>
 	int FindBones(const wchar_t* boneName)const;
+	/// <summary>
+	/// 二つ目のボーンがあればフレーム番号を探す
+	/// </summary>
+	/// <param name="def"></param>
+	/// <returns></returns>
+	int FindEndBone(const BoneCapsuleDef& def)const;
+
 	/// <summary>
 	/// カプセルをボーンの位置に合わせる
 	/// </summary>

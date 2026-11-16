@@ -32,6 +32,7 @@ private:
 		animSpeed,
 		blendTime,
 		bone,
+		endBone,
 		length,
 		radius,
 		offsetY,

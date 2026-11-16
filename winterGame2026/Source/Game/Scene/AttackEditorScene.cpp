@@ -81,6 +81,7 @@ namespace
 		L"再生速度",
 		L"ブレンド",
 		L"判定のボーン",
+		L"判定の終点ボーン",
 		L"判定の長さ",
 		L"判定の半径",
 		L"判定のオフセットY",
@@ -101,6 +102,25 @@ namespace
 	//攻撃判定を付けられるボーン
 	constexpr const wchar_t* kBoneNames[] =
 	{
+		L"mixamorig:LeftHand",
+		L"mixamorig:RightHand",
+		L"mixamorig:LeftForeArm",
+		L"mixamorig:RightForeArm",
+		L"mixamorig:LeftFoot",
+		L"mixamorig:RightFoot",
+		L"mixamorig:LeftToeBase",
+		L"mixamorig:RightToeBase",
+		L"mixamorig:LeftLeg",
+		L"mixamorig:RightLeg",
+		L"mixamorig:Head",
+		L"mixamorig:Spine2",
+		L"mixamorig:Hips",
+	};
+
+	//攻撃判定の終点に付けられるボーン(先頭の空文字は「なし」=1つのボーンだけ)
+	constexpr const wchar_t* kEndBoneNames[] =
+	{
+		L"",
 		L"mixamorig:LeftHand",
 		L"mixamorig:RightHand",
 		L"mixamorig:LeftForeArm",
@@ -511,6 +531,9 @@ void AttackEditorScene::ChangeParam(int dir, bool isFast)
 	case Param::bone:
 		def.bone = kBoneNames[NextIndex(kBoneNames, std::wstring_view(def.bone), dir)];
 		break;
+	case Param::endBone:
+		def.endBone = kEndBoneNames[NextIndex(kEndBoneNames, std::wstring_view(def.endBone), dir)];
+		break;
 	case Param::length:
 		def.length = std::max(0.0f, def.length + dir * floatStep);
 		break;
@@ -683,7 +706,9 @@ void AttackEditorScene::BuildReachCurve()
 
 	const AttackDef& def = Current();
 	const int model = m_attacker->GetModelHandle();
-	const int boneFrame = MV1SearchFrame(model, def.bone.c_str());
+	//終点ボーンがあるときは、判定の先端になる終点ボーンの伸びを見る
+	const std::wstring& reachBone = def.endBone.empty() ? def.bone : def.endBone;
+	const int boneFrame = MV1SearchFrame(model, reachBone.c_str());
 	if (boneFrame < 0)
 	{
 		return;
@@ -809,6 +834,7 @@ void AttackEditorScene::DrawParams()
 		case Param::animSpeed:	swprintf_s(value, L"%.2f (%.1f倍速)", def.animSpeed, def.animSpeed / 0.5f);	break;
 		case Param::blendTime:	swprintf_s(value, L"%.0fF", def.blendTime);	break;
 		case Param::bone:		swprintf_s(value, L"%s", StripPrefix(def.bone).c_str());	break;
+		case Param::endBone:	swprintf_s(value, L"%s", def.endBone.empty() ? L"なし" : StripPrefix(def.endBone).c_str());	break;
 		case Param::length:		swprintf_s(value, L"%.0f", def.length);	break;
 		case Param::radius:		swprintf_s(value, L"%.0f", def.radius);	break;
 		case Param::offsetY:	swprintf_s(value, L"%.0f", def.offsetY);	break;

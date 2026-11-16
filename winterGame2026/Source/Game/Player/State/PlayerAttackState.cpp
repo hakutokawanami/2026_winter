@@ -37,6 +37,13 @@ void PlayerAttackState::Update()
 		hitBoxes.EndAttack();
 	}
 
+	if (CanCombo() && IsBufferd(m_attack.nextButton, m_attack.bufferFrame))
+	{
+		const AttackDef& next = AttackTable::GetInstance().Get(m_attack.next);
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, next));
+		return;
+	}
+
 	//硬直が終わったら Idle に戻る
 	if (m_frame >= m_attack.GetTotalFrame())
 	{
@@ -49,4 +56,9 @@ void PlayerAttackState::Exit()
 {
 	//攻撃判定が残らないようにする
 	m_player.GetHitBoxes().EndAttack();
+}
+
+bool PlayerAttackState::CanCombo() const
+{
+	return !m_attack.next.empty() && m_frame >= m_attack.cancelFrame;
 }

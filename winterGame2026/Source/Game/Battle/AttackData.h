@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include"HitBox.h"
+#include"Engine/Input/Button.h"
 #include<string>
 #include<deque>
 
@@ -37,6 +38,8 @@ struct AttackDef
 	float blendTime = 3.0f;
 	//攻撃判定を付けるボーンの名前
 	std::wstring bone;
+	//攻撃判定のもう片方の端のボーンの名前(空ならboneだけを中心にした縦向きのカプセル)
+	std::wstring endBone;
 	//攻撃判定の長さ
 	float length = 0.0f;
 	//攻撃判定の半径
@@ -53,6 +56,8 @@ struct AttackDef
 	int bufferFrame = 0;
 	//次の技に切り替えるフレーム
 	int cancelFrame = 0;
+	//コンボの次の技を出すボタン(コンボが無い技はButton::count)
+	Button nextButton = Button::count;
 
 	//技性能
 	AttackData data = {};
@@ -62,7 +67,10 @@ struct AttackDef
 	/// (boneは中の文字列を指しているので、技の情報より長く持たないこと)
 	/// </summary>
 	/// <returns></returns>
-	BoneCapsuleDef GetBox()const { return { bone.c_str(), length, radius, offsetY }; }
+	BoneCapsuleDef GetBox()const
+	{
+		return { bone.c_str(), length, radius, offsetY, endBone.empty() ? nullptr : endBone.c_str() };
+	}
 
 	/// <summary>
 	/// 技の全体フレームを取得する

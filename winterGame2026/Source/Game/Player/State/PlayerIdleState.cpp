@@ -40,11 +40,11 @@ void PlayerIdleState::Update()
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("LungeJab")));
 		return;
 	}
-
+	
 	//攻撃
 	if (IsBufferd(Button::X, kBufferFrame))
 	{
-		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Jab")));
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Combo01_1")));
 		return;
 	}
 

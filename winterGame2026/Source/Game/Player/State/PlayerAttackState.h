@@ -13,6 +13,9 @@ public:
 	void Exit()override;
 
 private:
+
+	bool CanCombo()const;
+
 	//出している技
 	const AttackDef& m_attack;
 	//経過フレーム

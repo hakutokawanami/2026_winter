@@ -11,10 +11,15 @@ namespace
 	//技の情報のファイル
 	constexpr const char* kAttackDataPath = "Data/Attack/AttackData.csv";
 	//1行に必要な項目数
+	//(最後のnextButtonは空欄だと行末のカンマごと読み飛ばされるので、必須にはしない)
 	constexpr size_t kColumnCount = 19;
+	//nextButtonの列番号
+	constexpr size_t kNextButtonColumn = 19;
+	//攻撃判定のもう片方の端のボーンの列番号(空欄なら1つのボーンだけ)
+	constexpr size_t kEndBoneColumn = 20;
 	//ファイルの先頭に書く説明
 	constexpr const char* kHeader =
-		"# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,guardStun,isThrow,takeDamageFrame,next,bufferFrame,cancelFrame";
+		"# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,guardStun,isThrow,takeDamageFrame,next,bufferFrame,cancelFrame,nextButton,endBone";
 
 	/// <summary>
 	/// UTF-8の文字列をワイド文字列に変換する
@@ -119,6 +124,15 @@ bool AttackTable::Load()
 		def.next = items[16];
 		def.bufferFrame = (std::stoi(items[17]));
 		def.cancelFrame = (std::stoi(items[18]));
+		if (items.size() > kNextButtonColumn && !items[kNextButtonColumn].empty())
+		{
+			def.nextButton = FromName(items[kNextButtonColumn]);
+			assert(def.nextButton != Button::count && "AttackData.csvのnextButtonはA,B,X,Yのどれかにしてください");
+		}
+		if (items.size() > kEndBoneColumn && !items[kEndBoneColumn].empty())
+		{
+			def.endBone = ToWide(items[kEndBoneColumn]);
+		}
 		m_attacks.push_back(def);
 	}
 	return true;
@@ -139,7 +153,7 @@ bool AttackTable::Save() const
 	for (const auto& def : m_attacks)
 	{
 		char line[512];
-		snprintf(line, sizeof(line), "%s,%s,%.2f,%.0f,%s,%.1f,%.1f,%.1f,%d,%d,%d,%d,%d,%d,%d,%d,%s,%d,%d",
+		snprintf(line, sizeof(line), "%s,%s,%.2f,%.0f,%s,%.1f,%.1f,%.1f,%d,%d,%d,%d,%d,%d,%d,%d,%s,%d,%d,%s,%s",
 			def.name.c_str(),
 			ToUtf8(def.animName).c_str(),
 			def.animSpeed,
@@ -158,7 +172,9 @@ bool AttackTable::Save() const
 			def.takeDamageFrame,
 			def.next.c_str(),
 			def.bufferFrame,
-			def.cancelFrame
+			def.cancelFrame,
+			def.nextButton == Button::count ? "" : ToName(def.nextButton),
+			ToUtf8(def.endBone).c_str()
 			);
 		file << line << "\n";
 	}

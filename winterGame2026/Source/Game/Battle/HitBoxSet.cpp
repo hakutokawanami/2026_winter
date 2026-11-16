@@ -11,7 +11,7 @@ HitBoxSet::HitBoxSet(PlayerID owner,int modelHandle):
 	m_pushBox(),
 	m_pushBoxHeight(0.0f),
 	m_attackBox(),
-	m_attackAttachment(-1,{}),
+	m_attackAttachment(-1,-1,{}),
 	m_lastReceivedAttackID(0),
 	m_throwAttackBox(),
 	m_throwedBox(),
@@ -62,7 +62,7 @@ void HitBoxSet::AddHurtBox(const BoneCapsuleDef& def)
 	box.shape = Capsule{ {},{},def.radius };
 
 	m_hurtBoxes.push_back(box);
-	m_hurtAttachments.push_back({ FindBones(def.bone),def});
+	m_hurtAttachments.push_back({ FindBones(def.bone),FindEndBone(def),def});
 }
 
 void HitBoxSet::StartAttack(const BoneCapsuleDef& def, const AttackData& data, int instanceID)
@@ -71,7 +71,7 @@ void HitBoxSet::StartAttack(const BoneCapsuleDef& def, const AttackData& data, i
 	m_attackBox.attack = &data;
 	m_attackBox.attackInstanceID = instanceID;
 	m_attackBox.isActive = true;
-	m_attackAttachment = { FindBones(def.bone),def};
+	m_attackAttachment = { FindBones(def.bone),FindEndBone(def), def};
 
 	UpdateBoneCapsule(m_attackBox, m_attackAttachment);
 }
@@ -88,7 +88,7 @@ void HitBoxSet::StartThrowAttack(const BoneCapsuleDef& def, const AttackData& da
 	m_throwAttackBox.attack = &data;
 	m_throwAttackBox.attackInstanceID = instanceID;
 	m_throwAttackBox.isActive = true;
-	m_attackAttachment = { FindBones(def.bone),def };
+	m_attackAttachment = { FindBones(def.bone),FindEndBone(def),def };
 
 	UpdateBoneCapsule(m_throwAttackBox, m_attackAttachment);
 }
@@ -172,18 +172,46 @@ int HitBoxSet::FindBones(const wchar_t* boneName) const
 	return frame;
 }
 
+int HitBoxSet::FindEndBone(const BoneCapsuleDef& def) const
+{
+	//endBoneがなければ-1を返す
+	if (def.endBone == nullptr || def.endBone[0] == L'\0')
+	{
+		return -1;
+	}
+
+	return FindBones(def.endBone);
+}
+
 void HitBoxSet::UpdateBoneCapsule(HitBox& box, const BoneAttachment& attachment)
 {
 	const BoneCapsuleDef& def = attachment.def;
+	auto& capsule = std::get<Capsule>(box.shape);
 
-	//カプセルの中心をボーンの位置とオフセットから決める
-	Vector3 center;
-	center = MV1GetFramePosition(m_modelHandle, attachment.frame);
-	center.y += def.offsetY;
+	Vector3 start;
+	start = MV1GetFramePosition(m_modelHandle, attachment.frame);
+	start.y += def.offsetY;
+
+	if (attachment.endFrame >= 0)
+	{
+		Vector3 end;
+		end = MV1GetFramePosition(m_modelHandle, attachment.endFrame);
+		end.y += def.offsetY;
+		
+		//startからendの方向にlength分伸ばす
+		Vector3 dir = end - start;
+		if (dir.Length() > 0.0f)
+		{
+			end += dir.Normalized() * def.length;
+		}
+
+		capsule.start = start;
+		capsule.end = end;
+		return;
+	}
 
 	//中心から上下に長さの半分ずつ伸ばす
 	Vector3 half = Vector3::Up() * (def.length * 0.5f);
-	auto& capsule = std::get<Capsule>(box.shape);
-	capsule.start = center - half;
-	capsule.end = center + half;
+	capsule.start = start - half;
+	capsule.end = start + half;
 }
