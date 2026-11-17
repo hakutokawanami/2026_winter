@@ -10,6 +10,7 @@ class BattleManager;
 class HitBoxSet;
 class InputBuffer;
 struct AttackData;
+class IInputSource;
 class Player : public GameObject
 {
 public:
@@ -179,6 +180,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	InputBuffer& GetInputBuffer()const { return *m_InputBuffer; }
+	/// <summary>
+	/// Pad操作かCPU操作かセットする
+	/// </summary>
+	/// <param name="input"></param>
+	void SetInputSource(std::unique_ptr<IInputSource> input);
 
 private:
 	///モデルハンドル
@@ -199,5 +205,7 @@ private:
 	bool m_canControl;
 	//ボタンの先行入力
 	std::unique_ptr<InputBuffer>m_InputBuffer;
+	//入力
+	std::unique_ptr<IInputSource>m_input;
 };
 

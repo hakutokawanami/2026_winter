@@ -1,6 +1,6 @@
 #include "InputBuffer.h"
 #include"InputManager.h"
-
+#include"IInputSource.h"
 namespace
 {
 	//押されていない状態の数値
@@ -15,15 +15,14 @@ InputBuffer::InputBuffer()
 	AllClear();
 }
 
-void InputBuffer::Update(PlayerID id)
+void InputBuffer::Update(const IInputSource& input)
 {
-	auto& input = InputManager::GetInstance();
 	//すべてのボタン分繰り返す
 	for (int i = 0; i < m_histories.size(); i++)
 	{
 		const Button button = static_cast<Button>(i);
 		//ボタンが押されたら
-		if (input.IsTriggered(id, ToName(button)))
+		if (input.IsTriggerd(button))
 		{
 			//0フレームから数える
 			m_histories[i] = 0;

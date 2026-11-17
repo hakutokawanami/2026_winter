@@ -3,6 +3,7 @@
 #include"Engine/Math/Vector3.h"
 #include"Engine/Input/InputManager.h"
 #include"Engine/Input/InputBuffer.h"
+#include"Engine/Input/IInputSource.h"
 #include"State/PlayerStateBase.h"
 #include"State/PlayerIdleState.h"
 #include"State/PlayerHitState.h"
@@ -134,7 +135,7 @@ void Player::Update()
 	if (CanControl())
 	{
 		//先行入力用履歴更新
-		m_InputBuffer->Update(m_playerID);
+		m_InputBuffer->Update(*m_input);
 	}
 
 	m_state->Update();
@@ -158,8 +159,7 @@ void Player::Update()
 	m_animationController->Update();
 
 #ifdef _DEBUG
-	auto& input = InputManager::GetInstance();
-	StickDirection direction = input.GetStickDirection(m_playerID);
+	StickDirection direction = m_input->GetStickDirection();
 
 	const int x = 100 + static_cast<int>(m_playerID) * 200;
 	const int y = 500;
@@ -253,7 +253,6 @@ void Player::Draw()
 	{
 		DrawSphere3D(m_transform.position + Vector3{ 0.0f,kPushHeight + 60.0f,0.0f }, 15.0f, 8.0f, 0x00ff00, 0x00ff00, true);
 	}
-
 #endif // _DEBUG
 
 }
@@ -377,4 +376,9 @@ void Player::RoundReset()
 	m_hp = kMaxHp;
 
 	m_InputBuffer->AllClear();
+}
+
+void Player::SetInputSource(std::unique_ptr<IInputSource> input)
+{
+	m_input = std::move(input);
 }

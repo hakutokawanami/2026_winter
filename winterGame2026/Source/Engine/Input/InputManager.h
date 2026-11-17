@@ -141,7 +141,7 @@ public:
 	/// <param name="player"></param>
 	/// <param name="direction"></param>
 	/// <returns></returns>
-	bool IsStickDoubleTapInput(PlayerID player, StickDirection direction);
+	bool IsStickDoubleTapInput(PlayerID player, StickDirection direction)const;
 
 	/// <summary>
 	/// スティックの入力履歴をデバッグ表示する

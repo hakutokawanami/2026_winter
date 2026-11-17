@@ -3,6 +3,7 @@
 #include"Button.h"
 #include<array>
 
+class IInputSource;
 /// <summary>
 /// ボタンの先行入力を行うクラス
 /// </summary>
@@ -13,8 +14,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	/// <param name="id"></param>
-	void Update(PlayerID id);
+	void Update(const IInputSource& input);
 	/// <summary>
 	/// すべての履歴をクリアする
 	/// </summary>

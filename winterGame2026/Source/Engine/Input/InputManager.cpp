@@ -384,7 +384,7 @@ bool InputManager::IsStickQuickInput(PlayerID player, StickDirection direction)
 	return m_stickAnalyzer[static_cast<int>(player)].IsQuickInput(direction);
 }
 
-bool InputManager::IsStickDoubleTapInput(PlayerID player, StickDirection direction)
+bool InputManager::IsStickDoubleTapInput(PlayerID player, StickDirection direction)const
 {
 	return m_stickAnalyzer[static_cast<int>(player)].IsDoubleTap(direction);
 }
