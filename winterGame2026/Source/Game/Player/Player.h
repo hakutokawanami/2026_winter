@@ -185,6 +185,16 @@ public:
 	/// </summary>
 	/// <param name="input"></param>
 	void SetInputSource(std::unique_ptr<IInputSource> input);
+	/// <summary>
+	/// 入力を取得する
+	/// </summary>
+	/// <returns></returns>
+	const IInputSource& GetInput()const { return *m_input; }
+	/// <summary>
+	/// 攻撃中かどうか
+	/// </summary>
+	/// <returns></returns>
+	bool IsAttacking()const;
 
 private:
 	///モデルハンドル

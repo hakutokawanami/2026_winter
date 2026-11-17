@@ -9,6 +9,7 @@
 #include"Game/Battle/BattleManager.h"
 #include"Engine/Input/InputManager.h"
 #include"Engine/Input/PadInputSource.h"
+#include"Game/Cpu/CpuInputSource.h"
 #include"Game/Battle/RoundManager.h"
 #include"Game/Battle/BattleUI.h"
 #include<DxLib.h>
@@ -39,7 +40,7 @@ GameScene::GameScene(SceneController& controller) :
 	m_player1->Init();
 	m_player2->Init();
 	m_player1->SetInputSource(std::make_unique<PadInputSource>(m_player1->GetPlayerID()));
-	m_player2->SetInputSource(std::make_unique<PadInputSource>(m_player2->GetPlayerID()));
+	m_player2->SetInputSource(std::make_unique<CpuInputSource>(*m_player2));
 	//バトルマネージャー初期化
 	m_battleManager->Init(m_player1.get(), m_player2.get());
 	//プレイヤーの方向を相手に向ける

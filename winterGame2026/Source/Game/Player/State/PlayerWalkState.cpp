@@ -53,28 +53,28 @@ void PlayerWalkState::Update()
 	}
 
 	//攻撃
-	if (IsTriggered("Y"))
+	if (IsTriggered(Button::Y))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("LungeJab")));
 		return;
 	}
 
 	//攻撃
-	if (IsTriggered("X"))
+	if (IsTriggered(Button::X))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Combo01_1")));
 		return;
 	}
 
 	//攻撃
-	if (IsTriggered("A"))
+	if (IsTriggered(Button::A))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Kick")));
 		return;
 	}
 
 	//掴み
-	if (IsTriggered("B"))
+	if (IsTriggered(Button::B))
 	{
 		m_player.ChangeState(std::make_unique<PlayerGrabState>(m_player, AttackTable::GetInstance().Get("Grab")));
 		return;

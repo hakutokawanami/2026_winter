@@ -1,6 +1,7 @@
 #include "PlayerStateBase.h"
 #include"Engine/Input/Button.h"
 #include"Engine/Input/InputBuffer.h"
+#include"Engine/Input/IInputSource.h"
 
 PlayerStateBase::PlayerStateBase(Player& player):
 	m_player(player),
@@ -26,14 +27,14 @@ bool PlayerStateBase::IsGuardInput() const
 	return IsBackInput();
 }
 
-bool PlayerStateBase::IsTriggered(const char* button)const
+bool PlayerStateBase::IsTriggered(Button button)const
 {
 	if (!m_player.CanControl())
 	{
 		return false;
 	}
 
-	return InputManager::GetInstance().IsTriggered(m_player.GetPlayerID(), button);
+	return m_player.GetInput().IsTriggerd(button);
 }
 
 StickDirection PlayerStateBase::GetStickDirection()const
@@ -43,7 +44,7 @@ StickDirection PlayerStateBase::GetStickDirection()const
 		return StickDirection::neutral;
 	}
 
-	return InputManager::GetInstance().GetStickDirection(m_player.GetPlayerID());
+	return m_player.GetInput().GetStickDirection();
 }
 
 bool PlayerStateBase::IsStickDoubleTap(StickDirection dir) const
@@ -53,7 +54,7 @@ bool PlayerStateBase::IsStickDoubleTap(StickDirection dir) const
 		return false;
 	}
 
-	return InputManager::GetInstance().IsStickDoubleTapInput(m_player.GetPlayerID(), dir);
+	return m_player.GetInput().IsStickDoubleTap(dir);
 }
 
 bool PlayerStateBase::IsBufferd(const Button button,int frame) const

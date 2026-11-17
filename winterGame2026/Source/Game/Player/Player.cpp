@@ -132,6 +132,8 @@ void Player::Update()
 {
 	assert(m_state);
 
+	m_input->Update();
+
 	if (CanControl())
 	{
 		//先行入力用履歴更新
@@ -381,4 +383,9 @@ void Player::RoundReset()
 void Player::SetInputSource(std::unique_ptr<IInputSource> input)
 {
 	m_input = std::move(input);
+}
+
+bool Player::IsAttacking() const
+{
+	return m_state->IsAttacking();
 }

@@ -12,6 +12,7 @@ public:
 	void Update()override;
 	void Exit()override;
 
+	bool IsAttacking()const override { return true; }
 private:
 
 	bool CanCombo()const;

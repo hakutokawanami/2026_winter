@@ -17,6 +17,13 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual bool IsGuarding()const { return false; }
+
+	/// <summary>
+	/// 攻撃中かどうか
+	/// </summary>
+	/// <returns></returns>
+	virtual bool IsAttacking()const { return false; }
+
 	/// <summary>
 	/// 攻撃が当たる状態かどうか
 	/// </summary>
@@ -70,7 +77,7 @@ protected:
 	/// </summary>
 	/// <param name="button"></param>
 	/// <returns></returns>
-	bool IsTriggered(const char* button)const;
+	bool IsTriggered(Button button)const;
 	/// <summary>
 	/// ステートから使うGetStickDirection
 	/// </summary>
