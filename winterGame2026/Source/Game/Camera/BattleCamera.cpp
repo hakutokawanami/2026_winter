@@ -144,6 +144,11 @@ void BattleCamera::Apply()
 {
 	// カメラの位置とターゲットをDxLibに設定
 	SetCameraPositionAndTarget_UpVecY(m_position, m_target);
+	// カメラの向きに合わせて、毎フレーム（BattleCamera の更新のあとなど）
+	Vector3 dir = m_target - m_position;
+	// 少し上から当てる
+	dir.y -= dir.Length() / 2;     
+	SetLightDirection(VNorm(dir));
 }
 
 void BattleCamera::CalculateThrowCamera(Player* thrower,PlayerID id)

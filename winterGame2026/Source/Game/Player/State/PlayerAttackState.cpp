@@ -16,6 +16,8 @@ void PlayerAttackState::Enter()
 	if (!m_attack.animName.empty())
 	{
 		m_animationController.Play(m_attack.animName, false, m_attack.blendTime, m_attack.animSpeed);
+		//アニメーションの移動量を消す
+//		m_animationController.RootLocked();
 	}
 }
 

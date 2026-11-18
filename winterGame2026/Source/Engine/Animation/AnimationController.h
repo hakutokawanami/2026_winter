@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include<string>
 #include<map>
+#include"Engine/Math/Vector3.h"
 
 class AnimationController
 {
@@ -41,6 +42,20 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	float GetTotalTime()const;
+	/// <summary>
+	/// 今再生したアニメーションの腰の移動量を消す
+	/// </summary>
+	void RootLocked();
+	/// <summary>
+	/// アニメーションの消す移動量を取得する
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetRootOffset();
+	/// <summary>
+	/// 打ち消す移動量を計算する
+	/// </summary>
+	void CalculateRootOffset();
+
 private:
 	//モデルハンドル
 	int m_modelHandle;
@@ -74,4 +89,18 @@ private:
 	float m_speed;
 	//前のアニメーションの再生速度
 	float m_prevSpeed;
+	//アニメーションの移動量を消すための腰のフレーム番号
+	int m_rootFrame;
+	//アニメーションが開始された時点での腰の位置
+	Vector3 m_rootStartPos;
+	//アニメーションの移動量を消すかどうか
+	bool m_isRootLocked;
+	//前のアニメーションが開始された時点での腰の位置
+	Vector3 m_prevRootStartPos;
+	//前のアニメーションの移動量を消すかどうか
+	bool m_isPrevRootLocked;
+	//ブレンドの割合
+	float m_currentBlendRate;
+	//アニメーションの消した移動量
+	Vector3 m_rootOffset;
 };

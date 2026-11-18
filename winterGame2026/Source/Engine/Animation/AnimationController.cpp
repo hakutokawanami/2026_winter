@@ -14,8 +14,17 @@ AnimationController::AnimationController(int modelHandle) :
 	m_blendTime(0.0f),
 	m_blendTimer(0.0f),
 	m_speed(0.5f),
-	m_prevSpeed(0.5f)
+	m_prevSpeed(0.5f),
+	m_rootFrame(-1),
+	m_rootStartPos({}),
+	m_isRootLocked(false),
+	m_prevRootStartPos({}),
+	m_isPrevRootLocked(false),
+	m_currentBlendRate(1.0f),
+	m_rootOffset({})
 {
+	//腰のフレーム番号を取得する
+	m_rootFrame = MV1SearchFrame(m_modelHandle, L"mixamorig:Hips");
 }
 
 void AnimationController::Update()
@@ -66,27 +75,27 @@ void AnimationController::Update()
 		//ブレンド時間の更新
 		m_blendTimer += 1.0f;
 		//ブレンドレート
-		float rate = 1.0f;
+		m_currentBlendRate = 1.0f;
 
 		//ブレンドレートの計算
 		if (m_blendTime > 0.0f)
 		{
-			rate = m_blendTimer / m_blendTime;
+			m_currentBlendRate = m_blendTimer / m_blendTime;
 		}
 
 		//ブレンドレートが1.0を超えないようにする
-		if (rate > 1.0f)
+		if (m_currentBlendRate > 1.0f)
 		{
-			rate = 1.0f;
+			m_currentBlendRate = 1.0f;
 		}
 		//新しいアニメーションを補正
-		MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAttachNo, rate);
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAttachNo, m_currentBlendRate);
 
 		//前のアニメーションを補正
-		MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAttachNo, 1.0f - rate);
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAttachNo, 1.0f - m_currentBlendRate);
 
 		//ブレンドの終了
-		if (rate >= 1.0f)
+		if (m_currentBlendRate >= 1.0f)
 		{
 			//前のアニメーションを削除
 			MV1DetachAnim(m_modelHandle, m_prevAttachNo);
@@ -98,6 +107,9 @@ void AnimationController::Update()
 		// ブレンドしてないときは100%
 		MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAttachNo, 1.0f);
 	}
+
+	//アニメーションの打ち消す移動量を計算
+	CalculateRootOffset();
 }
 
 void AnimationController::Play(const std::wstring& name, bool loop, float blendTime,float speed,bool replay)
@@ -123,6 +135,8 @@ void AnimationController::Play(const std::wstring& name, bool loop, float blendT
 	m_prevAttachNo = m_currentAttachNo;
 	m_prevTime = m_currentTime;
 	m_prevSpeed = m_speed;
+	m_prevRootStartPos = m_rootStartPos;
+	m_isPrevRootLocked = m_isRootLocked;
 	//新しいアニメーションを設定
 	m_currentAnimNo = newAnim;
 	m_currentTime = 0.0f;
@@ -136,7 +150,9 @@ void AnimationController::Play(const std::wstring& name, bool loop, float blendT
 	//ブレンド時間のセット
 	m_blendTime = blendTime;
 	m_blendTimer = 0.0f;
-
+	//腰の位置を保存
+	m_rootStartPos = MV1GetAttachAnimFrameLocalPosition(m_modelHandle, m_currentAttachNo, m_rootFrame);
+	m_isRootLocked = false;
 	m_isEnd = false;
 }
 
@@ -157,6 +173,59 @@ float AnimationController::GetTotalTime() const
 		return 0.0f;
 	}
 	return MV1GetAnimTotalTime(m_modelHandle, m_currentAnimNo);
+}
+
+void AnimationController::RootLocked()
+{
+	m_isRootLocked = true;
+}
+
+Vector3 AnimationController::GetRootOffset()
+{
+	//親のフレーム番号を取得
+	int parentFrame = MV1GetFrameParent(m_modelHandle, m_rootFrame);
+
+	MATRIX mat = {};
+	//親のフレームがあるかないか
+	if (parentFrame == -2)
+	{
+		//ワールド座標に変換
+		mat = MV1GetLocalWorldMatrix(m_modelHandle);
+	}
+	else
+	{
+		//ワールド座標に変換
+		mat = MV1GetFrameLocalWorldMatrix(m_modelHandle, parentFrame);
+	}
+	Vector3 world = {};
+	world = VTransformSR(m_rootOffset, mat);
+	//y成分を消す
+	world.y = 0.0f;
+
+	return world;
+}
+
+void AnimationController::CalculateRootOffset()
+{
+	m_rootOffset = {};
+
+	if (m_rootFrame >= 0)
+	{
+		if (m_isRootLocked)
+		{
+			Vector3 currentPos = {};
+			currentPos = MV1GetAttachAnimFrameLocalPosition(m_modelHandle, m_currentAttachNo, m_rootFrame);
+			m_rootOffset += (currentPos - m_rootStartPos) * m_currentBlendRate;
+		}
+
+		if (m_prevAttachNo >= 0 && m_isPrevRootLocked)
+		{
+			Vector3 prevPos = {};
+			prevPos = MV1GetAttachAnimFrameLocalPosition(m_modelHandle, m_prevAttachNo, m_rootFrame);
+
+			m_rootOffset += (prevPos - m_prevRootStartPos) * (1.0f - m_currentBlendRate);
+		}
+	}
 }
 
 void AnimationController::AddAnimation(const std::wstring& name)

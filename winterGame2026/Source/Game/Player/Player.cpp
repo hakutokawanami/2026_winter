@@ -56,6 +56,14 @@ namespace
 		{ L"mixamorig:RightLeg",     30.0f, 25.0f },
 		{ L"mixamorig:RightFoot",    10.0f, 22.0f },
 	};
+
+	//マテリアルの調整(Mixamoの初期値はテカりが強く、影が真っ黒になるため)
+	//テカりの色(小さいほどテカらない)
+	constexpr float kSpecularColor = 0.15f;
+	//テカりの鋭さ(大きいほどテカる範囲が狭くなる)
+	constexpr float kSpecularPower = 50.0f;
+	//環境光を受ける強さ(大きいほど影の面が明るくなる)
+	constexpr float kAmbientColor = 0.35f;
 }
 
 Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
@@ -67,6 +75,13 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 {
 	//モデル複製
 	m_modelHandle = MV1DuplicateModel(modelHandle);
+	//マテリアルの調整
+	for (int i = 0; i < MV1GetMaterialNum(m_modelHandle); i++)
+	{
+		MV1SetMaterialSpcColor(m_modelHandle, i, GetColorF(kSpecularColor, kSpecularColor, kSpecularColor, 1.0f));
+		MV1SetMaterialSpcPower(m_modelHandle, i, kSpecularPower);
+		MV1SetMaterialAmbColor(m_modelHandle, i, GetColorF(kAmbientColor, kAmbientColor, kAmbientColor, 1.0f));
+	}
 	//アニメーションコントローラー生成
 	m_animationController = std::make_unique<AnimationController>(m_modelHandle);
 
@@ -156,9 +171,9 @@ void Player::Update()
 		}
 	}
 
-	ApplyDxLibMatrix();
-
 	m_animationController->Update();
+
+	ApplyDxLibMatrix();
 
 #ifdef _DEBUG
 	StickDirection direction = m_input->GetStickDirection();
@@ -289,7 +304,16 @@ void Player::OpponentRotateSmooth()
 
 void Player::ApplyDxLibMatrix()
 {
-	MV1SetMatrix(m_modelHandle, m_transform.GetWorldMatrix().ChangeDxMat());
+	MATRIX mat = m_transform.GetWorldMatrix().ChangeDxMat();
+
+	MV1SetMatrix(m_modelHandle,mat);
+
+	Vector3 offset = m_animationController->GetRootOffset();
+
+	mat.m[3][0] -= offset.x;
+	mat.m[3][2] -= offset.z;
+
+	MV1SetMatrix(m_modelHandle, mat);
 }
 
 void Player::OnHit(const AttackData& attack)

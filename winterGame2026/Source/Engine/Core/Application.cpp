@@ -34,9 +34,10 @@ bool Application::Init()
 	ChangeWindowMode(true);
 #else 
 	//フルスクリーン
-	ChangeWindowMode(false);
-	m_windowSize.w = 1920;
-	m_windowSize.h = 1080;
+//	ChangeWindowMode(false);
+	ChangeWindowMode(true);
+//	m_windowSize.w = 1920;
+//	m_windowSize.h = 1080;
 	//ウィンドウサイズ設定
 	SetGraphMode(m_windowSize.w, m_windowSize.h, Game::kColorBitNum);
 #endif // _DEBUG
@@ -45,6 +46,8 @@ bool Application::Init()
 	SetMainWindowText(L"3D格ゲー(仮)");
 	//文字コードの設定
 	SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
+	// サンプル数, 品質
+	SetFullSceneAntiAliasingMode(4, 2);   
 
 	if (DxLib_Init() == -1)
 	{
@@ -56,9 +59,13 @@ bool Application::Init()
 	// カリングの設定
 	SetUseBackCulling(true);
 	//ライティングの計算を行うかどうかの設定
-	SetUseLighting(false);
+	SetUseLighting(true);
+	//環境光(光の当たらない面が真っ黒にならないようにする)
+	SetGlobalAmbientLight(GetColorF(0.3f, 0.3f, 0.3f, 0.0f));
 	// カメラの近くと遠くの距離を設定
-	SetCameraNearFar(10.0f, 10000.0f);
+	SetCameraNearFar(500.0f, 10000.0f);
+	//背景色変更(仮)
+	SetBackgroundColor(0, 70, 70);
 
 	//初期化成功
 	return true;
