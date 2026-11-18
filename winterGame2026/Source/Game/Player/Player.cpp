@@ -39,22 +39,22 @@ namespace
 	constexpr BoneCapsuleDef kHurtBoxes[] =
 	{
 		//頭
-		{ L"mixamorig:Head",         20.0f, 30.0f, 20.0f },
+		{ L"mixamorig:Head",         20.0f, 40.0f, 20.0f },
 		//胴体
-		{ L"mixamorig:Spine2",       40.0f, 50.0f },
-		{ L"mixamorig:Hips",         30.0f, 50.0f },
+		{ L"mixamorig:Spine2",       40.0f, 60.0f },
+		{ L"mixamorig:Hips",         30.0f, 60.0f },
 		//腕(肘と手)
-		{ L"mixamorig:LeftForeArm",  20.0f, 20.0f },
-		{ L"mixamorig:LeftHand",     10.0f, 18.0f },
-		{ L"mixamorig:RightForeArm", 20.0f, 20.0f },
-		{ L"mixamorig:RightHand",    10.0f, 18.0f },
+		{ L"mixamorig:LeftForeArm",  20.0f, 30.0f },
+		{ L"mixamorig:LeftHand",     10.0f, 28.0f },
+		{ L"mixamorig:RightForeArm", 20.0f, 40.0f },
+		{ L"mixamorig:RightHand",    10.0f, 28.0f },
 		//脚(太もも・膝・足首)
-		{ L"mixamorig:LeftUpLeg",    40.0f, 30.0f, -40.0f },
-		{ L"mixamorig:LeftLeg",      30.0f, 25.0f },
-		{ L"mixamorig:LeftFoot",     10.0f, 22.0f },
-		{ L"mixamorig:RightUpLeg",   40.0f, 30.0f, -40.0f },
-		{ L"mixamorig:RightLeg",     30.0f, 25.0f },
-		{ L"mixamorig:RightFoot",    10.0f, 22.0f },
+		{ L"mixamorig:LeftUpLeg",    40.0f, 40.0f, -40.0f },
+		{ L"mixamorig:LeftLeg",      30.0f, 35.0f },
+		{ L"mixamorig:LeftFoot",     10.0f, 32.0f },
+		{ L"mixamorig:RightUpLeg",   40.0f, 40.0f, -40.0f },
+		{ L"mixamorig:RightLeg",     30.0f, 35.0f },
+		{ L"mixamorig:RightFoot",    10.0f, 32.0f },
 	};
 
 	//マテリアルの調整(Mixamoの初期値はテカりが強く、影が真っ黒になるため)
@@ -263,12 +263,12 @@ void Player::Draw()
 
 	if (m_state->IsHittable())
 	{
-		DrawSphere3D(m_transform.position + Vector3{0.0f,kPushHeight + 30.0f,0.0f}, 15.0f, 8.0f, 0xff0000, 0xff0000, true);
+		DrawSphere3D(m_transform.position + Vector3{0.0f,kPushHeight + 30.0f,0.0f}, 15.0f, 8, 0xff0000, 0xff0000, true);
 	}
 
 	if (m_state->IsThrowable())
 	{
-		DrawSphere3D(m_transform.position + Vector3{ 0.0f,kPushHeight + 60.0f,0.0f }, 15.0f, 8.0f, 0x00ff00, 0x00ff00, true);
+		DrawSphere3D(m_transform.position + Vector3{ 0.0f,kPushHeight + 60.0f,0.0f }, 15.0f, 8, 0x00ff00, 0x00ff00, true);
 	}
 #endif // _DEBUG
 
