@@ -12,6 +12,7 @@ public:
 	void Exit() override;
 
 	bool IsThrowable()const override { return false; }
+	bool IsThrowing()const override { return true; }
 private:
 	const AttackDef& m_attack;
 	int m_frame;
