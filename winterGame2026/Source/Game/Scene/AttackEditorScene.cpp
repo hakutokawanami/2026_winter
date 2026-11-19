@@ -47,9 +47,9 @@ namespace
 	constexpr int kParamY = 70;
 	constexpr int kParamValueX = 190;
 	//(720pxの画面で下のタイムラインと重ならないように詰めている)
-	constexpr int kParamLineHeight = 20;
+	constexpr int kParamLineHeight = 17;
 	//項目のグループの間の隙間
-	constexpr int kParamGroupGap = 8;
+	constexpr int kParamGroupGap = 6;
 
 	//タイムラインの表示位置
 	constexpr int kTimelineX = 60;
@@ -73,6 +73,10 @@ namespace
 	constexpr unsigned int kRecoveryColor = 0x4070e0;
 	//技が終わった後(アニメーションだけ続いている部分)
 	constexpr unsigned int kAfterColor = 0x383838;
+	//踏み込みで移動しているフレーム
+	constexpr unsigned int kMoveColor = 0xe0c040;
+	//踏み込みのフレームを示す線の太さ
+	constexpr int kMoveBarHeight = 4;
 
 	//項目の名前
 	constexpr const wchar_t* kParamNames[] =
@@ -91,11 +95,16 @@ namespace
 		L"ダメージ",
 		L"ヒット硬直",
 		L"ガード硬直",
+		L"吹き飛ばす",
 		L"投げ",
 		L"ダメージを受けるF",
 		L"コンボの次の技",
+		L"次の技のボタン",
 		L"先行入力の受付開始",
 		L"次の技へ切り替え",
+		L"踏み込み開始",
+		L"踏み込みフレーム数",
+		L"踏み込み距離",
 		L"相手との距離(保存しない)",
 	};
 
@@ -150,13 +159,39 @@ namespace
 	/// </summary>
 	int GetParamY(int index)
 	{
-		//アニメ / 攻撃判定 / 技性能 / コンボ / ツール の5つに分ける
+		//アニメ / 攻撃判定 / 技性能 / コンボ / 踏み込み / ツール の6つに分ける
 		int gap = 0;
 		if (index >= 3) gap += kParamGroupGap;
-		if (index >= 7) gap += kParamGroupGap;
-		if (index >= 15) gap += kParamGroupGap;
-		if (index >= 18) gap += kParamGroupGap;
+		if (index >= 8) gap += kParamGroupGap;
+		if (index >= 17) gap += kParamGroupGap;
+		if (index >= 21) gap += kParamGroupGap;
+		if (index >= 24) gap += kParamGroupGap;
 		return kParamY + index * kParamLineHeight + gap;
+	}
+
+	/// <summary>
+	/// 指定したフレームまでに踏み込みで進んだ距離
+	/// (PlayerAttackStateと同じく、フレームmoveStartからmoveFrameの間、毎フレーム同じ距離だけ進む)
+	/// </summary>
+	/// <param name="def">技</param>
+	/// <param name="frame">技を出して何フレーム目か</param>
+	float GetMovedDistance(const AttackDef& def, int frame)
+	{
+		if (def.moveFrame <= 0)
+		{
+			return 0.0f;
+		}
+		//frameのフレームまでに移動したフレーム数
+		const int moved = std::clamp(frame - def.moveStart + 1, 0, def.moveFrame);
+		return def.moveDistance / def.moveFrame * moved;
+	}
+
+	/// <summary>
+	/// フレームが踏み込みで移動するフレームかどうか
+	/// </summary>
+	bool IsMoveFrame(const AttackDef& def, int frame)
+	{
+		return frame >= def.moveStart && frame < def.moveStart + def.moveFrame;
 	}
 
 	/// <summary>
@@ -561,6 +596,10 @@ void AttackEditorScene::ChangeParam(int dir, bool isFast)
 	case Param::guardStun:
 		def.data.guardStun = std::max(0, def.data.guardStun + dir * step);
 		break;
+	case Param::isKnockback:
+		//左右どちらを押しても切り替える
+		def.data.isKnockback = !def.data.isKnockback;
+		break;
 	case Param::isThrow:
 		//左右どちらを押しても切り替える
 		def.isThrow = !def.isThrow;
@@ -584,11 +623,28 @@ void AttackEditorScene::ChangeParam(int dir, bool isFast)
 		def.next = names[NextIndex(names, def.next, dir)];
 		break;
 	}
+	case Param::nextButton:
+	{
+		//A,B,X,Yと「なし」(Button::count)を順番に切り替える
+		const int count = static_cast<int>(Button::count) + 1;
+		const int index = static_cast<int>(def.nextButton);
+		def.nextButton = static_cast<Button>((index + count + dir) % count);
+		break;
+	}
 	case Param::bufferFrame:
 		def.bufferFrame = std::max(0, def.bufferFrame + dir * step);
 		break;
 	case Param::cancelFrame:
 		def.cancelFrame = std::max(0, def.cancelFrame + dir * step);
+		break;
+	case Param::moveStart:
+		def.moveStart = std::max(0, def.moveStart + dir * step);
+		break;
+	case Param::moveFrame:
+		def.moveFrame = std::max(0, def.moveFrame + dir * step);
+		break;
+	case Param::moveDistance:
+		def.moveDistance = std::max(0.0f, def.moveDistance + dir * (isFast ? 50.0f : 5.0f));
 		break;
 	case Param::distance:
 		m_distance = std::clamp(m_distance + dir * (isFast ? 100.0f : 10.0f), 0.0f, kMaxDistance);
@@ -648,6 +704,8 @@ void AttackEditorScene::SetupAttackAnimation()
 	//ブレンドせず、勝手に進まないように速度0で再生する
 	//(時間はApplyFrameでフレームから計算して直接指定する)
 	anim.Play(Current().animName, false, 0.0f, 0.0f);
+	//ゲーム中と同じくアニメーションの移動を消す
+	anim.RootLocked();
 	//前のアニメーションを外すために一回だけ更新する
 	anim.Update();
 
@@ -658,7 +716,7 @@ void AttackEditorScene::SetupAttackAnimation()
 void AttackEditorScene::PlacePlayers()
 {
 	//攻撃側を左、相手を右に置く
-	m_attacker->GetTransform().SetPosition({ -m_distance * 0.5f, 0.0f, 0.0f });
+	m_attacker->GetTransform().SetPosition(GetAttackerBasePos());
 	m_dummy->GetTransform().SetPosition({ m_distance * 0.5f, 0.0f, 0.0f });
 
 	//BattleManagerはP1とP2の順番で渡す(向きの計算に使われる)
@@ -677,9 +735,8 @@ void AttackEditorScene::ApplyFrame()
 {
 	const AttackDef& def = Current();
 
-	//ゲーム中と同じく「フレーム数 × 再生速度」がアニメーション時間になる
-	auto& anim = m_attacker->GetAnimationController();
-	anim.SetTime(std::min(m_frame * def.animSpeed, anim.GetTotalTime()));
+	//ポーズと踏み込みの位置を反映する
+	ApplyPose(m_frame);
 
 	//持続フレームの間だけ攻撃判定を出す(PlayerAttackStateと同じ範囲)
 	auto& hitBoxes = m_attacker->GetHitBoxes();
@@ -700,6 +757,29 @@ void AttackEditorScene::ApplyFrame()
 	m_isHit = !m_collision.DetectHits(*m_attacker, *m_dummy).empty();
 }
 
+void AttackEditorScene::ApplyPose(int frame)
+{
+	const AttackDef& def = Current();
+	auto& anim = m_attacker->GetAnimationController();
+
+	//ゲーム中と同じく「フレーム数 × 再生速度」がアニメーション時間になる
+	anim.SetTime(std::min(frame * def.animSpeed, anim.GetTotalTime()));
+	//SetTimeでは打ち消す移動量が更新されないので、ここで計算し直す
+	anim.CalculateRootOffset();
+
+	//踏み込みの分だけ相手の方向に進める
+	const Vector3 forward = m_battleManager->GetOpponentDirection(m_attacker->GetPlayerID());
+	m_attacker->GetTransform().SetPosition(GetAttackerBasePos() + forward * GetMovedDistance(def, frame));
+
+	//位置とアニメーションの移動の打ち消しをモデルに反映する
+	m_attacker->ApplyDxLibMatrix();
+}
+
+Vector3 AttackEditorScene::GetAttackerBasePos() const
+{
+	return { -m_distance * 0.5f, 0.0f, 0.0f };
+}
+
 void AttackEditorScene::BuildReachCurve()
 {
 	m_reachCurve.clear();
@@ -714,23 +794,22 @@ void AttackEditorScene::BuildReachCurve()
 		return;
 	}
 
-	auto& anim = m_attacker->GetAnimationController();
-	const float totalTime = anim.GetTotalTime();
-	const Vector3 root = m_attacker->GetTransform().GetPosition();
+	//踏み込む前の位置から測るので、踏み込みの距離も伸びに入る
+	const Vector3 root = GetAttackerBasePos();
 	const Vector3 forward = m_battleManager->GetOpponentDirection(m_attacker->GetPlayerID());
 
 	//フレームごとにポーズを変えて、ボーンが相手の方向にどれだけ出ているかを調べる
 	const int length = GetTimelineLength();
 	for (int frame = 1; frame <= length; frame++)
 	{
-		anim.SetTime(std::min(frame * def.animSpeed, totalTime));
+		ApplyPose(frame);
 		Vector3 bonePos;
 		bonePos = MV1GetFramePosition(model, boneFrame);
 		m_reachCurve.push_back((bonePos - root).Dot(forward));
 	}
 
 	//ポーズを今のフレームに戻す
-	anim.SetTime(std::min(m_frame * def.animSpeed, totalTime));
+	ApplyPose(m_frame);
 }
 
 int AttackEditorScene::GetAnimEndFrame() const
@@ -844,6 +923,7 @@ void AttackEditorScene::DrawParams()
 		case Param::damage:		swprintf_s(value, L"%d", def.data.damage);	break;
 		case Param::hitStun:	swprintf_s(value, L"%dF", def.data.hitStun);	break;
 		case Param::guardStun:	swprintf_s(value, L"%dF", def.data.guardStun);	break;
+		case Param::isKnockback:	swprintf_s(value, L"%s", def.data.isKnockback ? L"ON" : L"OFF");	break;
 		case Param::isThrow:	swprintf_s(value, L"%s", def.isThrow ? L"ON" : L"OFF");	break;
 		case Param::takeDamageFrame:	swprintf_s(value, L"%dF", def.takeDamageFrame);	break;
 		case Param::next:
@@ -853,8 +933,19 @@ void AttackEditorScene::DrawParams()
 			swprintf_s(value, L"%s", def.next.empty() ? L"なし" : next.c_str());
 			break;
 		}
+		case Param::nextButton:
+		{
+			//ボタンの名前は半角英字なのでそのまま広げる
+			const std::string button = (def.nextButton == Button::count) ? "" : ToName(def.nextButton);
+			const std::wstring buttonW(button.begin(), button.end());
+			swprintf_s(value, L"%s", button.empty() ? L"なし" : buttonW.c_str());
+			break;
+		}
 		case Param::bufferFrame:	swprintf_s(value, L"%dF", def.bufferFrame);	break;
 		case Param::cancelFrame:	swprintf_s(value, L"%dF", def.cancelFrame);	break;
+		case Param::moveStart:		swprintf_s(value, L"%dF", def.moveStart);	break;
+		case Param::moveFrame:		swprintf_s(value, L"%dF%s", def.moveFrame, def.moveFrame <= 0 ? L" (移動しない)" : L"");	break;
+		case Param::moveDistance:	swprintf_s(value, L"%.0f", def.moveDistance);	break;
 		case Param::distance:	swprintf_s(value, L"%.0f", m_distance);	break;
 		default:	break;
 		}
@@ -923,7 +1014,7 @@ void AttackEditorScene::DrawTimeline()
 		m_isPlaying ? L"再生中" : L"停止中", kSlowText[m_slowLevel]);
 
 	//攻撃判定のボーンの伸びのグラフ
-	DrawString(x, graphTop - 20, L"攻撃判定のボーンの伸び(上ほど相手側)", 0xaaaaaa);
+	DrawString(x, graphTop - 20, L"攻撃判定のボーンの伸び(上ほど相手側・踏み込みも含む)   黄色の線: 踏み込み中", 0xaaaaaa);
 	if (m_reachCurve.size() >= 2)
 	{
 		auto [minIt, maxIt] = std::minmax_element(m_reachCurve.begin(), m_reachCurve.end());
@@ -961,6 +1052,12 @@ void AttackEditorScene::DrawTimeline()
 		const int left = x + static_cast<int>(cellW * (frame - 1));
 		const int right = x + static_cast<int>(cellW * frame) - gap;
 		DrawBox(left, barY, right, barY + kTimelineHeight, color, true);
+
+		//踏み込みで移動しているフレームはマスの上に線を出す
+		if (IsMoveFrame(def, frame))
+		{
+			DrawBox(left, barY - kMoveBarHeight - 1, right, barY - 1, kMoveColor, true);
+		}
 
 		//10フレームごとに数字
 		if (frame % 10 == 0)

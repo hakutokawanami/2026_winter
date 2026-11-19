@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "SceneBase.h"
 #include "Game/Battle/BattleCollision.h"
+#include "Engine/Math/Vector3.h"
 #include<memory>
 #include<vector>
 #include<string>
@@ -42,11 +43,16 @@ private:
 		damage,
 		hitStun,
 		guardStun,
+		isKnockback,
 		isThrow,
 		takeDamageFrame,
 		next,
+		nextButton,
 		bufferFrame,
 		cancelFrame,
+		moveStart,
+		moveFrame,
+		moveDistance,
 		distance,
 		count
 	};
@@ -108,6 +114,16 @@ private:
 	/// 今のフレームのポーズと判定を反映する
 	/// </summary>
 	void ApplyFrame();
+	/// <summary>
+	/// 指定したフレームのポーズと位置にする
+	/// (アニメーションの移動を消して、技の踏み込みの分だけ前に出す)
+	/// </summary>
+	/// <param name="frame">技を出して何フレーム目か</param>
+	void ApplyPose(int frame);
+	/// <summary>
+	/// 攻撃側の踏み込む前の位置を取得する
+	/// </summary>
+	Vector3 GetAttackerBasePos()const;
 	/// <summary>
 	/// 攻撃判定のボーンが相手の方向にどれだけ伸びているかをフレームごとに調べる
 	/// </summary>

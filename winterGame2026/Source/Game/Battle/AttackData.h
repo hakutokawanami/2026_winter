@@ -21,6 +21,8 @@ struct AttackData
 	int hitStun;
 	//ガード時に相手が動けないフレーム
 	int guardStun;
+	//吹き飛ぶかどうか
+	bool isKnockback = false;
 };
 
 /// <summary>
@@ -58,6 +60,12 @@ struct AttackDef
 	int cancelFrame = 0;
 	//コンボの次の技を出すボタン(コンボが無い技はButton::count)
 	Button nextButton = Button::count;
+	//移動し始めるフレーム
+	int moveStart = 0;
+	//移動するフレーム
+	int moveFrame = 0;
+	//移動する距離
+	float moveDistance = 0;
 
 	//技性能
 	AttackData data = {};

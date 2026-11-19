@@ -10,16 +10,24 @@ namespace
 {
 	//技の情報のファイル
 	constexpr const char* kAttackDataPath = "Data/Attack/AttackData.csv";
-	//1行に必要な項目数
-	//(最後のnextButtonは空欄だと行末のカンマごと読み飛ばされるので、必須にはしない)
+	//1行に必要な項目数(cancelFrameまで)
+	//(nextButton以降は空欄だと行末のカンマごと読み飛ばされたり、古いファイルに無かったりするので、必須にはしない)
 	constexpr size_t kColumnCount = 19;
 	//nextButtonの列番号
 	constexpr size_t kNextButtonColumn = 19;
 	//攻撃判定のもう片方の端のボーンの列番号(空欄なら1つのボーンだけ)
 	constexpr size_t kEndBoneColumn = 20;
+	//移動し始めるフレームの列番号
+	constexpr size_t kMoveStartColumn = 21;
+	//移動するフレームの列番号
+	constexpr size_t kMoveFrameColumn = 22;
+	//移動する距離の列番号
+	constexpr size_t kMoveDistanceColumn = 23;
+	//吹き飛ばすかどうかの列番号
+	constexpr size_t kKnockbackColumn = 24;
 	//ファイルの先頭に書く説明
 	constexpr const char* kHeader =
-		"# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,guardStun,isThrow,takeDamageFrame,next,bufferFrame,cancelFrame,nextButton,endBone";
+		"# name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,guardStun,isThrow,takeDamageFrame,next,bufferFrame,cancelFrame,nextButton,endBone,moveStart,moveFrame,moveDistance,isKnockback";
 
 	/// <summary>
 	/// UTF-8の文字列をワイド文字列に変換する
@@ -133,6 +141,24 @@ bool AttackTable::Load()
 		{
 			def.endBone = ToWide(items[kEndBoneColumn]);
 		}
+
+		//踏み込み(列が無い古いファイルや空欄のときは0のまま=移動しない)
+		if (items.size() > kMoveStartColumn && !items[kMoveStartColumn].empty())
+		{
+			def.moveStart = std::stoi(items[kMoveStartColumn]);
+		}
+		if (items.size() > kMoveFrameColumn && !items[kMoveFrameColumn].empty())
+		{
+			def.moveFrame = std::stoi(items[kMoveFrameColumn]);
+		}
+		if (items.size() > kMoveDistanceColumn && !items[kMoveDistanceColumn].empty())
+		{
+			def.moveDistance = std::stof(items[kMoveDistanceColumn]);
+		}
+		if (items.size() > kKnockbackColumn && !items[kKnockbackColumn].empty())
+		{
+			def.data.isKnockback = std::stof(items[kKnockbackColumn]);
+		}
 		m_attacks.push_back(def);
 	}
 	return true;
@@ -153,7 +179,7 @@ bool AttackTable::Save() const
 	for (const auto& def : m_attacks)
 	{
 		char line[512];
-		snprintf(line, sizeof(line), "%s,%s,%.2f,%.0f,%s,%.1f,%.1f,%.1f,%d,%d,%d,%d,%d,%d,%d,%d,%s,%d,%d,%s,%s",
+		snprintf(line, sizeof(line), "%s,%s,%.2f,%.0f,%s,%.1f,%.1f,%.1f,%d,%d,%d,%d,%d,%d,%d,%d,%s,%d,%d,%s,%s,%d,%d,%.1f,%d",
 			def.name.c_str(),
 			ToUtf8(def.animName).c_str(),
 			def.animSpeed,
@@ -174,7 +200,11 @@ bool AttackTable::Save() const
 			def.bufferFrame,
 			def.cancelFrame,
 			def.nextButton == Button::count ? "" : ToName(def.nextButton),
-			ToUtf8(def.endBone).c_str()
+			ToUtf8(def.endBone).c_str(),
+			def.moveStart,
+			def.moveFrame,
+			def.moveDistance,
+			def.data.isKnockback ? 1 : 0
 			);
 		file << line << "\n";
 	}
