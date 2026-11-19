@@ -1,6 +1,7 @@
 #include "BattleManager.h"
 #include "Game/Player/Player.h"
 #include"HitBoxSet.h"
+
 BattleManager::BattleManager():
 	m_centerPosition({}),
 	m_direction({}),
@@ -215,6 +216,14 @@ void BattleManager::ResolveThrowHits(const std::vector<ThrowHitEvent>& throwEven
 		//投げられる状態かどうか
 		if (defender->IsThrowable())
 		{
+			//投げの際にプレイヤー同士の距離を調整する
+			Vector3 center = m_player1->GetBattleManager()->GetCenterPosition();
+			Vector3 dir = m_player1->GetBattleManager()->GetOpponentDirection(m_player1->GetPlayerID());
+			m_player1->GetTransform().SetPosition(center - (dir * 100.0f));
+			m_player1->ApplyDxLibMatrix();
+			m_player2->GetTransform().SetPosition(center + (dir * 100.0f));
+			m_player2->ApplyDxLibMatrix();
+
 			//投げる処理
 			attacker->OnThrowSuccess(*event.attack);
 			//投げられる処理
