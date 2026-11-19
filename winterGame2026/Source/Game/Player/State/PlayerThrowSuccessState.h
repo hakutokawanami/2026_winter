@@ -10,6 +10,8 @@ public:
 	void Update() override;
 	void Exit() override;
 
+	bool UseRootMotion()const override { return true; }
+	bool IsRotationLocked()const override { return true; }
 private:
 	const AttackData& m_attack;	
 

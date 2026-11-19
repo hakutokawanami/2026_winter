@@ -2,6 +2,8 @@
 #include"PlayerIdleState.h"
 #include"PlayerGetUpState.h"
 #include"PlayerDeadState.h"
+#include"PlayerDownState.h"
+
 namespace
 {
 	//アニメーションのブレンドにかけるフレーム数
@@ -18,11 +20,13 @@ PlayerThrowHitState::PlayerThrowHitState(Player& player, const AttackData& attac
 void PlayerThrowHitState::Enter()
 {
 	m_animationController.Play(Player::kThrownAnimName, false, kThrowBlendTime);
+	m_animationController.RootLocked();
 }
 
 void PlayerThrowHitState::Update()
 {
 	m_frame++;
+
 	if (m_frame == AttackTable::GetInstance().Get("Grab").takeDamageFrame)
 	{
 		m_player.TakeDamage(m_attack);
@@ -32,20 +36,7 @@ void PlayerThrowHitState::Update()
 	{
 		if (m_animationController.IsEnd())
 		{
-			const int model = m_player.GetModelHandle();
-			const int hipsFrame = MV1SearchFrame(model, L"mixamorig:Hips");
-			const VECTOR before = MV1GetFramePosition(model, hipsFrame);
-
-			m_animationController.Play(Player::kGettingUpAnimName, false, 0.0f, 1.0f);
-			m_animationController.Update();
-			const VECTOR after = MV1GetFramePosition(model, hipsFrame);
-
-			Vector3 pos = m_player.GetTransform().GetPosition();
-			pos.x += before.x - after.x;
-			pos.z += before.z - after.z;
-			m_player.GetTransform().SetPosition(pos);
-
-			m_player.ChangeState(std::make_unique<PlayerGetUpState>(m_player));
+			m_player.ChangeState(std::make_unique<PlayerDownState>(m_player));
 		}
 	}
 }

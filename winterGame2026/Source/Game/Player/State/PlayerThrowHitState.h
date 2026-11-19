@@ -11,8 +11,10 @@ public:
 	void Exit() override;
 
 	bool IsThrowable()const override { return false; }
-	bool IsThrowing()const override { return true; }
+	bool IsThrown()const override { return true; }
 	bool IsFacingOpponent()const override { return false; }
+	bool UseRootMotion()const override { return true; }
+	bool IsRotationLocked()const override{ return true; }
 private:
 	const AttackData& m_attack;
 

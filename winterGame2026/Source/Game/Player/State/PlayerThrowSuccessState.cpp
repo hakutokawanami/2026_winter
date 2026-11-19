@@ -16,6 +16,7 @@ PlayerThrowSuccessState::PlayerThrowSuccessState(Player& player, const AttackDat
 void PlayerThrowSuccessState::Enter()
 {
 	m_animationController.Play(Player::kThrowAnimName, false, kThrowSuccessBlendTime);
+	m_animationController.RootLocked();
 }
 
 void PlayerThrowSuccessState::Update()
