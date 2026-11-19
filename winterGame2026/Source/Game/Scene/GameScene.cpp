@@ -42,6 +42,7 @@ GameScene::GameScene(SceneController& controller) :
 	//Pad入力
 	m_player1->SetInputSource(std::make_unique<PadInputSource>(m_player1->GetPlayerID()));
 	//CPU入力
+//	m_player2->SetInputSource(std::make_unique<PadInputSource>(m_player2->GetPlayerID()));
 	m_player2->SetInputSource(std::make_unique<CpuInputSource>(*m_player2));
 	//バトルマネージャー初期化
 	m_battleManager->Init(m_player1.get(), m_player2.get());
