@@ -23,6 +23,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual bool IsAttacking()const { return false; }
+	/// <summary>
+	/// 投げ攻撃中かどうか
+	/// </summary>
+	/// <returns></returns>
+	virtual bool IsThrowing()const { return false; }
 
 	/// <summary>
 	/// 攻撃が当たる状態かどうか
@@ -39,7 +44,7 @@ public:
 	/// 投げられているかどうか
 	/// </summary>
 	/// <returns></returns>
-	virtual bool IsThrowing()const { return false; }
+	virtual bool IsThrown()const { return false; }
 	/// <summary>
 	/// 体の向きを固定するかどうか
 	/// </summary>
@@ -52,6 +57,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual bool IsRotationLocked()const { return false; }
+	/// <summary>
+	/// アニメーションの移動量をプレイヤーの位置に反映するかどうか
+	/// </summary>
+	/// <returns></returns>
+	virtual bool UseRootMotion()const { return false; }
 
 protected:
 	/// <summary>
