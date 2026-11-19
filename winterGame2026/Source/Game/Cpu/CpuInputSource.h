@@ -69,6 +69,8 @@ private:
 	int m_reactionTimer;
 	//前のフレームに相手が攻撃していたか
 	bool m_wasOpponentAttacking;
+	//前のフレームに相手が投げ攻撃していたか
+	bool m_wasOpponentThrowing;
 	//このフレームの入力
 	StickDirection m_stick;
 	std::array<bool, static_cast<size_t>(Button::count)>m_triggered;

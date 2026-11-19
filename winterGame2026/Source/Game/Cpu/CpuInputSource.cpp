@@ -13,6 +13,8 @@ namespace
 	constexpr int kReactionFrame = 8;
 	//相手の攻撃をガードしようとする確率(%)
 	constexpr int kGuardRate = 70;
+	//相手の投げを抜けようとする確率(%)
+	constexpr int kGrabRate = 70;
 	//コンボを最後まで出そうとする確率(%)
 	constexpr int kComboRate = 70;
 	//コンボ中にボタンを押す間隔
@@ -28,6 +30,7 @@ CpuInputSource::CpuInputSource(const Player& self):
 	m_attackButton(Button::X),
 	m_reactionTimer(-1),
 	m_wasOpponentAttacking(false),
+	m_wasOpponentThrowing(false),
 	m_stick(StickDirection::neutral),
 	m_triggered{},
 	m_doubleTap(StickDirection::neutral),
@@ -62,6 +65,24 @@ void CpuInputSource::Update()
 	if (m_reactionTimer >= 0 && --m_reactionTimer < 0)
 	{
 		StartAction(Action::guard, kGuardActionFrame);
+	}
+
+	//投げ攻撃中かどうか
+	const bool isOpponentThrowing = opponent->IsThrowing();
+	//相手が投げ攻撃を出した瞬間に投げ抜けするかどうかを決める
+	if (isOpponentThrowing && !m_wasOpponentThrowing && Random100() < kGrabRate)
+	{
+		m_reactionTimer = kReactionFrame;
+	}
+	//前のフレームに攻撃していたかどうかを保存
+	m_wasOpponentThrowing = isOpponentThrowing;
+
+	//反応が間に合ったら投げに切り替える
+	if (m_reactionTimer >= 0 && --m_reactionTimer < 0)
+	{
+		//投げ
+		m_triggered[static_cast<size_t>(Button::B)] = true;
+		StartAction(Action::attack, 1);
 	}
 
 	//行動が終わったら次の行動を決める
