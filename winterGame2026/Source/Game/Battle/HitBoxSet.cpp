@@ -163,6 +163,11 @@ void HitBoxSet::Draw()
 #endif // _DEBUG
 }
 
+void HitBoxSet::SetPushBoxActive(bool isActive)
+{
+	m_pushBox.isActive = isActive;
+}
+
 int HitBoxSet::FindBones(const wchar_t* boneName) const
 {
 	int frame = MV1SearchFrame(m_modelHandle, boneName);

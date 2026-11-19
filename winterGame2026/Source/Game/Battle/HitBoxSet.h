@@ -95,6 +95,12 @@ public:
 	/// <param name="attackInstanceID"></param>
 	void SetLastReceivedAttackID(int attackInstanceID) { m_lastReceivedAttackID = attackInstanceID; }
 
+	/// <summary>
+	/// 押し出し判定をするかどうかをセットする
+	/// </summary>
+	/// <param name="isActive"></param>
+	void SetPushBoxActive(bool isActive);
+
 private:
 	/// <summary>
 	/// ボーンについているカプセルの情報
