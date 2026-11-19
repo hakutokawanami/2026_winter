@@ -12,6 +12,7 @@
 #include"State/PlayerThrowSuccessState.h"
 #include"State/PlayerThrowBreakState.h"
 #include"State/PlayerDeadState.h"
+#include"State/PlayerKnockbackState.h"
 #include"Game/Battle/BattleManager.h"
 #include"Game/Battle/HitBoxSet.h"
 #include"Game/Battle/AttackData.h"
@@ -27,13 +28,13 @@ namespace
 	constexpr float kPlayer2Scale = 0.252f;
 
 	//押し出し判定のカプセルの半径
-	constexpr float kPushRadius = 70.0f;
+	constexpr float kPushRadius = 80.0f;
 	//押し出し判定のカプセルの高さ
 	constexpr float kPushHeight = 400.0f;
 	//投げられ判定のカプセルの半径
-	constexpr float kThrowedRadius = 70.0f;
+	constexpr float kThrowedRadius = 80.0f;
 	//投げられ判定のカプセルの高さ
-	constexpr float kThrowedHeight = 300.0f;	
+	constexpr float kThrowedHeight = 300.0f;
 
 	//やられ判定
 	constexpr BoneCapsuleDef kHurtBoxes[] =
@@ -71,7 +72,9 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	m_modelHandle(-1),
 	m_battleManager(battleManager),
 	m_hp(kMaxHp),
-	m_canControl(false)
+	m_canControl(false),
+	m_prevRootOffset({}),
+	m_rootMotionDirection({})
 {
 	//モデル複製
 	m_modelHandle = MV1DuplicateModel(modelHandle);
@@ -157,6 +160,9 @@ void Player::Update()
 
 	m_state->Update();
 
+	//押し出し判定をするかをチェック
+	CheckCanPush();
+
 	//起き上がり中などは向きを変えない
 	//(原点を軸に回すと、原点から離れた位置にある体が振り回されるため)
 	if (!m_state->IsRotationLocked())
@@ -172,6 +178,19 @@ void Player::Update()
 	}
 
 	m_animationController->Update();
+
+	if (m_state->UseRootMotion())
+	{
+		Vector3 offset = m_animationController->GetRootOffset();
+
+		Vector3 delta =  offset - m_prevRootOffset;
+
+		float forward = delta.Dot(m_rootMotionDirection);
+
+		m_transform.Translate(m_rootMotionDirection * forward);
+
+		m_prevRootOffset = offset;
+	}
 
 	ApplyDxLibMatrix();
 
@@ -283,6 +302,11 @@ void Player::ChangeState(std::unique_ptr<PlayerStateBase> newState)
 
 	m_state = std::move(newState);
 
+	//アニメーションを変える際にゼロにする
+	m_prevRootOffset = {};
+	//アニメーションを変える際に方向を保存しておく
+	m_rootMotionDirection = m_battleManager->GetOpponentDirection(m_playerID);
+
 	m_state->Enter();
 }
 
@@ -333,6 +357,14 @@ void Player::OnHit(const AttackData& attack)
 			ChangeState(std::make_unique<PlayerDeadState>(*this));
 			return;
 		}
+
+		//吹き飛び
+		if (attack.isKnockback)
+		{
+			ChangeState(std::make_unique<PlayerKnockbackState>(*this));
+			return;
+		}
+		
 		//のけぞりステートに変更
 		ChangeState(std::make_unique<PlayerHitState>(*this, attack));
 		return;
@@ -365,9 +397,9 @@ void Player::OnThrowBreak(bool attacker)
 	return;
 }
 
-bool Player::IsThrowing() const
+bool Player::IsThrown() const
 {
-	return m_state->IsThrowing();
+	return m_state->IsThrown();
 }
 
 void Player::TakeDamage(const AttackData& attack)
@@ -412,4 +444,19 @@ void Player::SetInputSource(std::unique_ptr<IInputSource> input)
 bool Player::IsAttacking() const
 {
 	return m_state->IsAttacking();
+}
+
+bool Player::IsThrowing() const
+{
+	return m_state->IsThrowing();
+}
+
+void Player::CheckCanPush()
+{
+	m_hitBoxes->SetPushBoxActive(true);
+
+	if (m_state->IsThrown())
+	{
+		m_hitBoxes->SetPushBoxActive(false);
+	}
 }

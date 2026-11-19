@@ -47,15 +47,28 @@ public:
 	//つかみアニメーション
 	static constexpr const wchar_t* kGrabAnimName = L"Armature|Grab";
 	//投げアニメーション
-	static constexpr const wchar_t* kThrowAnimName = L"Armature|Throw";
-	static constexpr const wchar_t* kThrownAnimName = L"Armature|Thrown";
+//	static constexpr const wchar_t* kThrowAnimName = L"Armature|Throw";
+//	static constexpr const wchar_t* kThrownAnimName = L"Armature|Thrown";
+
+	//投げのアニメーション2
+	static constexpr const wchar_t* kThrowAnimName = L"Armature|Throw03";
+	static constexpr const wchar_t* kThrownAnimName = L"Armature|Thrown03";
+
 	//投げぬけアニメーション
 	static constexpr const wchar_t* kThrowBreakAttackerAnimName = L"Armature|ThrowBreakAttacker";
 	static constexpr const wchar_t* kThrowBreakDefenderAnimName = L"Armature|ThrowBreakDefender";
 	//起き上がりアニメーション
-	static constexpr const wchar_t* kGettingUpAnimName = L"Armature|GetUp";
+//	static constexpr const wchar_t* kGettingUpAnimName = L"Armature|GetUp";
+	static constexpr const wchar_t* kGettingUpAnimName = L"Armature|GetUpFaceUp";
+	static constexpr const wchar_t* kGettingUpRollBackAnimName = L"Armature|GetUpRollBack";
+	static constexpr const wchar_t* kGettingUpAttackAnimName = L"Armature|GetUpSpring";
+
 	//死亡アニメーション
 	static constexpr const wchar_t* kDeadAnimName = L"Armature|Death";
+	//ダウンアニメーション
+	static constexpr const wchar_t* kDownAnimName = L"Armature|DownFaceUp";
+	//吹き飛びアニメーション
+	static constexpr const wchar_t* kKnockbackAnimName = L"Armature|KnockDown";
 
 public:
 	Player(PlayerID id, int modelHandle, BattleManager* battleManager);
@@ -155,7 +168,7 @@ public:
 	/// 投げられているかどうか
 	/// </summary>
 	/// <returns></returns>
-	bool IsThrowing()const;
+	bool IsThrown()const;
 	/// <summary>
 	/// ダメージを受ける関数
 	/// </summary>
@@ -195,6 +208,16 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool IsAttacking()const;
+	/// <summary>
+	/// 投げ攻撃中かどうか
+	/// </summary>
+	/// <returns></returns>
+	bool IsThrowing()const;
+
+	/// <summary>
+	/// 押し出しをするかチェック
+	/// </summary>
+	void CheckCanPush();
 
 private:
 	///モデルハンドル
@@ -217,5 +240,9 @@ private:
 	std::unique_ptr<InputBuffer>m_InputBuffer;
 	//入力
 	std::unique_ptr<IInputSource>m_input;
+	//前回のアニメーションの移動量
+	Vector3 m_prevRootOffset;
+	//アニメーション移動中の方向を保存する
+	Vector3 m_rootMotionDirection;
 };
 
