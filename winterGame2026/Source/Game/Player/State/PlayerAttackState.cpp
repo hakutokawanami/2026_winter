@@ -6,7 +6,8 @@
 PlayerAttackState::PlayerAttackState(Player& player, const AttackDef& attack):
 	PlayerStateBase(player),
 	m_attack(attack),
-	m_frame(0)
+	m_frame(0),
+	m_direction({})
 {
 }
 
@@ -17,14 +18,14 @@ void PlayerAttackState::Enter()
 	{
 		m_animationController.Play(m_attack.animName, false, m_attack.blendTime, m_attack.animSpeed);
 		//アニメーションの移動量を消す
-//		m_animationController.RootLocked();
+		m_animationController.RootLocked();
 	}
+	//攻撃の移動方向を決める
+	m_direction = m_battleManager->GetOpponentDirection(m_player.GetPlayerID());
 }
 
 void PlayerAttackState::Update()
 {
-	++m_frame;
-
 	const AttackData& data = m_attack.data;
 	auto& hitBoxes = m_player.GetHitBoxes();
 	//発生フレームになったら攻撃判定を出す
@@ -38,6 +39,15 @@ void PlayerAttackState::Update()
 	{
 		hitBoxes.EndAttack();
 	}
+
+	//攻撃の移動
+	if (m_frame >= m_attack.moveStart && m_frame < m_attack.moveStart + m_attack.moveFrame)
+	{
+		float speed = m_attack.moveDistance / m_attack.moveFrame;
+		m_player.GetTransform().Translate(m_direction * speed);
+	}
+
+	++m_frame;
 
 	if (CanCombo() && IsBufferd(m_attack.nextButton, m_attack.bufferFrame))
 	{

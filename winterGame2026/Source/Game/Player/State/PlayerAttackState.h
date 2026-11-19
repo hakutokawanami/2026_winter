@@ -13,6 +13,7 @@ public:
 	void Exit()override;
 
 	bool IsAttacking()const override { return true; }
+	bool IsFacingOpponent()const override { return true; }
 private:
 
 	bool CanCombo()const;
@@ -21,5 +22,7 @@ private:
 	const AttackDef& m_attack;
 	//経過フレーム
 	int m_frame;
+	//移動する方向
+	Vector3 m_direction;
 };
 
