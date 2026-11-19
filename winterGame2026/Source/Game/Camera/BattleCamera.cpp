@@ -47,12 +47,12 @@ void BattleCamera::Init(Player* player1, Player*player2)
 void BattleCamera::Update()
 {
 	m_isThrow = false;
-	if (m_player1->IsThrowing())
+	if (m_player1->IsThrown())
 	{
 		m_thrower = m_player1;
 		m_isThrow = true;
 	}
-	else if (m_player2->IsThrowing())
+	else if (m_player2->IsThrown())
 	{
 		m_thrower = m_player2;
 		m_isThrow = true;
@@ -153,6 +153,34 @@ void BattleCamera::Apply()
 
 void BattleCamera::CalculateThrowCamera(Player* thrower,PlayerID id)
 {
+	// プレイヤーの位置を取得してカメラのターゲットを設定
+	Vector3 player1Pos = m_player1->GetTransform().GetPosition();
+	Vector3 player2Pos = m_player2->GetTransform().GetPosition();
+	m_calculatedTarget = (player1Pos + player2Pos) * 0.5f;
+	//プレイヤー間の距離を計算
+	Vector3 playerToPlayerDirection = player2Pos - player1Pos;
+	playerToPlayerDirection.y = 0.0f; // 水平方向の距離のみを考慮
+	//カメラの方向を計算
+	Vector3 cameraOffsetDirection = playerToPlayerDirection.Cross(Vector3::Up()).Normalized();
+	//カメラの距離を計算
+	float cameraDistance = playerToPlayerDirection.Length() * kDistanceRate;
+	//カメラの距離の最小値と最大値を制限
+	if (cameraDistance < kCameraDistanceMin)
+	{
+		cameraDistance = kCameraDistanceMin;
+	}
+	else if (cameraDistance > kCameraDistanceMax)
+	{
+		cameraDistance = kCameraDistanceMax;
+	}
+	//カメラの位置を計算
+	m_calculatedPosition = m_calculatedTarget - cameraOffsetDirection * cameraDistance;
+	//カメラの高さを設定
+	m_calculatedTarget.y = kCameraHeightOffset;
+	m_calculatedPosition.y = kCameraHeightOffset;
+
+
+/*
 	Vector3 player1Pos = {0.0f,0.0f,0.0f};
 	Vector3 player2Pos = {0.0f,0.0f,0.0f};
 	if (id == PlayerID::P1)
@@ -205,4 +233,6 @@ void BattleCamera::CalculateThrowCamera(Player* thrower,PlayerID id)
 	//カメラの高さを設定
 	m_calculatedTarget.y = kCameraHeightOffset;
 	m_calculatedPosition.y = kCameraHeightOffset;
+
+*/
 }
