@@ -37,7 +37,7 @@ void PlayerIdleState::Update()
 	//攻撃
 	if (IsBufferd(Button::Y, kBufferFrame))
 	{
-		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("LungeJab")));
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("RushPunch")));
 		return;
 	}
 	
@@ -55,10 +55,10 @@ void PlayerIdleState::Update()
 		return;
 	}
 
-	//掴み
+	//攻撃
 	if (IsBufferd(Button::B, kBufferFrame))
 	{
-		m_player.ChangeState(std::make_unique<PlayerGrabState>(m_player, AttackTable::GetInstance().Get("Grab")));
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("HeavyKick")));
 		return;
 	}
 

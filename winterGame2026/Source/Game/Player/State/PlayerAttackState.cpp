@@ -1,7 +1,14 @@
 ﻿#include "PlayerAttackState.h"
 #include"PlayerIdleState.h"
+#include"PlayerGrabState.h"
 #include"Game/Battle/AttackData.h"
 #include"Game/Battle/HitBoxSet.h"
+
+namespace
+{
+	constexpr int kGrabCancelFrame = 5;
+}
+
 
 PlayerAttackState::PlayerAttackState(Player& player, const AttackDef& attack):
 	PlayerStateBase(player),
@@ -28,6 +35,32 @@ void PlayerAttackState::Update()
 {
 	const AttackData& data = m_attack.data;
 	auto& hitBoxes = m_player.GetHitBoxes();
+
+	//投げへのキャンセル
+	if (m_attack.name == "Kick")
+	{
+		if (m_frame < kGrabCancelFrame && m_frame < data.startUp)
+		{
+			if (IsBufferd(Button::X, kGrabCancelFrame))
+			{
+				m_player.ChangeState(std::make_unique<PlayerGrabState>(m_player, AttackTable::GetInstance().Get("Grab")));
+				return;
+			}
+		}
+	}
+	//投げへのキャンセル
+	if (m_attack.name == "Combo01_1")
+	{
+		if (m_frame < kGrabCancelFrame && m_frame < data.startUp)
+		{
+			if (IsBufferd(Button::A, kGrabCancelFrame))
+			{
+				m_player.ChangeState(std::make_unique<PlayerGrabState>(m_player, AttackTable::GetInstance().Get("Grab")));
+				return;
+			}
+		}
+	}
+
 	//発生フレームになったら攻撃判定を出す
 	if (m_frame == data.startUp)
 	{

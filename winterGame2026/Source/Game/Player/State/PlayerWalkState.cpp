@@ -7,6 +7,8 @@
 namespace
 {
 	constexpr float kSpeed = 5.0f;
+	//先行入力を受け付けるフレーム数(この数以内に押されていたら技を出す)
+	constexpr int kBufferFrame = 10;
 }
 
 void PlayerWalkState::Enter()
@@ -53,33 +55,32 @@ void PlayerWalkState::Update()
 	}
 
 	//攻撃
-	if (IsTriggered(Button::Y))
+	if (IsBufferd(Button::Y, kBufferFrame))
 	{
-		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("LungeJab")));
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("RushPunch")));
 		return;
 	}
 
 	//攻撃
-	if (IsTriggered(Button::X))
+	if (IsBufferd(Button::X, kBufferFrame))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Combo01_1")));
 		return;
 	}
 
 	//攻撃
-	if (IsTriggered(Button::A))
+	if (IsBufferd(Button::A, kBufferFrame))
 	{
 		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Kick")));
 		return;
 	}
 
-	//掴み
-	if (IsTriggered(Button::B))
+	//攻撃
+	if (IsBufferd(Button::B, kBufferFrame))
 	{
-		m_player.ChangeState(std::make_unique<PlayerGrabState>(m_player, AttackTable::GetInstance().Get("Grab")));
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("HeavyKick")));
 		return;
 	}
-
 	//ニュートラルに入っていたらIdleへ
 	if (stick == StickDirection::neutral ||
 		stick == StickDirection::up ||
