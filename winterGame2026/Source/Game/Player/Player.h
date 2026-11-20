@@ -33,8 +33,10 @@ public:
 	//攻撃アニメーション
 	static constexpr const wchar_t* kJabAnimName = L"Armature|Jab";
 	static constexpr const wchar_t* kLungeJabAnimName = L"Armature|LungeJab";
+	static constexpr const wchar_t* kRuchPunchAnimName = L"Armature|RushPunch";
 	static constexpr const wchar_t* kPunchAnimName = L"Armature|FS_Punch";
 	static constexpr const wchar_t* kKickAnimName = L"Armature|FS_Kick";
+	static constexpr const wchar_t* kHeavyKickAnimName = L"Armature|KickHeavy";
 	//コンボアニメーション
 	static constexpr const wchar_t* kCombo01_1Name = L"Armature|Combo01_1";
 	static constexpr const wchar_t* kCombo01_2Name = L"Armature|Combo01_2";
@@ -50,9 +52,11 @@ public:
 //	static constexpr const wchar_t* kThrowAnimName = L"Armature|Throw";
 //	static constexpr const wchar_t* kThrownAnimName = L"Armature|Thrown";
 
-	//投げのアニメーション2
+	//投げアニメーション
 	static constexpr const wchar_t* kThrowAnimName = L"Armature|Throw03";
 	static constexpr const wchar_t* kThrownAnimName = L"Armature|Thrown03";
+	static constexpr const wchar_t* kBackThrowAnimName = L"Armature|Throw04";
+	static constexpr const wchar_t* kBackThrownAnimName = L"Armature|Thrown04";
 
 	//投げぬけアニメーション
 	static constexpr const wchar_t* kThrowBreakAttackerAnimName = L"Armature|ThrowBreakAttacker";
@@ -241,7 +245,7 @@ private:
 	//入力
 	std::unique_ptr<IInputSource>m_input;
 	//前回のアニメーションの移動量
-	Vector3 m_prevRootOffset;
+	Vector3 m_prevRootMotion;
 	//アニメーション移動中の方向を保存する
 	Vector3 m_rootMotionDirection;
 };

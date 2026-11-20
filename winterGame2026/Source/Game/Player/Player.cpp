@@ -73,7 +73,7 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	m_battleManager(battleManager),
 	m_hp(kMaxHp),
 	m_canControl(false),
-	m_prevRootOffset({}),
+	m_prevRootMotion({}),
 	m_rootMotionDirection({})
 {
 	//モデル複製
@@ -181,15 +181,15 @@ void Player::Update()
 
 	if (m_state->UseRootMotion())
 	{
-		Vector3 offset = m_animationController->GetRootOffset();
+		Vector3 motion = m_animationController->GetRootMotion();
 
-		Vector3 delta =  offset - m_prevRootOffset;
+		Vector3 delta =  motion - m_prevRootMotion;
 
 		float forward = delta.Dot(m_rootMotionDirection);
 
 		m_transform.Translate(m_rootMotionDirection * forward);
 
-		m_prevRootOffset = offset;
+		m_prevRootMotion = motion;
 	}
 
 	ApplyDxLibMatrix();
@@ -302,12 +302,12 @@ void Player::ChangeState(std::unique_ptr<PlayerStateBase> newState)
 
 	m_state = std::move(newState);
 
-	//アニメーションを変える際にゼロにする
-	m_prevRootOffset = {};
 	//アニメーションを変える際に方向を保存しておく
 	m_rootMotionDirection = m_battleManager->GetOpponentDirection(m_playerID);
 
 	m_state->Enter();
+
+	m_prevRootMotion = m_animationController->GetRootMotion();
 }
 
 void Player::OpponentRotate()
