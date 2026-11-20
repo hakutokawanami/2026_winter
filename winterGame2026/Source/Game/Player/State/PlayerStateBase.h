@@ -104,7 +104,7 @@ protected:
 	/// </summary>
 	/// <param name="button"></param>
 	/// <returns></returns>
-	bool IsBufferd(Button button,int frame)const;
+	bool IsBufferd(Button button, int frame)const;
 
 	Player& m_player;
 

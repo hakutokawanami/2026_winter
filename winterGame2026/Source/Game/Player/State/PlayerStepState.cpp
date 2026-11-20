@@ -14,8 +14,8 @@ namespace
 	{
 		{16,250.0f},//forward
 		{18,200.0f},//back
-		{14,150.0f},//sideIn
-		{14,150.0f},//sideOut
+		{14,200.0f},//sideIn
+		{14,200.0f},//sideOut
 	};
 
 	const StepParam& GetStepParam(PlayerStepState::Type type)
