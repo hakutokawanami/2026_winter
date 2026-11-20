@@ -52,9 +52,21 @@ public:
 	/// <returns></returns>
 	Vector3 GetRootOffset();
 	/// <summary>
+	/// ルートモーション用の移動量を取得する
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetRootMotion();
+
+	/// <summary>
 	/// 打ち消す移動量を計算する
 	/// </summary>
 	void CalculateRootOffset();
+	/// <summary>
+	/// ワールド座標に変換する
+	/// </summary>
+	/// <param name="offset"></param>
+	/// <returns></returns>
+	Vector3 ToWorldOffset(const Vector3& offset);
 
 private:
 	//モデルハンドル
@@ -103,4 +115,6 @@ private:
 	float m_currentBlendRate;
 	//アニメーションの消した移動量
 	Vector3 m_rootOffset;
+	//今のアニメーションだけの移動量
+	Vector3 m_motionOffset;
 };

@@ -21,7 +21,8 @@ AnimationController::AnimationController(int modelHandle) :
 	m_prevRootStartPos({}),
 	m_isPrevRootLocked(false),
 	m_currentBlendRate(1.0f),
-	m_rootOffset({})
+	m_rootOffset({}),
+	m_motionOffset({})
 {
 	//腰のフレーム番号を取得する
 	m_rootFrame = MV1SearchFrame(m_modelHandle, L"mixamorig:Hips");
@@ -152,6 +153,7 @@ void AnimationController::Play(const std::wstring& name, bool loop, float blendT
 	m_blendTimer = 0.0f;
 	//腰の位置を保存
 	m_rootStartPos = MV1GetAttachAnimFrameLocalPosition(m_modelHandle, m_currentAttachNo, m_rootFrame);
+	m_motionOffset = {};
 	m_isRootLocked = false;
 	m_isEnd = false;
 }
@@ -182,6 +184,41 @@ void AnimationController::RootLocked()
 
 Vector3 AnimationController::GetRootOffset()
 {
+	return ToWorldOffset(m_rootOffset);
+}
+
+Vector3 AnimationController::GetRootMotion()
+{
+	return ToWorldOffset(m_motionOffset);
+}
+
+void AnimationController::CalculateRootOffset()
+{
+	m_rootOffset = {};
+
+	if (m_rootFrame >= 0)
+	{
+		Vector3 currentPos = {};
+		if (m_isRootLocked)
+		{
+			currentPos = MV1GetAttachAnimFrameLocalPosition(m_modelHandle, m_currentAttachNo, m_rootFrame);
+			m_rootOffset += (currentPos - m_rootStartPos) * m_currentBlendRate;
+		}
+
+		if (m_prevAttachNo >= 0 && m_isPrevRootLocked)
+		{
+			Vector3 prevPos = {};
+			prevPos = MV1GetAttachAnimFrameLocalPosition(m_modelHandle, m_prevAttachNo, m_rootFrame);
+
+			m_rootOffset += (prevPos - m_prevRootStartPos) * (1.0f - m_currentBlendRate);
+		}
+
+		m_motionOffset = currentPos - m_rootStartPos;
+	}
+}
+
+Vector3 AnimationController::ToWorldOffset(const Vector3& offset)
+{
 	//親のフレーム番号を取得
 	int parentFrame = MV1GetFrameParent(m_modelHandle, m_rootFrame);
 
@@ -198,34 +235,11 @@ Vector3 AnimationController::GetRootOffset()
 		mat = MV1GetFrameLocalWorldMatrix(m_modelHandle, parentFrame);
 	}
 	Vector3 world = {};
-	world = VTransformSR(m_rootOffset, mat);
+	world = VTransformSR(offset, mat);
 	//y成分を消す
 	world.y = 0.0f;
 
 	return world;
-}
-
-void AnimationController::CalculateRootOffset()
-{
-	m_rootOffset = {};
-
-	if (m_rootFrame >= 0)
-	{
-		if (m_isRootLocked)
-		{
-			Vector3 currentPos = {};
-			currentPos = MV1GetAttachAnimFrameLocalPosition(m_modelHandle, m_currentAttachNo, m_rootFrame);
-			m_rootOffset += (currentPos - m_rootStartPos) * m_currentBlendRate;
-		}
-
-		if (m_prevAttachNo >= 0 && m_isPrevRootLocked)
-		{
-			Vector3 prevPos = {};
-			prevPos = MV1GetAttachAnimFrameLocalPosition(m_modelHandle, m_prevAttachNo, m_rootFrame);
-
-			m_rootOffset += (prevPos - m_prevRootStartPos) * (1.0f - m_currentBlendRate);
-		}
-	}
 }
 
 void AnimationController::AddAnimation(const std::wstring& name)
