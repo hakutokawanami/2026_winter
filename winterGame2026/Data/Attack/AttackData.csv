@@ -1,10 +1,12 @@
 # name,anim,animSpeed,blendTime,bone,length,radius,offsetY,startUp,active,recovery,damage,hitStun,guardStun,isThrow,takeDamageFrame,next,bufferFrame,cancelFrame,nextButton,endBone,moveStart,moveFrame,moveDistance,isKnockback
-Jab,Armature|Jab,1,3,mixamorig:LeftHand,0,25,0,10,10,12,50,30,20,0,0,,0,0,,mixamorig:LeftForeArm,0,0,0,0
-LungeJab,Armature|LungeJab,0.85,3,mixamorig:RightHand,0,25,0,20,12,39,100,60,40,0,0,,0,0,,mixamorig:RightArm,0,0,0,0
-Grab,Armature|Grab,1,6,mixamorig:RightHand,0,40,0,15,5,17,100,0,0,1,160,,0,0,,mixamorig:RightArm,0,0,0,0
-Punch,Armature|FS_Punch,0.45,3,mixamorig:LeftHand,0,25,0,10,11,12,50,30,20,0,0,,0,0,,mixamorig:LeftArm,0,0,0,0
-Kick,Armature|FS_Kick,0.6,3,mixamorig:RightToeBase,50,60,0,16,20,17,100,60,40,0,0,,0,0,,mixamorig:RightUpLeg,0,0,0,0
-Combo01_1,Armature|Combo01_1,1,3,mixamorig:LeftHand,0,25,0,10,13,18,40,36,20,0,0,Combo01_2,10,22,X,mixamorig:LeftArm,0,10,70,0
-Combo01_2,Armature|Combo01_2,1,4,mixamorig:RightHand,0,25,0,21,6,54,60,30,20,0,0,Combo01_3,10,27,X,mixamorig:RightArm,0,21,120,0
-Combo01_3,Armature|Combo01_3,1,8,mixamorig:RightToeBase,0,35,0,15,13,47,100,40,25,0,0,,0,0,,mixamorig:RightUpLeg,0,15,150,1
-GetUpAttack,Armature|GetUpSpring,1,8,mixamorig:LeftFoot,0,35,0,8,20,18,50,30,10,0,0,,0,0,,mixamorig:RightFoot,0,13,300,0
+Jab,Armature|Jab,1.00,3,mixamorig:LeftHand,0.0,25.0,0.0,10,10,12,50,30,20,0,0,,0,0,,mixamorig:LeftForeArm,0,0,0.0,0
+LungeJab,Armature|LungeJab,0.85,3,mixamorig:RightHand,0.0,25.0,0.0,20,12,39,100,60,40,0,0,,0,0,,mixamorig:RightArm,0,0,0.0,0
+Grab,Armature|Grab,1.00,6,mixamorig:RightHand,0.0,40.0,0.0,15,5,17,100,0,0,1,160,,0,0,,mixamorig:RightArm,0,0,0.0,0
+Punch,Armature|FS_Punch,0.45,3,mixamorig:LeftHand,0.0,25.0,0.0,10,11,12,50,30,20,0,0,,0,0,,mixamorig:LeftArm,0,0,0.0,0
+Kick,Armature|FS_Kick,0.60,3,mixamorig:RightToeBase,50.0,60.0,0.0,16,20,17,100,60,40,0,0,,0,0,,mixamorig:RightUpLeg,0,0,0.0,0
+Combo01_1,Armature|Combo01_1,1.00,3,mixamorig:LeftHand,0.0,25.0,0.0,10,13,18,40,36,20,0,0,Combo01_2,10,22,X,mixamorig:LeftArm,0,10,70.0,0
+Combo01_2,Armature|Combo01_2,1.00,4,mixamorig:RightHand,0.0,25.0,0.0,21,6,54,60,30,20,0,0,Combo01_3,10,27,X,mixamorig:RightArm,0,21,120.0,0
+Combo01_3,Armature|Combo01_3,1.00,8,mixamorig:RightToeBase,0.0,35.0,0.0,15,13,47,100,40,25,0,0,,0,0,,mixamorig:RightUpLeg,0,15,150.0,1
+GetUpAttack,Armature|GetUpSpring,1.00,8,mixamorig:LeftFoot,0.0,35.0,0.0,8,20,18,50,30,10,0,0,,0,0,,mixamorig:RightFoot,0,13,300.0,0
+RushPunch,Armature|RushPunch,0.50,8,mixamorig:RightHand,0.0,35.0,0.0,22,10,27,100,30,30,0,0,,0,0,,mixamorig:RightArm,2,20,300.0,1
+HeavyKick,Armature|KickHeavy,0.60,8,mixamorig:RightToeBase,50.0,60.0,0.0,14,8,33,100,60,20,0,0,,0,0,,mixamorig:RightUpLeg,0,0,0.0,0
