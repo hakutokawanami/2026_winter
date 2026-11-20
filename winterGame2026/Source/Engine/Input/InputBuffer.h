@@ -26,6 +26,7 @@ public:
 	/// <param name="frame"></param>
 	/// <returns></returns>
 	bool IsBuffered(Button button, int frame);
+
 	/// <summary>
 	/// ボタンを使ったらそのボタンの履歴をクリアする
 	/// </summary>
