@@ -82,8 +82,8 @@ void BattleCamera::Update()
 
 #ifdef _DEBUG
 	// デバッグ用にカメラの位置とターゲットを表示
-	DrawFormatString(10, 10, 0xffffff, L"Camera Position: (%.2f, %.2f, %.2f)", m_position.x, m_position.y, m_position.z);
-	DrawFormatString(10, 30, 0xffffff, L"Camera Target: (%.2f, %.2f, %.2f)", m_target.x, m_target.y, m_target.z);
+	DrawFormatString(10, 400, 0xffffff, L"Camera Position: (%.2f, %.2f, %.2f)", m_position.x, m_position.y, m_position.z);
+	DrawFormatString(10, 420, 0xffffff, L"Camera Target: (%.2f, %.2f, %.2f)", m_target.x, m_target.y, m_target.z);
 #endif // _DEBUG
 
 }

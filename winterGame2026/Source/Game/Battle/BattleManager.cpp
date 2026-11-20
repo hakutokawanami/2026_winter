@@ -76,7 +76,7 @@ void BattleManager::Draw()
 	// デバッグ用にP1からP2への方向ベクトルを描画
 	DrawLine3D(m_player1->GetTransform().GetPosition(), m_player2->GetTransform().GetPosition(), GetColor(0, 255, 0));
 	// デバッグ用にプレイヤー間の距離を描画
-	DrawFormatString(10, 10, GetColor(255, 255, 255), L"Distance: %.2f", m_distance);
+	DrawFormatString(10, 10, GetColor(255, 255, 255), L"PtoPDistance: %.2f", m_distance);
 #endif // _DEBUG
 }
 
