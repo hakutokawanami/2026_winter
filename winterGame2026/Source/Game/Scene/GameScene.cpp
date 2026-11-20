@@ -21,7 +21,9 @@ namespace
 }
 
 GameScene::GameScene(SceneController& controller) :
-	SceneBase(controller)
+	SceneBase(controller),
+	m_timeScale(1.0f),
+	m_timeAccum(0.0f)
 {
 	//フェードイン
 	m_update = &GameScene::FadeInUpdate;
@@ -42,8 +44,8 @@ GameScene::GameScene(SceneController& controller) :
 	//Pad入力
 	m_player1->SetInputSource(std::make_unique<PadInputSource>(m_player1->GetPlayerID()));
 	//CPU入力
-//	m_player2->SetInputSource(std::make_unique<PadInputSource>(m_player2->GetPlayerID()));
-	m_player2->SetInputSource(std::make_unique<CpuInputSource>(*m_player2));
+	m_player2->SetInputSource(std::make_unique<PadInputSource>(m_player2->GetPlayerID()));
+//	m_player2->SetInputSource(std::make_unique<CpuInputSource>(*m_player2));
 	//バトルマネージャー初期化
 	m_battleManager->Init(m_player1.get(), m_player2.get());
 	//プレイヤーの方向を相手に向ける
@@ -99,18 +101,28 @@ void GameScene::NormalUpdate()
 	auto& input = InputManager::GetInstance();
 	input.Update();
 
-	//操作していいかをセットする
-	m_player1->SetCanControl(m_roundManager->CanControl());
-	m_player2->SetCanControl(m_roundManager->CanControl());
-	//プレイヤー更新
-	m_player1->Update();
-	m_player2->Update();
-	//バトルマネージャー更新
-	m_battleManager->Update();
+	m_timeAccum += m_timeScale;
+	while (m_timeAccum >= 1.0f)
+	{
+		m_timeAccum -= 1.0f;
+
+		//操作していいかをセットする
+		m_player1->SetCanControl(m_roundManager->CanControl());
+		m_player2->SetCanControl(m_roundManager->CanControl());
+		//プレイヤー更新
+		m_player1->Update();
+		m_player2->Update();
+
+		//バトルマネージャー更新
+		m_battleManager->Update();
+
+		//ラウンドマネージャー更新
+		m_roundManager->Update(*m_player1, *m_player2);
+	}
+
 	//カメラ更新
 	m_camera->Update();
-	//ラウンドマネージャー更新
-	m_roundManager->Update(*m_player1, *m_player2);
+	
 	//ラウンド間のプレイヤーのリセット
 	if (m_roundManager->IsResetRequest())
 	{
@@ -119,6 +131,27 @@ void GameScene::NormalUpdate()
 		//フェード用描画
 		m_draw = &GameScene::FadeDraw;
 	}
+
+
+#ifdef _DEBUG
+	if (input.IsTriggered(m_player1->GetPlayerID(),"SELECT"))
+	{
+		m_timeAccum += 1.0f;
+	}
+
+	if (input.IsTriggered(m_player1->GetPlayerID(), "START"))
+	{
+		if (m_timeScale == 1.0f)
+		{
+			m_timeScale = 0.0f;
+		}
+		else
+		{
+			m_timeScale = 1.0f;
+		}
+	}
+#endif // _DEBUG
+
 }
 
 void GameScene::FadeOutUpdate()

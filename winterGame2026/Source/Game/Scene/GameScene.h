@@ -52,5 +52,10 @@ private:
 	std::unique_ptr<BattleCamera>m_camera;
 	//バトルUI
 	std::unique_ptr<BattleUI>m_battleUI;
+
+	//タイムスケール
+	float m_timeScale;
+	//タイムスケールを足していき１を超えたら処理を進める
+	float m_timeAccum;
 };
 
