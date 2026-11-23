@@ -2,6 +2,14 @@
 #include"Engine/Input/Button.h"
 #include"Engine/Input/InputBuffer.h"
 #include"Engine/Input/IInputSource.h"
+#include"Engine/Input/CommandInput.h"
+#include"PlayerAttackState.h"
+#include"Game/Battle/AttackData.h"
+
+namespace
+{
+	constexpr int kCommandBufferFrame = 10;
+}
 
 PlayerStateBase::PlayerStateBase(Player& player):
 	m_player(player),
@@ -65,4 +73,37 @@ bool PlayerStateBase::IsBufferd(const Button button,int frame) const
 	}
 
 	return m_player.GetInputBuffer().IsBuffered(button, frame);
+}
+
+bool PlayerStateBase::IsCommandInput(std::string_view command, int maxFrame) const
+{
+	if (!m_player.CanControl())
+	{
+		return false;
+	}
+
+	return m_player.GetCommandInput().IsInput(command, maxFrame);
+}
+
+bool PlayerStateBase::TryCommandMove()
+{
+	// 技を出すかの処理
+	auto tryMove = [&](std::string_view command, int maxFrame, Button button, const char* attack)
+		{
+			// コマンドとボタンの判定
+			if (!IsCommandInput(command, maxFrame) || !IsBufferd(button, kCommandBufferFrame))
+			{
+				return false;
+			}
+			// 履歴を消す
+			m_player.GetCommandInput().Clear();
+			// 技を出す
+			m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get(attack)));
+			return true;
+		};
+
+	// 優先順位を決めて試していく
+	if (tryMove("236", 15, Button::Y, "RushPunch")) return true;
+
+	return false;
 }

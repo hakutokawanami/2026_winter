@@ -1,5 +1,5 @@
 #include "CommandInput.h"
-#undef max
+#include<algorithm>
 
 namespace
 {
@@ -29,7 +29,7 @@ bool CommandInput::IsInput(std::string_view command, int maxFrame) const
 
 	const int size = static_cast<int>(m_history.size());
 	//maxFrameより前の履歴は見ない(0まで)
-	const int oldest = std::max(0, size - maxFrame);
+	const int oldest = (std::max)(0, size - maxFrame);
 
 	//新しいほうから探していく
 	for (int i = size - 1; i >= oldest; i--)

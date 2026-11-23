@@ -6,6 +6,7 @@
 #include"Game/Battle/BattleManager.h"
 #include <Engine/Input/StickDirection.h>
 #include"Engine/Input/Button.h"
+#include<string_view>
 
 class PlayerStateBase : public StateBase
 {
@@ -105,6 +106,18 @@ protected:
 	/// <param name="button"></param>
 	/// <returns></returns>
 	bool IsBufferd(Button button, int frame)const;
+	/// <summary>
+	/// ステートから使うコマンド判定
+	/// </summary>
+	/// <param name="command"></param>
+	/// <param name="maxFrame"></param>
+	/// <returns></returns>
+	bool IsCommandInput(std::string_view command, int maxFrame)const;
+	/// <summary>
+	/// コマンド技の入力をチェックして成立していたら技を出す
+	/// </summary>
+	/// <returns></returns>
+	bool TryCommandMove();
 
 	Player& m_player;
 

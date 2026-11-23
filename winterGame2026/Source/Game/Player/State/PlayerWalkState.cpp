@@ -54,10 +54,16 @@ void PlayerWalkState::Update()
 		break;
 	}
 
+	//コマンド技
+	if (TryCommandMove())
+	{
+		return;
+	}
+
 	//攻撃
 	if (IsBufferd(Button::Y, kBufferFrame))
 	{
-		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("RushPunch")));
+		m_player.ChangeState(std::make_unique<PlayerAttackState>(m_player, AttackTable::GetInstance().Get("Jab")));
 		return;
 	}
 
