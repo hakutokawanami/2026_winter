@@ -11,6 +11,7 @@ class HitBoxSet;
 class InputBuffer;
 struct AttackData;
 class IInputSource;
+class CommandInput;
 class Player : public GameObject
 {
 public:
@@ -223,6 +224,12 @@ public:
 	/// </summary>
 	void CheckCanPush();
 
+	/// <summary>
+	/// コマンド入力の履歴を取得する
+	/// </summary>
+	/// <returns></returns>
+	CommandInput& GetCommandInput()const { return *m_commandInput; }
+
 private:
 	///モデルハンドル
 	int m_modelHandle;
@@ -248,5 +255,7 @@ private:
 	Vector3 m_prevRootMotion;
 	//アニメーション移動中の方向を保存する
 	Vector3 m_rootMotionDirection;
+	//コマンド入力の履歴
+	std::unique_ptr<CommandInput>m_commandInput;
 };
 

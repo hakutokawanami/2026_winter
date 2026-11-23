@@ -4,6 +4,7 @@
 #include"Engine/Input/InputManager.h"
 #include"Engine/Input/InputBuffer.h"
 #include"Engine/Input/IInputSource.h"
+#include"Engine/Input/CommandInput.h"
 #include"State/PlayerStateBase.h"
 #include"State/PlayerIdleState.h"
 #include"State/PlayerHitState.h"
@@ -117,6 +118,8 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	m_hitBoxes->SetThrowedBox(kPushRadius, kPushHeight);
 	//先行入力判定生成
 	m_InputBuffer = std::make_unique<InputBuffer>();
+	//コマンド入力判定生成
+	m_commandInput = std::make_unique<CommandInput>();
 }
 
 Player::~Player()
@@ -156,6 +159,8 @@ void Player::Update()
 	{
 		//先行入力用履歴更新
 		m_InputBuffer->Update(*m_input);
+		//コマンド入力履歴更新
+		m_commandInput->Update(m_input->GetStickDirection(), m_battleManager->IsOpponentOnRight(m_playerID));
 	}
 
 	m_state->Update();
@@ -277,6 +282,32 @@ void Player::Draw()
 #ifdef _DEBUG
 	//プレイヤーのポジションのデバッグ表示
 	DrawFormatString(10, 50 + static_cast<int>(m_playerID) * 20, 0xffffff, L"Player %d Position: (%.2f, %.2f, %.2f)", static_cast<int>(m_playerID), m_transform.GetPosition().x, m_transform.GetPosition().y, m_transform.GetPosition().z);
+	//コマンド入力履歴のデバッグ表示(相手基準のテンキー、右端が最新)
+	//履歴はcharの文字列なので、wchar_tの文字列に変換して描画する(数字だけなのでそのままコピーでよい)
+	const std::string history = m_commandInput->GetHistoryString();
+	const std::wstring historyW(history.begin(), history.end());
+	DrawFormatString(10, 570 + static_cast<int>(m_playerID) * 20, 0xffff00, L"P%d CMD:%s", static_cast<int>(m_playerID) + 1, historyW.c_str());
+	
+	//コマンド判定のデバッグ表示(成立中は赤)
+	struct DebugCommand { const char* command; int maxFrame; };
+	constexpr DebugCommand kDebugCommands[] =
+	{
+		{ "236",    15 },
+		{ "623",    20 },
+		{ "41236",  30 },
+		{ "236236", 40 },
+	};
+	int x = 10;
+	const int y = 610 + static_cast<int>(m_playerID) * 20;
+	for (const auto& cmd : kDebugCommands)
+	{
+		const bool isInput = m_commandInput->IsInput(cmd.command, cmd.maxFrame);
+		const std::string name = cmd.command;
+		DrawFormatString(x, y, isInput ? 0xff0000 : 0x808080, L"%s",
+			std::wstring(name.begin(), name.end()).c_str());
+		x += 90;
+	}
+	
 	//当たり判定のデバッグ表示
 	m_hitBoxes->Draw();
 
@@ -434,6 +465,7 @@ void Player::RoundReset()
 	m_hp = kMaxHp;
 
 	m_InputBuffer->AllClear();
+	m_commandInput->Clear();
 }
 
 void Player::SetInputSource(std::unique_ptr<IInputSource> input)
