@@ -9,6 +9,7 @@
 #include"State/PlayerIdleState.h"
 #include"State/PlayerHitState.h"
 #include"State/PlayerGuardHitState.h"
+#include"State/PlayerGuardBreakState.h"
 #include"State/PlayerThrowHitState.h"
 #include"State/PlayerThrowSuccessState.h"
 #include"State/PlayerThrowBreakState.h"
@@ -18,6 +19,7 @@
 #include"Game/Battle/HitBoxSet.h"
 #include"Game/Battle/AttackData.h"
 #include<cassert>
+#include<algorithm>
 #include<DxLib.h>
 namespace
 {
@@ -66,6 +68,16 @@ namespace
 	constexpr float kSpecularPower = 50.0f;
 	//環境光を受ける強さ(大きいほど影の面が明るくなる)
 	constexpr float kAmbientColor = 0.35f;
+
+	//ガード耐久の最大値
+	constexpr float kMaxGuardHp = 500.0f;
+
+	//ガードしたときに耐久が減る割合
+	constexpr float kGuardDamageRate = 1.0f;
+	//最後にガードしてから回復し始めるまでのフレーム
+	constexpr int kGuardRecoverDelay = 120;
+	//1フレームに回復する量
+	constexpr float kGuardRecoverSpeed = 2.0f;
 }
 
 Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
@@ -75,7 +87,9 @@ Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
 	m_hp(kMaxHp),
 	m_canControl(false),
 	m_prevRootMotion({}),
-	m_rootMotionDirection({})
+	m_rootMotionDirection({}),
+	m_guardHp(kMaxGuardHp),
+	m_guardRecoverWait(0)
 {
 	//モデル複製
 	m_modelHandle = MV1DuplicateModel(modelHandle);
@@ -164,6 +178,21 @@ void Player::Update()
 	}
 
 	m_state->Update();
+
+	//ガード耐久の回復
+	if (m_state->IsGuardBroken())
+	{
+		//ブレイク中は回復しない(終わったときにExitで満タンに戻る)
+	}
+	else if (m_guardRecoverWait > 0)
+	{
+		//最後にガードしてからしばらくは回復しない
+		m_guardRecoverWait--;
+	}
+	else
+	{
+		m_guardHp = (std::min)(m_guardHp + kGuardRecoverSpeed, kMaxGuardHp);
+	}
 
 	//押し出し判定をするかをチェック
 	CheckCanPush();
@@ -375,6 +404,18 @@ void Player::OnHit(const AttackData& attack)
 {
 	if(m_state->IsGuarding())
 	{
+		//ガード耐久を減らす
+		m_guardHp = (std::max)(m_guardHp - attack.damage * kGuardDamageRate, 0.0f);
+		//しばらく回復しないようにする
+		m_guardRecoverWait = kGuardRecoverDelay;
+
+		//耐久がなくなったらガードブレイク
+		if (m_guardHp <= 0.0f)
+		{
+			ChangeState(std::make_unique<PlayerGuardBreakState>(*this));
+			return;
+		}
+
 		//ガード入力をしていたらガード
 		ChangeState(std::make_unique<PlayerGuardHitState>(*this, attack));
 		return;
@@ -463,6 +504,8 @@ void Player::RoundReset()
 	}
 
 	m_hp = kMaxHp;
+	ResetGuardHp();
+	m_guardRecoverWait = 0;
 
 	m_InputBuffer->AllClear();
 	m_commandInput->Clear();
@@ -491,4 +534,15 @@ void Player::CheckCanPush()
 	{
 		m_hitBoxes->SetPushBoxActive(false);
 	}
+}
+
+float Player::GetGuardRate() const
+{
+	//マイナスになっていても0～1に収める
+	return std::clamp(m_guardHp / kMaxGuardHp, 0.0f, 1.0f);
+}
+
+void Player::ResetGuardHp()
+{
+	m_guardHp = kMaxGuardHp;
 }

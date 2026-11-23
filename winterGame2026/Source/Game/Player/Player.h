@@ -45,6 +45,9 @@ public:
 	//ヒットアニメーション
 	static constexpr const wchar_t* kHitHeadLightAnimName = L"Armature|HitHeadLight";
 	static constexpr const wchar_t* kHitHeadHeavyAnimName = L"Armature|HitHeadHeavy";
+	//ガードブレイクアニメーション(弾かれる→ふらふらする)
+	static constexpr const wchar_t* kGuardBreakAnimName = L"Armature|GuardBreak";
+	static constexpr const wchar_t* kStunAnimName = L"Armature|Stun";
 	//ガードヒットアニメーション
 	static constexpr const wchar_t* kGuardHitAnimName = L"Armature|GuardHit";
 	//つかみアニメーション
@@ -230,6 +233,19 @@ public:
 	/// <returns></returns>
 	CommandInput& GetCommandInput()const { return *m_commandInput; }
 
+	/// <summary>
+	/// ガード耐久を取得する
+	/// </summary>
+	float GetGuardHp()const { return m_guardHp; }
+	/// <summary>
+	/// ガード耐久の残りの割合を取得する(0.0～1.0)
+	/// </summary>
+	float GetGuardRate()const;
+	/// <summary>
+	/// ガード耐久を最大まで戻す(ガードブレイクが終わったとき・ラウンド開始時)
+	/// </summary>
+	void ResetGuardHp();
+
 private:
 	///モデルハンドル
 	int m_modelHandle;
@@ -257,5 +273,10 @@ private:
 	Vector3 m_rootMotionDirection;
 	//コマンド入力の履歴
 	std::unique_ptr<CommandInput>m_commandInput;
+
+	//ガード耐久値
+	float m_guardHp;
+	//ガード耐久が回復し始めるまでの残りフレーム
+	int m_guardRecoverWait;
 };
 

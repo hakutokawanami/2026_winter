@@ -155,6 +155,7 @@
     <ClCompile Include="Source\Game\Player\State\PlayerThrowHitState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerThrowSuccessState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerGuardHitState.cpp" />
+    <ClCompile Include="Source\Game\Player\State\PlayerGuardBreakState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerHitState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerAttackState.cpp" />
     <ClCompile Include="Source\Game\Battle\BattleCollision.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Source\Game\Player\State\PlayerThrowHitState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerThrowSuccessState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerGuardHitState.h" />
+    <ClInclude Include="Source\Game\Player\State\PlayerGuardBreakState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerHitState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerAttackState.h" />
     <ClInclude Include="Source\Game\Battle\AttackData.h" />

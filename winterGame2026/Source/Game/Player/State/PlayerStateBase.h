@@ -47,6 +47,11 @@ public:
 	/// <returns></returns>
 	virtual bool IsThrown()const { return false; }
 	/// <summary>
+	/// ガードブレイク中かどうか
+	/// </summary>
+	/// <returns></returns>
+	virtual bool IsGuardBroken()const { return false; }
+	/// <summary>
 	/// 体の向きを固定するかどうか
 	/// </summary>
 	/// <returns></returns>

@@ -13,6 +13,17 @@ namespace
 	constexpr int kMarginX = 40;
 	constexpr int kBarY = 40;
 
+	//ガードゲージ(HPバーの下に出す細いバー。横幅と左右の位置はHPバーと同じ)
+	constexpr int kGuardBarHeight = 8;
+	//HPバーとの間隔
+	constexpr int kGuardBarMarginY = 4;
+	//残りがこの割合以下になったら色を変える
+	constexpr float kGuardLowRate = 0.3f;
+	//ふつうの色・少ないときの色・背景(減った部分)の色
+	constexpr unsigned int kGuardColor = 0x40a0ff;
+	constexpr unsigned int kGuardLowColor = 0xff6030;
+	constexpr unsigned int kGuardBackColor = 0x202840;
+
 	//勝利ラウンドの四角
 	constexpr int kWinBoxWidth = 28;
 	constexpr int kWinBoxHeight = 14;
@@ -80,6 +91,9 @@ void BattleUI::Draw(const RoundManager& round, const Player& p1, const Player& p
 	DrawHpBar(p1);
 	DrawHpBar(p2);
 
+	DrawGuardBar(p1);
+	DrawGuardBar(p2);
+
 	DrawWins(round.GetWins(PlayerID::P1), p1);
 	DrawWins(round.GetWins(PlayerID::P2), p2);
 
@@ -118,6 +132,35 @@ void BattleUI::DrawHpBar(const Player& player) const
 	}
 	//枠
 	DrawBox(x, kBarY, x + kBarWidth, kBarY + kBarHeight, 0xffffff, false);
+}
+
+void BattleUI::DrawGuardBar(const Player& player) const
+{
+	auto& wsize = Application::GetInstance().GetWindowSize();
+	const bool isP1 = player.GetPlayerID() == PlayerID::P1;
+
+	const float rate = player.GetGuardRate();
+	const int fill = static_cast<int>(kBarWidth * rate);
+
+	//横の位置はHPバーと同じ、縦はHPバーのすぐ下
+	const int x = isP1 ? kMarginX : wsize.w - kMarginX - kBarWidth;
+	const int top = kBarY + kBarHeight + kGuardBarMarginY;
+	const int bottom = top + kGuardBarHeight;
+
+	//背景(減った部分)
+	DrawBox(x, top, x + kBarWidth, bottom, kGuardBackColor, true);
+	//残り(HPバーと同じく画面の中央側から減っていく)
+	const unsigned int color = (rate <= kGuardLowRate) ? kGuardLowColor : kGuardColor;
+	if (isP1)
+	{
+		DrawBox(x, top, x + fill, bottom, color, true);
+	}
+	else
+	{
+		DrawBox(x + kBarWidth - fill, top, x + kBarWidth, bottom, color, true);
+	}
+	//枠
+	DrawBox(x, top, x + kBarWidth, bottom, 0xffffff, false);
 }
 
 void BattleUI::DrawTimer(int seconds) const

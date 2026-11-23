@@ -22,6 +22,11 @@ private:
     /// <param name="player">プレイヤー</param>
     void DrawHpBar(const Player& player) const;
     /// <summary>
+    /// ガードゲージを描画する(HPバーの下の細いバー)
+    /// </summary>
+    /// <param name="player">プレイヤー</param>
+    void DrawGuardBar(const Player& player) const;
+    /// <summary>
     /// タイマーを描画する
     /// </summary>
     /// <param name="seconds">秒数</param>
