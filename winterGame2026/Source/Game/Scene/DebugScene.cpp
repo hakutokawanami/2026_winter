@@ -80,7 +80,7 @@ void DebugScene::NormalUpdate()
 
 		case 1:
 			m_controller.ChangeScene(
-				std::make_shared<GameScene>(m_controller)
+				std::make_shared<GameScene>(m_controller,MatchSetting{})
 			);
 			break;
 

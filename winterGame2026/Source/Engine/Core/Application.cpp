@@ -88,7 +88,7 @@ void Application::Run()
 #ifdef _DEBUG
 	SceneController.ChangeScene(std::make_shared<DebugScene>(SceneController));
 #else
-	SceneController.ChangeScene(std::make_shared<GameScene>(SceneController));
+	SceneController.ChangeScene(std::make_shared<GameScene>(SceneController, MatchSetting{}));
 #endif // _DEBUG
 
 	while (ProcessMessage() != -1)

@@ -18,9 +18,22 @@ namespace
 {
 	//フェードにかかる時間
 	constexpr int kFadeInterval = 60;
+
+	//キャラクターIDをモデルタイプに変換する
+	ModelType ToModelType(CharacterID id)
+	{
+		if (id == CharacterID::character1)
+		{
+			return ModelType::player1;
+		}
+		else
+		{
+			return ModelType::player2;
+		}
+	}
 }
 
-GameScene::GameScene(SceneController& controller) :
+GameScene::GameScene(SceneController& controller, const MatchSetting& matchSetting) :
 	SceneBase(controller),
 	m_timeScale(1.0f),
 	m_timeAccum(0.0f)
@@ -35,17 +48,32 @@ GameScene::GameScene(SceneController& controller) :
 	auto& resourceManager = ResourceManager::GetInstance();
 	//バトルマネージャー生成
 	m_battleManager = std::make_unique<BattleManager>();
+
 	//プレイヤー生成
-	m_player1 = std::make_unique<Player>(PlayerID::P1, resourceManager.GetModel(ModelType::player1), m_battleManager.get());
-	m_player2 = std::make_unique<Player>(PlayerID::P2, resourceManager.GetModel(ModelType::player2), m_battleManager.get());
+	m_player1 = std::make_unique<Player>(PlayerID::P2, resourceManager.GetModel(ToModelType(matchSetting.p1)), m_battleManager.get());
+	m_player2 = std::make_unique<Player>(PlayerID::P2, resourceManager.GetModel(ToModelType(matchSetting.p1)), m_battleManager.get());
+
 	//プレイヤー初期化
 	m_player1->Init();
 	m_player2->Init();
-	//Pad入力
-	m_player1->SetInputSource(std::make_unique<PadInputSource>(m_player1->GetPlayerID()));
-	//CPU入力
-	m_player2->SetInputSource(std::make_unique<PadInputSource>(m_player2->GetPlayerID()));
-//	m_player2->SetInputSource(std::make_unique<CpuInputSource>(*m_player2));
+
+	//入力設定
+	if (matchSetting.gameMode == GameMode::vsPlayer)
+	{
+		m_player1->SetInputSource(std::make_unique<PadInputSource>(m_player1->GetPlayerID()));
+		m_player2->SetInputSource(std::make_unique<PadInputSource>(m_player2->GetPlayerID()));
+	}
+	else if (matchSetting.gameMode == GameMode::vsCpu)
+	{
+		m_player1->SetInputSource(std::make_unique<PadInputSource>(m_player1->GetPlayerID()));
+		m_player2->SetInputSource(std::make_unique<CpuInputSource>(*m_player2));
+	}
+	else if (matchSetting.gameMode == GameMode::training)
+	{
+		m_player1->SetInputSource(std::make_unique<PadInputSource>(m_player1->GetPlayerID()));
+		m_player2->SetInputSource(std::make_unique<CpuInputSource>(*m_player2));
+	}
+
 	//バトルマネージャー初期化
 	m_battleManager->Init(m_player1.get(), m_player2.get());
 	//プレイヤーの方向を相手に向ける

@@ -62,7 +62,7 @@ void TitleScene::FadeOutUpdate()
 	if (++m_frame >= kFadeInterval)
 	{
 		//シーンの切り替え
-		m_controller.ChangeScene(std::make_shared<GameScene>(m_controller));
+		m_controller.ChangeScene(std::make_shared<GameScene>(m_controller, MatchSetting{}));
 		return;
 	}
 }

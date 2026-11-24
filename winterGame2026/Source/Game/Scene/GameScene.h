@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneBase.h"
+#include"Game/Common/MatchSetting.h"
 #include<memory>
 class Player;
 class BattleCamera;
@@ -9,7 +10,7 @@ class BattleUI;
 class GameScene : public SceneBase
 {
 public:
-	GameScene(SceneController& controller);
+	GameScene(SceneController& controller,const MatchSetting& matchSetting);
 	~GameScene();
 	void Update()override;
 	void Draw()override;

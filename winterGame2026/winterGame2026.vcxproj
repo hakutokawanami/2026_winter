@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Scene\ModeSelectScene.cpp" />
     <ClCompile Include="Source\Engine\Input\CommandInput.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerKnockbackState.cpp" />
     <ClCompile Include="Source\Game\Player\State\PlayerDownState.cpp" />
@@ -192,7 +193,9 @@
     <ClCompile Include="Source\Game\Base\StateBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Scene\ModeSelectScene.h" />
     <ClInclude Include="Source\Engine\Input\CommandInput.h" />
+    <ClInclude Include="Source\Game\Common\MatchSetting.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerKnockbackState.h" />
     <ClInclude Include="Source\Game\Player\State\PlayerDownState.h" />
     <ClInclude Include="Source\Game\Cpu\CpuInputSource.h" />
