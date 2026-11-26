@@ -1,5 +1,6 @@
-#include "ModeSelectScene.h"
+﻿#include "ModeSelectScene.h"
 #include"GameScene.h"
+#include"TitleScene.h"
 #include"SceneController.h"
 #include"Engine/Input/InputManager.h"
 #include"Engine/Core/Application.h"
@@ -9,10 +10,25 @@ namespace
 {
 	//フェードにかかる時間
 	constexpr int kFadeInterval = 60;
+
+	struct ModeItem
+	{
+		const wchar_t* name;
+		GameMode mode;
+	};
+	constexpr ModeItem kModeItems[] =
+	{
+		{ L"対CPU",       GameMode::vsCpu },
+		{ L"対人",        GameMode::vsPlayer },
+		{ L"トレーニング", GameMode::training },
+	};
+	constexpr int kItemCount = static_cast<int>(std::size(kModeItems));
 }
 
 ModeSelectScene::ModeSelectScene(SceneController& controller) :
-	SceneBase(controller)
+	SceneBase(controller),
+	m_cursor(0),
+	m_isBack(false)
 {
 	//フェードイン
 	m_update = &ModeSelectScene::FadeInUpdate;
@@ -51,8 +67,26 @@ void ModeSelectScene::NormalUpdate()
 	auto& input = InputManager::GetInstance();
 	input.Update();
 
-	if (input.AnyPressButtonInput())
+	if (input.IsTriggered(PlayerID::P1, "up"))
 	{
+		m_cursor = (m_cursor + kItemCount - 1) % kItemCount;
+	}
+
+	if (input.IsTriggered(PlayerID::P1, "down"))
+	{
+		m_cursor = (m_cursor + 1) % kItemCount;
+	}
+
+	if (input.IsTriggered(PlayerID::P1,"A"))
+	{
+		m_matchSetting.gameMode = kModeItems[m_cursor].mode;
+		m_update = &ModeSelectScene::FadeOutUpdate;
+		m_draw = &ModeSelectScene::FadeDraw;
+	}
+
+	if (input.IsTriggered(PlayerID::P1, "B"))
+	{
+		m_isBack = true;
 		m_update = &ModeSelectScene::FadeOutUpdate;
 		m_draw = &ModeSelectScene::FadeDraw;
 	}
@@ -62,18 +96,64 @@ void ModeSelectScene::FadeOutUpdate()
 {
 	if (++m_frame >= kFadeInterval)
 	{
-		//シーンの切り替え
-		m_controller.ChangeScene(std::make_shared<GameScene>(m_controller, MatchSetting{}));
-		return;
+		if (m_isBack)
+		{
+			m_controller.ChangeScene(std::make_shared<TitleScene>(m_controller));
+			return;
+		}
+		else
+		{
+			m_controller.ChangeScene(std::make_shared<GameScene>(m_controller, m_matchSetting));
+		}
 	}
 }
 
 void ModeSelectScene::NormalDraw()
 {
 	auto& wsize = Application::GetInstance().GetWindowSize();
-#ifdef _DEBUG
-	DrawFormatString(static_cast<int>(wsize.w / 2.0f), static_cast<int>(wsize.h / 2.0f), 0xffffff, L"TITLESCENE");
-#endif // _DEBUG
+
+	//見出しの高さ(画面の高さに対する割合)
+	constexpr float kTitleRate = 0.25f;
+	//1つ目の項目の高さ(画面の高さに対する割合)
+	constexpr float kItemStartRate = 0.45f;
+	//項目同士の間隔
+	constexpr int kItemSpace = 40;
+	//カーソルの印と項目の間
+	constexpr int kCursorOffset = 30;
+	//選ばれている項目の色
+	constexpr unsigned int kSelectColor = 0xffd040;
+	//選ばれていない項目の色
+	constexpr unsigned int kNormalColor = 0x808080;
+
+	//見出し(画面の中央にそろえる)
+	const wchar_t* title = L"MODE SELECT";
+	int titleWidth = GetDrawStringWidth(title, static_cast<int>(wcslen(title)));
+	DrawString((wsize.w - titleWidth) / 2, static_cast<int>(wsize.h * kTitleRate), title, 0xffffff);
+
+	//項目
+	for (int i = 0; i < kItemCount; i++)
+	{
+		const wchar_t* name = kModeItems[i].name;
+		int width = GetDrawStringWidth(name, static_cast<int>(wcslen(name)));
+		int x = (wsize.w - width) / 2;
+		int y = static_cast<int>(wsize.h * kItemStartRate) + i * kItemSpace;
+
+		if (i == m_cursor)
+		{
+			//選ばれている項目は色を変えて、左に印を付ける
+			DrawString(x - kCursorOffset, y, L"▶", kSelectColor);
+			DrawString(x, y, name, kSelectColor);
+		}
+		else
+		{
+			DrawString(x, y, name, kNormalColor);
+		}
+	}
+
+	//操作説明
+	const wchar_t* guide = L"↑↓：選択　A：決定　B：戻る";
+	int guideWidth = GetDrawStringWidth(guide, static_cast<int>(wcslen(guide)));
+	DrawString((wsize.w - guideWidth) / 2, wsize.h - 60, guide, 0xffffff);
 }
 
 void ModeSelectScene::FadeDraw()

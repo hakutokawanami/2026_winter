@@ -1,5 +1,5 @@
 ﻿#include "TitleScene.h"
-#include"GameScene.h"
+#include"ModeSelectScene.h"
 #include"SceneController.h"
 #include"Engine/Input/InputManager.h"
 #include"Engine/Core/Application.h"
@@ -62,7 +62,7 @@ void TitleScene::FadeOutUpdate()
 	if (++m_frame >= kFadeInterval)
 	{
 		//シーンの切り替え
-		m_controller.ChangeScene(std::make_shared<GameScene>(m_controller, MatchSetting{}));
+		m_controller.ChangeScene(std::make_shared<ModeSelectScene>(m_controller));
 		return;
 	}
 }

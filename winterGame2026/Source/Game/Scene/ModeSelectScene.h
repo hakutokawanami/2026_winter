@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneBase.h"
+#include"Game/Common/MatchSetting.h"
 
 class ModeSelectScene : public SceneBase
 {
@@ -30,5 +31,11 @@ private:
 
 	//フェード用のフレームカウンター
 	int m_frame;
+	//選んでいる項目の番号
+	int m_cursor;
+	//次のシーンに渡す設定
+	MatchSetting m_matchSetting;
+	//戻るかどうか
+	bool m_isBack;
 };
 
