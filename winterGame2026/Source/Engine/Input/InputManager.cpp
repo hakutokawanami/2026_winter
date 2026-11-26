@@ -281,6 +281,22 @@ bool InputManager::IsTriggered(PlayerID player,const char* name) const
 	return m_inputData[index].at(name) && !m_lastInputData[index].at(name);
 }
 
+bool InputManager::IsTriggered(const char* name) const
+{
+	if (m_inputData[0].at(name) && !m_lastInputData[0].at(name))
+	{
+		return true;
+	}
+	else if (m_inputData[1].at(name) && !m_lastInputData[1].at(name))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 bool InputManager::IsReleased(PlayerID player,const char* name) const
 {
 	int index = static_cast<int>(player);

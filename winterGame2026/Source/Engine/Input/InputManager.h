@@ -83,6 +83,14 @@ public:
 	/// <param name="name">イベント名</param>
 	/// <returns>今押された:true / 押されていないor押しっぱなし:false</returns>
 	bool IsTriggered(PlayerID player, const char* name)const;
+
+	/// <summary>
+	/// 特定のボタンが今押されたか
+	/// </summary>
+	/// <param name="name">イベント名</param>
+	/// <returns></returns>
+	bool IsTriggered(const char* name)const;
+
 	/// <summary>
 	/// 特定のボタンが今離されたか
 	/// </summary>

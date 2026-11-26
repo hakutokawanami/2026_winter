@@ -50,8 +50,8 @@ GameScene::GameScene(SceneController& controller, const MatchSetting& matchSetti
 	m_battleManager = std::make_unique<BattleManager>();
 
 	//プレイヤー生成
-	m_player1 = std::make_unique<Player>(PlayerID::P1, resourceManager.GetModel(ToModelType(matchSetting.p1)), m_battleManager.get());
-	m_player2 = std::make_unique<Player>(PlayerID::P2, resourceManager.GetModel(ToModelType(matchSetting.p2)), m_battleManager.get());
+	m_player1 = std::make_unique<Player>(PlayerID::P1,matchSetting.p1, resourceManager.GetModel(ToModelType(matchSetting.p1)), m_battleManager.get());
+	m_player2 = std::make_unique<Player>(PlayerID::P2,matchSetting.p2, resourceManager.GetModel(ToModelType(matchSetting.p2)), m_battleManager.get());
 
 	//プレイヤー初期化
 	m_player1->Init();

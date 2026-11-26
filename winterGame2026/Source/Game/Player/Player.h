@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"Game/Base/GameObject.h"
 #include"Game/Common/PlayerID.h"
+#include"Game/Common/MatchSetting.h"
 #include<string>
 #include<memory>
 
@@ -79,7 +80,7 @@ public:
 	static constexpr const wchar_t* kKnockbackAnimName = L"Armature|KnockDown";
 
 public:
-	Player(PlayerID id, int modelHandle, BattleManager* battleManager);
+	Player(PlayerID id,CharacterID characterID, int modelHandle, BattleManager* battleManager);
 	~Player();
 
 	void Init()override;
@@ -251,6 +252,8 @@ private:
 	int m_modelHandle;
 	//プレイヤー識別子
 	PlayerID m_playerID;
+	//モデル識別子
+	CharacterID m_characterID;
 	//アニメーションコントローラー
 	std::unique_ptr<AnimationController>m_animationController;
 	//バトルマネージャー

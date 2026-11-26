@@ -1,5 +1,5 @@
 ﻿#include "ModeSelectScene.h"
-#include"GameScene.h"
+#include"CharacterSelectScene.h"
 #include"TitleScene.h"
 #include"SceneController.h"
 #include"Engine/Input/InputManager.h"
@@ -11,17 +11,20 @@ namespace
 	//フェードにかかる時間
 	constexpr int kFadeInterval = 60;
 
+	//名前と対応するゲームモード
 	struct ModeItem
 	{
 		const wchar_t* name;
 		GameMode mode;
 	};
+	//モードの配列
 	constexpr ModeItem kModeItems[] =
 	{
 		{ L"対CPU",       GameMode::vsCpu },
 		{ L"対人",        GameMode::vsPlayer },
 		{ L"トレーニング", GameMode::training },
 	};
+	//モードの数
 	constexpr int kItemCount = static_cast<int>(std::size(kModeItems));
 }
 
@@ -67,24 +70,24 @@ void ModeSelectScene::NormalUpdate()
 	auto& input = InputManager::GetInstance();
 	input.Update();
 
-	if (input.IsTriggered(PlayerID::P1, "up"))
+	if (input.IsTriggered("up"))
 	{
 		m_cursor = (m_cursor + kItemCount - 1) % kItemCount;
 	}
 
-	if (input.IsTriggered(PlayerID::P1, "down"))
+	if (input.IsTriggered("down"))
 	{
 		m_cursor = (m_cursor + 1) % kItemCount;
 	}
 
-	if (input.IsTriggered(PlayerID::P1,"A"))
+	if (input.IsTriggered("A"))
 	{
 		m_matchSetting.gameMode = kModeItems[m_cursor].mode;
 		m_update = &ModeSelectScene::FadeOutUpdate;
 		m_draw = &ModeSelectScene::FadeDraw;
 	}
 
-	if (input.IsTriggered(PlayerID::P1, "B"))
+	if (input.IsTriggered("B"))
 	{
 		m_isBack = true;
 		m_update = &ModeSelectScene::FadeOutUpdate;
@@ -103,7 +106,7 @@ void ModeSelectScene::FadeOutUpdate()
 		}
 		else
 		{
-			m_controller.ChangeScene(std::make_shared<GameScene>(m_controller, m_matchSetting));
+			m_controller.ChangeScene(std::make_shared<CharacterSelectScene>(m_controller, m_matchSetting));
 		}
 	}
 }

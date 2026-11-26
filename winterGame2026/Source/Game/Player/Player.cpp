@@ -80,8 +80,9 @@ namespace
 	constexpr float kGuardRecoverSpeed = 2.0f;
 }
 
-Player::Player(PlayerID id, int modelHandle, BattleManager* battleManager) :
+Player::Player(PlayerID id, CharacterID characterID, int modelHandle, BattleManager* battleManager) :
 	m_playerID(id),
+	m_characterID(characterID),
 	m_modelHandle(-1),
 	m_battleManager(battleManager),
 	m_hp(kMaxHp),
@@ -143,19 +144,26 @@ Player::~Player()
 
 void Player::Init()
 {
-	if (m_playerID == PlayerID::P1)
+	if (m_characterID == CharacterID::character1)
 	{
-		// 1Pの初期化処理
-		m_transform.SetPosition(kPlayer1InitPos);
+		// キャラクター1の初期化処理
 		m_transform.SetScale({ kPlayer1Scale, kPlayer1Scale, kPlayer1Scale });
 		MV1SetMatrix(m_modelHandle, m_transform.GetWorldMatrix().ChangeDxMat());
 	}
 	else
 	{
-		// 2Pの初期化処理
-		m_transform.SetPosition(kPlayer2InitPos);
+		// キャラクター2の初期化処理
 		m_transform.SetScale({ kPlayer2Scale, kPlayer2Scale, kPlayer2Scale });
 		MV1SetMatrix(m_modelHandle, m_transform.GetWorldMatrix().ChangeDxMat());
+	}
+
+	if (m_playerID == PlayerID::P1)
+	{
+		m_transform.SetPosition(kPlayer1InitPos);
+	}
+	else
+	{
+		m_transform.SetPosition(kPlayer2InitPos);
 	}
 }
 
@@ -488,21 +496,27 @@ void Player::RoundReset()
 	m_animationController->Play(kIdleAnimName, true, 0.0f);
 	ChangeState(std::make_unique<PlayerIdleState>(*this));
 
-	if (m_playerID == PlayerID::P1)
+	if (m_characterID == CharacterID::character1)
 	{
-		// 1Pの初期化処理
-		m_transform.SetPosition(kPlayer1InitPos);
+		// キャラクター1の初期化処理
 		m_transform.SetScale({ kPlayer1Scale, kPlayer1Scale, kPlayer1Scale });
 		MV1SetMatrix(m_modelHandle, m_transform.GetWorldMatrix().ChangeDxMat());
 	}
 	else
 	{
-		// 2Pの初期化処理
-		m_transform.SetPosition(kPlayer2InitPos);
+		// キャラクター2の初期化処理
 		m_transform.SetScale({ kPlayer2Scale, kPlayer2Scale, kPlayer2Scale });
 		MV1SetMatrix(m_modelHandle, m_transform.GetWorldMatrix().ChangeDxMat());
 	}
 
+	if (m_playerID == PlayerID::P1)
+	{
+		m_transform.SetPosition(kPlayer1InitPos);
+	}
+	else
+	{
+		m_transform.SetPosition(kPlayer2InitPos);
+	}
 	m_hp = kMaxHp;
 	ResetGuardHp();
 	m_guardRecoverWait = 0;

@@ -232,8 +232,8 @@ AttackEditorScene::AttackEditorScene(SceneController& controller) :
 
 	auto& resourceManager = ResourceManager::GetInstance();
 	m_battleManager = std::make_unique<BattleManager>();
-	m_attacker = std::make_unique<Player>(PlayerID::P1, resourceManager.GetModel(ModelType::player1), m_battleManager.get());
-	m_dummy = std::make_unique<Player>(PlayerID::P2, resourceManager.GetModel(ModelType::player2), m_battleManager.get());
+	m_attacker = std::make_unique<Player>(PlayerID::P1,CharacterID::character1, resourceManager.GetModel(ModelType::player1), m_battleManager.get());
+	m_dummy = std::make_unique<Player>(PlayerID::P2,CharacterID::character2, resourceManager.GetModel(ModelType::player2), m_battleManager.get());
 	m_attacker->Init();
 	m_dummy->Init();
 	//相手は待機の最初のポーズで止めておく
