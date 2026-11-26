@@ -96,6 +96,48 @@ bool CharacterSelectScene::UpdateSelector(Selector& selector, PlayerID id)
 	return false;
 }
 
+bool CharacterSelectScene::UpdateVersus()
+{
+	//それぞれ操作
+	bool isBack1 = UpdateSelector(m_selectors[0], PlayerID::P1);
+	bool isBack2 = UpdateSelector(m_selectors[1], PlayerID::P2);
+	//どちらかが戻る操作をしたなら戻る
+	return isBack1 || isBack2;
+}
+
+bool CharacterSelectScene::UpdateSingle()
+{	
+	//CPUを操作するかどうか
+	const bool isSelectCpu = m_selectors[0].isDecided;
+	
+	//自分が決まっていたらCPU
+	//決まっていないなら自分を動かす
+	Selector& select = isSelectCpu ? m_selectors[1] : m_selectors[0];
+
+	//動かすカーソルの更新
+	bool isBack = UpdateSelector(select, PlayerID::P1);
+
+	//戻る操作をしたとき
+	if (isBack)
+	{
+		//CPUを選んでいたら
+		if (isSelectCpu)
+		{
+			//自分の操作に戻る
+			m_selectors[0].isDecided = false;
+			return false;
+		}
+		//自分を選んでるなら
+		else
+		{
+			//前のシーンに戻る
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void CharacterSelectScene::FadeInUpdate()
 {
 	if (--m_frame <= 0)
@@ -111,8 +153,10 @@ void CharacterSelectScene::NormalUpdate()
 	auto& input = InputManager::GetInstance();
 	input.Update();
 
+	//どちらも選択済みだったら
 	if (m_selectors[0].isDecided && m_selectors[1].isDecided)
 	{
+		//次へ
 		if (input.IsTriggered("A"))
 		{
 			m_matchSetting.p1 = kCharacterItems[m_selectors[0].cursor].id;
@@ -122,93 +166,23 @@ void CharacterSelectScene::NormalUpdate()
 			m_draw = &CharacterSelectScene::FadeDraw;
 			return;
 		}
-
-		if (m_matchSetting.gameMode == GameMode::vsCpu || m_matchSetting.gameMode == GameMode::training)
-		{
-			if (input.IsTriggered("B"))
-			{
-				m_selectors[1].isDecided = false;
-			}
-		}
-		else
-		{
-			if (input.IsTriggered(PlayerID::P1, "B"))
-			{
-				m_selectors[0].isDecided = false;
-			}
-
-			if (input.IsTriggered(PlayerID::P2, "B"))
-			{
-				m_selectors[1].isDecided = false;
-			}
-		}
 	}
-
-
-
-
-
-	if (m_matchSetting.gameMode == GameMode::vsCpu || m_matchSetting.gameMode == GameMode::training)
+	//対人戦なら
+	if (m_matchSetting.gameMode == GameMode::vsPlayer)
 	{
-		if (!m_selectors[0].isDecided)
-		{
-			m_isBack = UpdateSelector(m_selectors[0], PlayerID::P1);
-		}
-		else if (m_selectors[0].isDecided && !m_selectors[1].isDecided)
-		{
-			bool isBack = UpdateSelector(m_selectors[1], PlayerID::P1);
-
-			if (isBack)
-			{
-				m_selectors[0].isDecided = false;
-			}
-			return;
-		}
-
-		if (m_selectors[0].isDecided && m_selectors[1].isDecided)
-		{
-			if (input.IsTriggered("A"))
-			{
-				m_matchSetting.p1 = kCharacterItems[m_selectors[0].cursor].id;
-				m_matchSetting.p2 = kCharacterItems[m_selectors[1].cursor].id;
-
-				m_update = &CharacterSelectScene::FadeOutUpdate;
-				m_draw = &CharacterSelectScene::FadeDraw;
-				return;
-			}
-			else if (input.IsTriggered("B"))
-			{
-				m_selectors[1].isDecided = false;
-			}
-		}
+		m_isBack = UpdateVersus();
 	}
+	//一人用なら
 	else
 	{
-		m_isBack = UpdateSelector(m_selectors[0], PlayerID::P1);
-
-		if (!m_isBack)
-		{
-			m_isBack = UpdateSelector(m_selectors[1], PlayerID::P2);
-		}
+		m_isBack = UpdateSingle();
 	}
 
+	//前のシーンに戻る
 	if (m_isBack)
 	{
 		m_update = &CharacterSelectScene::FadeOutUpdate;
 		m_draw = &CharacterSelectScene::FadeDraw;
-	}
-
-	if (m_selectors[0].isDecided && m_selectors[1].isDecided)
-	{
-		if (input.IsTriggered("A"))
-		{
-			m_matchSetting.p1 = kCharacterItems[m_selectors[0].cursor].id;
-			m_matchSetting.p2 = kCharacterItems[m_selectors[1].cursor].id;
-
-			m_update = &CharacterSelectScene::FadeOutUpdate;
-			m_draw = &CharacterSelectScene::FadeDraw;
-			return;
-		}
 	}
 }
 

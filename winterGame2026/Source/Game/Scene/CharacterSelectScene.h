@@ -18,9 +18,6 @@ public:
 	void Update()override;
 	void Draw()override;
 
-	//一人分の更新
-	bool UpdateSelector(Selector& selector, PlayerID id);
-
 private:
 	//フェードイン更新
 	void FadeInUpdate();
@@ -39,6 +36,13 @@ private:
 	//Drawメンバ関数を代入できるメンバ関数ポインタ
 	using DrawFunc_t = void(CharacterSelectScene::*)();
 	DrawFunc_t m_draw;
+
+	//一人分の更新
+	bool UpdateSelector(Selector& selector, PlayerID id);
+	//対人用
+	bool UpdateVersus();
+	//一人用
+	bool UpdateSingle();
 
 	//フェード用のフレームカウンター
 	int m_frame;
