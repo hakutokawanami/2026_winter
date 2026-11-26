@@ -92,6 +92,13 @@ public:
 	void ResolveThrowHits(const std::vector<ThrowHitEvent>& throwEvents,const std::vector<HitEvent>& hitEvents);
 
 private:
+	/// <summary>
+	/// ステージから出ないようにする
+	/// </summary>
+	/// <param name="player"></param>
+	/// <returns>戻した量</returns>
+	Vector3 ClampToStage(Player& player);
+
 	Player* m_player1;
 	Player* m_player2;
 	// プレイヤー間の中心位置

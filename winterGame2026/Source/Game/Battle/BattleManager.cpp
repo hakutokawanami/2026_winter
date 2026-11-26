@@ -2,6 +2,16 @@
 #include "Game/Player/Player.h"
 #include"HitBoxSet.h"
 
+namespace
+{
+	//ステージの中央
+	const Vector3 kStageCenter = { 0.0f,0.0f,0.0f };
+	//ステージの半径
+	constexpr float kStageRadius = 1000.0f;
+	//プレイヤーの押出判定の半径
+	constexpr float kBodyRadius = 80.0f;
+}
+
 BattleManager::BattleManager():
 	m_centerPosition({}),
 	m_direction({}),
@@ -39,11 +49,25 @@ void BattleManager::Update()
 	{
 		return;
 	}
+	//ステージとの押し戻し
+	ClampToStage(*m_player1);
+	ClampToStage(*m_player2);
+
 	//移動後の位置に判定を合わせる
 	m_player1->GetHitBoxes().Update(m_player1->GetTransform().GetPosition());
 	m_player2->GetHitBoxes().Update(m_player2->GetTransform().GetPosition());
 	//押し戻し
 	m_collision.ResolvePush(*m_player1, *m_player2);
+
+	//プレイヤー同士の押し戻しをした結果のステージとの押し戻し
+	const Vector3 back1 = ClampToStage(*m_player1);
+	const Vector3 back2 = ClampToStage(*m_player2);
+	//戻された分は相手を押す
+	m_player2->GetTransform().Translate(back1);
+	m_player1->GetTransform().Translate(back2);
+	//またはみ出す可能性があるのでもう一度
+	ClampToStage(*m_player1);
+	ClampToStage(*m_player2);
 
 	//押し戻し後の位置に合わせる
 	m_player1->ApplyDxLibMatrix();
@@ -77,6 +101,49 @@ void BattleManager::Draw()
 	DrawLine3D(m_player1->GetTransform().GetPosition(), m_player2->GetTransform().GetPosition(), GetColor(0, 255, 0));
 	// デバッグ用にプレイヤー間の距離を描画
 	DrawFormatString(10, 10, GetColor(255, 255, 255), L"PtoPDistance: %.2f", m_distance);
+
+	//ステージの端を壁のように描く
+	//円を何分割するか
+	constexpr int kDivide = 64;
+	//壁の高さ
+	constexpr float kWallHeight = 250.0f;
+	//縦の線を何分割ごとに引くか
+	constexpr int kPillarInterval = 4;
+	//壁の面の透明度(0～255)
+	constexpr int kWallAlpha = 60;
+	constexpr unsigned int kWallColor = 0xff8000;
+	const Vector3 up = { 0.0f, kWallHeight, 0.0f };
+
+	//面は半透明にして、奥のプレイヤーを隠さないようにZバッファには書き込まない
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, kWallAlpha);
+	SetWriteZBuffer3D(FALSE);
+	for (int i = 0; i < kDivide; i++)
+	{
+		const float a0 = DX_TWO_PI_F * i / kDivide;
+		const float a1 = DX_TWO_PI_F * (i + 1) / kDivide;
+		const Vector3 p0 = kStageCenter + Vector3{ cosf(a0), 0.0f, sinf(a0) } * kStageRadius;
+		const Vector3 p1 = kStageCenter + Vector3{ cosf(a1), 0.0f, sinf(a1) } * kStageRadius;
+		//四角形を三角形2枚で描く
+		DrawTriangle3D(p0, p1, p1 + up, kWallColor, true);
+		DrawTriangle3D(p0, p1 + up, p0 + up, kWallColor, true);
+	}
+	SetWriteZBuffer3D(TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	//枠線(床の円・上の円・一定間隔の縦線)
+	for (int i = 0; i < kDivide; i++)
+	{
+		const float a0 = DX_TWO_PI_F * i / kDivide;
+		const float a1 = DX_TWO_PI_F * (i + 1) / kDivide;
+		const Vector3 p0 = kStageCenter + Vector3{ cosf(a0), 0.0f, sinf(a0) } * kStageRadius;
+		const Vector3 p1 = kStageCenter + Vector3{ cosf(a1), 0.0f, sinf(a1) } * kStageRadius;
+		DrawLine3D(p0, p1, kWallColor);
+		DrawLine3D(p0 + up, p1 + up, kWallColor);
+		if (i % kPillarInterval == 0)
+		{
+			DrawLine3D(p0, p0 + up, kWallColor);
+		}
+	}
 #endif // _DEBUG
 }
 
@@ -230,4 +297,30 @@ void BattleManager::ResolveThrowHits(const std::vector<ThrowHitEvent>& throwEven
 			defender->OnThrowHit(*event.attack);
 		}
 	}
+}
+
+Vector3 BattleManager::ClampToStage(Player& player)
+{
+	//現在のポジション
+	const Vector3 pos = player.GetTransform().GetPosition();
+	//体の端が円に触れるとこまで
+	const float limit = kStageRadius - kBodyRadius;
+	//ステージ中央からのずれ
+	Vector3 offset = pos - kStageCenter;
+	offset.y = 0.0f;
+	//ステージ中央からの距離
+	const float distance = offset.Length();
+	//円の中にいるなら
+	if (distance <= limit)
+	{
+		//何もしない
+		return { 0.0f,0.0f,0.0f };
+	}
+	//端の位置に戻す
+	Vector3 clamped = kStageCenter + offset * (limit / distance);
+	clamped.y = 0.0f;
+	//プレイヤーの位置を補正
+	player.GetTransform().SetPosition(clamped);
+	//戻した量を返す
+	return clamped - pos;
 }
