@@ -1,29 +1,32 @@
-#include "BattleCamera.h"
+﻿#include "BattleCamera.h"
 #include "Game/Player/Player.h"
+#include "State/CameraStateBase.h"
+#include "State/CameraBattleState.h"
+#include "State/CameraThrowState.h"
 #include<cmath>
 
 namespace
 {
 	// カメラの高さ
-	constexpr float kCameraHeightOffset = 300.0f; 
+	constexpr float kCameraHeightOffset = 300.0f;
 	// カメラのオフセット
-	constexpr float kCameraDistanceOffset = 1000.0f; 
+	constexpr float kCameraDistanceOffset = 1000.0f;
 	// カメラの最小距離
-	constexpr float kCameraDistanceMin = 650.0f; 
-	// カメラの最大距離	
-	constexpr float kCameraDistanceMax = 1500.0f; 
+	constexpr float kCameraDistanceMin = 650.0f;
+	// カメラの最大距離
+	constexpr float kCameraDistanceMax = 1500.0f;
 	//カメラの距離に使うプレイヤー同士の距離に掛ける倍率
 	constexpr float kDistanceRate = 0.6f;
 }
 
 BattleCamera::BattleCamera():
-	m_cameraState(CameraState::Battle),
 	m_player1(nullptr),
 	m_player2(nullptr),
-	m_thrower(nullptr),
-	m_isThrow(false)
+	m_shakePower(0.0f),
+	m_shakeTime(0),
+	m_shakeOffset({})
 {
-	
+	m_state = std::make_unique<CameraBattleState>(*this);
 }
 
 BattleCamera::~BattleCamera()
@@ -39,43 +42,15 @@ void BattleCamera::Init(Player* player1, Player*player2)
 	m_player1 = player1;
 	m_player2 = player2;
 
-	CalculateCameraPositionAndTarget();
+	m_state->Update();
 	SetCameraPositionAndTarget();
 	Apply();
 }
 
 void BattleCamera::Update()
 {
-	m_isThrow = false;
-	if (m_player1->IsThrown())
-	{
-		m_thrower = m_player1;
-		m_isThrow = true;
-	}
-	else if (m_player2->IsThrown())
-	{
-		m_thrower = m_player2;
-		m_isThrow = true;
-	}
-	//投げられているプレイヤーがいてカメラがバトル状態なら投げ状態に切り替える
-	if(m_isThrow && m_cameraState == CameraState::Battle)
-	{
-		m_cameraState = CameraState::Throw;
-	}
-	//投げられているプレイヤーがいなくてカメラが投げ状態ならバトル状態に切り替える
-	else if(!m_isThrow && m_cameraState == CameraState::Throw)
-	{
-		m_cameraState = CameraState::Battle;
-	}
-
-	if (m_cameraState == CameraState::Battle)
-	{
-		CalculateCameraPositionAndTarget();
-	}
-	else if (m_cameraState == CameraState::Throw)
-	{
-		CalculateThrowCamera(m_thrower, m_thrower->GetPlayerID());
-	}
+	//ステートで行きたい位置と注視点を計算する
+	m_state->Update();
 
 	LerpCamera();
 	Apply();
@@ -94,11 +69,21 @@ void BattleCamera::SetPlayers(Player* player1, Player* player2)
 	m_player2 = player2;
 }
 
-void BattleCamera::CalculateCameraPositionAndTarget()
+void BattleCamera::ChangeState(std::unique_ptr<CameraStateBase> newState)
 {
-	// プレイヤーの位置を取得してカメラのターゲットを設定
-	Vector3 player1Pos = m_player1->GetTransform().GetPosition();
-	Vector3 player2Pos = m_player2->GetTransform().GetPosition();
+	if (m_state)
+	{
+		m_state->Exit();
+	}
+
+	m_state = std::move(newState);
+
+	m_state->Enter();
+}
+
+void BattleCamera::CalculateSideView(const Vector3& player1Pos, const Vector3& player2Pos)
+{
+	// プレイヤーの位置からカメラのターゲットを設定
 	m_calculatedTarget = (player1Pos + player2Pos) * 0.5f;
 	//プレイヤー間の距離を計算
 	Vector3 playerToPlayerDirection = player2Pos - player1Pos;
@@ -119,7 +104,7 @@ void BattleCamera::CalculateCameraPositionAndTarget()
 	//カメラの位置を計算
 	m_calculatedPosition = m_calculatedTarget - cameraOffsetDirection * cameraDistance;
 	//カメラの高さを設定
-	m_calculatedTarget.y = kCameraHeightOffset; 
+	m_calculatedTarget.y = kCameraHeightOffset;
 	m_calculatedPosition.y = kCameraHeightOffset;
 }
 
@@ -143,96 +128,28 @@ void BattleCamera::SetCameraPositionAndTarget()
 void BattleCamera::Apply()
 {
 	// カメラの位置とターゲットをDxLibに設定
-	SetCameraPositionAndTarget_UpVecY(m_position, m_target);
+	SetCameraPositionAndTarget_UpVecY(m_position + m_shakeOffset, m_target);
 	// カメラの向きに合わせて、毎フレーム（BattleCamera の更新のあとなど）
 	Vector3 dir = m_target - m_position;
 	// 少し上から当てる
-	dir.y -= dir.Length() / 2;     
+	dir.y -= dir.Length() / 2;
 	SetLightDirection(VNorm(dir));
 }
 
-void BattleCamera::CalculateThrowCamera(Player* thrower,PlayerID id)
+void BattleCamera::ShakeStart(float power, int time)
 {
-	// プレイヤーの位置を取得してカメラのターゲットを設定
-	Vector3 player1Pos = m_player1->GetTransform().GetPosition();
-	Vector3 player2Pos = m_player2->GetTransform().GetPosition();
-	m_calculatedTarget = (player1Pos + player2Pos) * 0.5f;
-	//プレイヤー間の距離を計算
-	Vector3 playerToPlayerDirection = player2Pos - player1Pos;
-	playerToPlayerDirection.y = 0.0f; // 水平方向の距離のみを考慮
-	//カメラの方向を計算
-	Vector3 cameraOffsetDirection = playerToPlayerDirection.Cross(Vector3::Up()).Normalized();
-	//カメラの距離を計算
-	float cameraDistance = playerToPlayerDirection.Length() * kDistanceRate;
-	//カメラの距離の最小値と最大値を制限
-	if (cameraDistance < kCameraDistanceMin)
+	m_shakePower = power;
+	m_shakeTime = time;
+}
+
+void BattleCamera::ShakeUpdate()
+{
+	m_shakeOffset = {};
+	if (m_shakeTime > 0)
 	{
-		cameraDistance = kCameraDistanceMin;
+		m_shakeTime--;
+		m_shakeOffset.x = (rand() / (float)RAND_MAX - 0.5f) * 2.0f * m_shakePower;
+		m_shakeOffset.y = (rand() / (float)RAND_MAX - 0.5f) * 2.0f * m_shakePower;
+		m_shakeOffset.z = (rand() / (float)RAND_MAX - 0.5f) * 2.0f * m_shakePower;
 	}
-	else if (cameraDistance > kCameraDistanceMax)
-	{
-		cameraDistance = kCameraDistanceMax;
-	}
-	//カメラの位置を計算
-	m_calculatedPosition = m_calculatedTarget - cameraOffsetDirection * cameraDistance;
-	//カメラの高さを設定
-	m_calculatedTarget.y = kCameraHeightOffset;
-	m_calculatedPosition.y = kCameraHeightOffset;
-
-
-/*
-	Vector3 player1Pos = {0.0f,0.0f,0.0f};
-	Vector3 player2Pos = {0.0f,0.0f,0.0f};
-	if (id == PlayerID::P1)
-	{
-		const int model = thrower->GetModelHandle();
-		const VECTOR hips = MV1GetFramePosition(model, MV1SearchFrame(model, L"mixamorig:Hips"));
-
-		Vector3 pos = thrower->GetTransform().GetPosition();
-
-		pos.x = hips.x;
-		pos.z = hips.z;
-
-		// プレイヤーの位置を取得してカメラのターゲットを設定
-		player1Pos = pos;
-		player2Pos = m_player2->GetTransform().GetPosition();
-	}
-	else if(id == PlayerID::P2)
-	{
-		const int model = thrower->GetModelHandle();
-		const VECTOR hips = MV1GetFramePosition(model, MV1SearchFrame(model, L"mixamorig:Hips"));
-
-		Vector3 pos = thrower->GetTransform().GetPosition();
-
-		pos.x = hips.x;
-		pos.z = hips.z;
-
-		// プレイヤーの位置を取得してカメラのターゲットを設定
-		player2Pos = pos;
-		player1Pos = m_player1->GetTransform().GetPosition();
-	}
-	m_calculatedTarget = (player1Pos + player2Pos) * 0.5f;
-	//プレイヤー間の距離を計算
-	Vector3 playerToPlayerDirection = player2Pos - player1Pos;
-	playerToPlayerDirection.y = 0.0f; // 水平方向の距離のみを考慮
-	//カメラの方向を計算
-	Vector3 cameraOffsetDirection = playerToPlayerDirection.Cross(Vector3::Up()).Normalized();
-	//カメラの距離を計算
-	float cameraDistance = playerToPlayerDirection.Length() * kDistanceRate;
-	//カメラの距離の最小値と最大値を制限
-	if (cameraDistance < kCameraDistanceMin)
-	{
-		cameraDistance = kCameraDistanceMin;
-	}
-	else if (cameraDistance > kCameraDistanceMax)
-	{
-		cameraDistance = kCameraDistanceMax;
-	}
-	//カメラの位置を計算
-	m_calculatedPosition = m_calculatedTarget - cameraOffsetDirection * cameraDistance;
-	//カメラの高さを設定
-	m_calculatedTarget.y = kCameraHeightOffset;
-	m_calculatedPosition.y = kCameraHeightOffset;
-
-*/
 }

@@ -1,20 +1,9 @@
-#pragma once
+﻿#pragma once
 #include "CameraBase.h"
-#include"Game/Common/PlayerID.h"
 #include<memory>
 
-/// <summary>
-/// カメラの状態を表す列挙型()
-/// </summary>
-enum class CameraState
-{
-	// バトルカメラ
-	Battle,
-	//投げ状態のカメラ
-	Throw
-};
-
 class Player;
+class CameraStateBase;
 class BattleCamera : public CameraBase
 {
 public:
@@ -26,27 +15,42 @@ public:
 	void Update()override;
 
 	void SetPlayers(Player* player1, Player* player2);
-	// カメラの位置とターゲットを計算する関数
-	void CalculateCameraPositionAndTarget();
+	/// <summary>
+	/// カメラのステートを切り替える
+	/// </summary>
+	/// <param name="newState"></param>
+	void ChangeState(std::unique_ptr<CameraStateBase> newState);
+	/// <summary>
+	/// 2人を横から映す位置と注視点を計算する
+	/// </summary>
+	/// <param name="player1Pos"></param>
+	/// <param name="player2Pos"></param>
+	void CalculateSideView(const Vector3& player1Pos, const Vector3& player2Pos);
 	// カメラの位置とターゲットを補間する関数
 	void LerpCamera();
 	//補完せずに直接カメラの位置とターゲットを設定する関数
 	void SetCameraPositionAndTarget();
 	//DXライブラリにカメラの位置とターゲットを適用する関数
 	void Apply();
-	/// <summary>
-	/// 投げ状態のカメラの位置とターゲットを計算する関数
-	/// </summary>
-	/// <param name="thrower"></param>
-	void CalculateThrowCamera(Player* thrower,PlayerID id);
+
+	//揺れ開始の設定
+	void ShakeStart(float power,int time);
+	//揺れの更新
+	void ShakeUpdate();
+
+	Player* GetPlayer1()const { return m_player1; }
+	Player* GetPlayer2()const { return m_player2; }
+
 private:
 	Player* m_player1;
 	Player* m_player2;
 
-	Player* m_thrower;
-
-	bool m_isThrow;
-
-	CameraState m_cameraState;
+	//今のカメラのステート
+	std::unique_ptr<CameraStateBase> m_state;
+	//揺れの力
+	float m_shakePower;
+	//揺れる時間
+	int m_shakeTime;
+	//揺れのオフセット
+	Vector3 m_shakeOffset;
 };
-

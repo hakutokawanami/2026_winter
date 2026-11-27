@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Camera\State\CameraStateBase.cpp" />
     <ClCompile Include="Source\Game\Scene\CharacterSelectScene.cpp" />
     <ClCompile Include="Source\Game\Scene\ModeSelectScene.cpp" />
     <ClCompile Include="Source\Engine\Input\CommandInput.cpp" />
@@ -174,6 +175,12 @@
     <ClCompile Include="Source\Engine\Animation\AnimationController.cpp" />
     <ClCompile Include="Source\Game\Camera\BattleCamera.cpp" />
     <ClCompile Include="Source\Game\Camera\CameraBase.cpp" />
+    <ClCompile Include="Source\Game\Camera\State\CameraBattleState.cpp" />
+    <ClCompile Include="Source\Game\Camera\State\CameraThrowState.cpp" />
+    <ClCompile Include="Source\Game\Camera\State\CameraRoundStartState.cpp" />
+    <ClCompile Include="Source\Game\Camera\State\CameraKOState.cpp" />
+    <ClCompile Include="Source\Game\Camera\State\CameraWinState.cpp" />
+    <ClCompile Include="Source\Game\Camera\State\CameraSuperState.cpp" />
     <ClCompile Include="Source\Game\Player\Player.cpp" />
     <ClCompile Include="Source\Engine\Core\GameObjectManager.cpp" />
     <ClCompile Include="Source\Game\Base\GameObject.cpp" />
@@ -234,6 +241,13 @@
     <ClInclude Include="Source\Engine\Animation\AnimationController.h" />
     <ClInclude Include="Source\Game\Camera\BattleCamera.h" />
     <ClInclude Include="Source\Game\Camera\CameraBase.h" />
+    <ClInclude Include="Source\Game\Camera\State\CameraStateBase.h" />
+    <ClInclude Include="Source\Game\Camera\State\CameraBattleState.h" />
+    <ClInclude Include="Source\Game\Camera\State\CameraThrowState.h" />
+    <ClInclude Include="Source\Game\Camera\State\CameraRoundStartState.h" />
+    <ClInclude Include="Source\Game\Camera\State\CameraKOState.h" />
+    <ClInclude Include="Source\Game\Camera\State\CameraWinState.h" />
+    <ClInclude Include="Source\Game\Camera\State\CameraSuperState.h" />
     <ClInclude Include="Source\Game\Common\PlayerID.h" />
     <ClInclude Include="Source\Game\Player\Player.h" />
     <ClInclude Include="Source\Engine\Core\GameObjectManager.h" />
