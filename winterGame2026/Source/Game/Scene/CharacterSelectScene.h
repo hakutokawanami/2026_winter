@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "SceneBase.h"
 #include"Game/Common/MatchSetting.h"
 #include"Game/Common/PlayerID.h"

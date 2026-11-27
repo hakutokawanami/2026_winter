@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /// <summary>
 /// Vector2構造体

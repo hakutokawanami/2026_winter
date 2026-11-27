@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"Game/Common/PlayerID.h"
 #include"Engine/Math/Vector3.h"
 #include"BattleCollision.h"
@@ -91,6 +91,15 @@ public:
 	/// <param name="events"></param>
 	void ResolveThrowHits(const std::vector<ThrowHitEvent>& throwEvents,const std::vector<HitEvent>& hitEvents);
 
+	//このフレームに起こるイベント
+	struct BattleEvent
+	{
+		bool isShake;
+	};
+	//イベントのクリア
+	void ClearEvent() { m_events.clear(); }
+	//イベントを取得する
+	const std::vector<BattleEvent>& GetBattleEvents()const { return m_events; }
 private:
 	/// <summary>
 	/// ステージから出ないようにする
@@ -111,5 +120,7 @@ private:
 	BattleCollision m_collision;
 	//攻撃の番号のカウンター
 	int m_attackInstanceCounter = 0;
+	//このフレームに起こるイベント
+	std::vector<BattleEvent>m_events;
 };
 

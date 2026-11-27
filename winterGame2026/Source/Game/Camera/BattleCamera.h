@@ -7,6 +7,17 @@ class CameraStateBase;
 class BattleCamera : public CameraBase
 {
 public:
+	// カメラの高さ
+	static constexpr float kCameraHeightOffset = 260.0f;
+	// カメラのオフセット
+	static constexpr float kCameraDistanceOffset = 1000.0f;
+	// カメラの最小距離
+	static constexpr float kCameraDistanceMin = 500.0f;
+	// カメラの最大距離
+	static constexpr float kCameraDistanceMax = 1500.0f;
+	//カメラの距離に使うプレイヤー同士の距離に掛ける倍率
+	static constexpr float kDistanceRate = 0.8f;
+
 	BattleCamera();
 	~BattleCamera()override;
 
@@ -34,12 +45,14 @@ public:
 	void Apply();
 
 	//揺れ開始の設定
-	void ShakeStart(float power,int time);
+	void ShakeStart(float power = 10.0f,int time = 10);
 	//揺れの更新
 	void ShakeUpdate();
 
 	Player* GetPlayer1()const { return m_player1; }
 	Player* GetPlayer2()const { return m_player2; }
+
+	void SetCalculatedPosition(const Vector3& pos)override { m_calculatedPosition = pos; }
 
 private:
 	Player* m_player1;

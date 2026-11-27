@@ -93,7 +93,7 @@ void InputManager::Update()
 		//すべての入力イベントをチェック
 		//ここでinputData_が更新される
 		//inputTable_を回して各イベントの入力をチェック
-		for (const auto inputInfo : m_inputTable)
+		for (const auto& inputInfo : m_inputTable)
 		{
 			//inputInfo.firstには"ok"等が入っている
 			auto& input = m_inputData[i][inputInfo.first];

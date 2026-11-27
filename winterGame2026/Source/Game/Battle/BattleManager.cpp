@@ -1,4 +1,4 @@
-#include "BattleManager.h"
+﻿#include "BattleManager.h"
 #include "Game/Player/Player.h"
 #include"HitBoxSet.h"
 
@@ -99,8 +99,6 @@ void BattleManager::Draw()
 	DrawSphere3D(m_centerPosition, 10.0f, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), true);
 	// デバッグ用にP1からP2への方向ベクトルを描画
 	DrawLine3D(m_player1->GetTransform().GetPosition(), m_player2->GetTransform().GetPosition(), GetColor(0, 255, 0));
-	// デバッグ用にプレイヤー間の距離を描画
-	DrawFormatString(10, 10, GetColor(255, 255, 255), L"PtoPDistance: %.2f", m_distance);
 
 	//ステージの端を壁のように描く
 	//円を何分割するか
@@ -245,7 +243,9 @@ void BattleManager::ResolveHits(const std::vector<HitEvent>& hitEvents)
 		//最後に受けた攻撃の番号を記録
 		defender->GetHitBoxes().SetLastReceivedAttackID(event.attackInstanceId);
 		//当たった処理
-		defender->OnHit(*event.attack);
+		bool isShake = defender->OnHit(*event.attack);
+		//イベントを保存
+		m_events.push_back(BattleEvent{ isShake });
 	}
 }
 

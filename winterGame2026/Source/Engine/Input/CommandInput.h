@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"StickDirection.h"
 #include<deque>
 #include<string>

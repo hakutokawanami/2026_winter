@@ -63,7 +63,7 @@ bool Application::Init()
 	//環境光(光の当たらない面が真っ黒にならないようにする)
 	SetGlobalAmbientLight(GetColorF(0.3f, 0.3f, 0.3f, 0.0f));
 	// カメラの近くと遠くの距離を設定
-	SetCameraNearFar(500.0f, 10000.0f);
+	SetCameraNearFar(100.0f, 10000.0f);
 	//背景色変更(仮)
 	SetBackgroundColor(0, 70, 70);
 
@@ -88,7 +88,7 @@ void Application::Run()
 #ifdef _DEBUG
 	SceneController.ChangeScene(std::make_shared<DebugScene>(SceneController));
 #else
-	SceneController.ChangeScene(std::make_shared<GameScene>(SceneController, MatchSetting{}));
+	SceneController.ChangeScene(std::make_shared<TitleScene>(SceneController));
 #endif // _DEBUG
 
 	while (ProcessMessage() != -1)

@@ -1,4 +1,4 @@
-#include "CommandInput.h"
+﻿#include "CommandInput.h"
 #include<algorithm>
 
 namespace

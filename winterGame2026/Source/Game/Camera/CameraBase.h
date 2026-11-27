@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"Engine/Math/Vector3.h"
 
 class CameraBase
@@ -9,6 +9,8 @@ public:
 	virtual void Init()abstract;
 	virtual void Update()abstract;
 
+	virtual void SetCalculatedPosition(const Vector3& pos)abstract;
+	virtual void SetCalculatedTarget(const Vector3& target)abstract;
 protected:
 	//カメラの位置
 	Vector3 m_position = {};

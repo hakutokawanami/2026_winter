@@ -408,7 +408,7 @@ void Player::ApplyDxLibMatrix()
 	MV1SetMatrix(m_modelHandle, mat);
 }
 
-void Player::OnHit(const AttackData& attack)
+bool Player::OnHit(const AttackData& attack)
 {
 	if(m_state->IsGuarding())
 	{
@@ -421,12 +421,12 @@ void Player::OnHit(const AttackData& attack)
 		if (m_guardHp <= 0.0f)
 		{
 			ChangeState(std::make_unique<PlayerGuardBreakState>(*this));
-			return;
+			return false;
 		}
 
 		//ガード入力をしていたらガード
 		ChangeState(std::make_unique<PlayerGuardHitState>(*this, attack));
-		return;
+		return false;
 	}
 	else
 	{
@@ -435,19 +435,19 @@ void Player::OnHit(const AttackData& attack)
 		if (m_hp <= 0)
 		{
 			ChangeState(std::make_unique<PlayerDeadState>(*this));
-			return;
+			return false;
 		}
 
 		//吹き飛び
 		if (attack.isKnockback)
 		{
 			ChangeState(std::make_unique<PlayerKnockbackState>(*this));
-			return;
+			return true;
 		}
 		
 		//のけぞりステートに変更
 		ChangeState(std::make_unique<PlayerHitState>(*this, attack));
-		return;
+		return true;
 	}
 }
 

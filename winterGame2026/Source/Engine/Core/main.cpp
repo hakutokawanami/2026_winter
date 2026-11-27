@@ -1,24 +1,24 @@
-#include "DxLib.h"
+ï»¿#include "DxLib.h"
 #include"Application.h"
 
-// ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚è‚Ü‚·
+// ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯ WinMain ã‹ã‚‰å§‹ã¾ã‚Šã¾ã™
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	//ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌƒCƒ“ƒXƒ^ƒ“ƒXì¬
+	//ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
 	auto& app = Application::GetInstance();
 
-	//‰Šú‰»ˆ—
+	//åˆæœŸåŒ–å‡¦ç†
 	if (!app.Init())
 	{
 		return -1;
 	}
 
-	//ƒQ[ƒ€ƒ‹[ƒv
+	//ã‚²ãƒ¼ãƒ ãƒ«ãƒ¼ãƒ—
 	app.Run();
 
-	//Œãˆ—
+	//å¾Œå‡¦ç†
 	app.Terminate();
 
-	// ƒ\ƒtƒg‚ÌI—¹ 
+	// ã‚½ãƒ•ãƒˆã®çµ‚äº† 
 	return 0;
 }

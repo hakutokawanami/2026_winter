@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /// <summary>
 ///	スティックの8方向+ニュートラルの情報

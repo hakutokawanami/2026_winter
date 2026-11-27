@@ -6,6 +6,8 @@ namespace
 {
 	//演出の長さ(フレーム)
 	constexpr int kDuration = 120;
+	//最初のターゲットの高さ
+	constexpr float kStartTargetY = 500.0f;
 }
 
 CameraRoundStartState::CameraRoundStartState(BattleCamera& camera) :
@@ -23,11 +25,41 @@ void CameraRoundStartState::Update()
 {
 	m_frame++;
 
-	//TODO:試合開始の演出(ステージを回り込んでから2人を映す など)
-	//今は仮で通常のカメラと同じ位置
-	Vector3 player1Pos = m_camera.GetPlayer1()->GetTransform().GetPosition();
-	Vector3 player2Pos = m_camera.GetPlayer2()->GetTransform().GetPosition();
-	m_camera.CalculateSideView(player1Pos, player2Pos);
+	Vector3 p1Pos = m_camera.GetPlayer1()->GetTransform().GetPosition();
+	Vector3 p2Pos = m_camera.GetPlayer2()->GetTransform().GetPosition();
+	//中央
+	Vector3 center = (p1Pos + p2Pos) * 0.5f;
+	//演出の時間で行う
+	float rate = m_frame / kDuration;
+	if (rate > 1.0f)
+	{
+		rate = 1.0f;
+	}
+	//演出中に動く距離
+	const float kMoveLength = kStartTargetY - BattleCamera::kCameraHeightOffset;
+	//高さを計算
+	float y = kStartTargetY - kMoveLength * rate;
+	//ターゲット
+	Vector3 target = { center.x,y,center.z };
+	//プレイヤー同士の方向
+	Vector3 playerToPlayerDirection = p2Pos - p1Pos;
+	//カメラの方向を計算
+	Vector3 cameraOffsetDirection = playerToPlayerDirection.Cross(Vector3::Up()).Normalized();
+	//カメラの距離を計算
+	float cameraDistance = playerToPlayerDirection.Length() * BattleCamera::kDistanceRate;
+
+	//カメラの距離の最小値と最大値を制限
+	if (cameraDistance < BattleCamera::kCameraDistanceMin)
+	{
+		cameraDistance = BattleCamera::kCameraDistanceMin;
+	}
+	else if (cameraDistance > BattleCamera::kCameraDistanceMax)
+	{
+		cameraDistance = BattleCamera::kCameraDistanceMax;
+	}
+
+	//カメラの位置を計算
+	
 }
 
 bool CameraRoundStartState::IsFinished() const

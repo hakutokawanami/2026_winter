@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "PlayerStateBase.h"
 #include"Game/Battle/AttackData.h"
 

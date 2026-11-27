@@ -5,20 +5,6 @@
 #include "State/CameraThrowState.h"
 #include<cmath>
 
-namespace
-{
-	// カメラの高さ
-	constexpr float kCameraHeightOffset = 300.0f;
-	// カメラのオフセット
-	constexpr float kCameraDistanceOffset = 1000.0f;
-	// カメラの最小距離
-	constexpr float kCameraDistanceMin = 650.0f;
-	// カメラの最大距離
-	constexpr float kCameraDistanceMax = 1500.0f;
-	//カメラの距離に使うプレイヤー同士の距離に掛ける倍率
-	constexpr float kDistanceRate = 0.6f;
-}
-
 BattleCamera::BattleCamera():
 	m_player1(nullptr),
 	m_player2(nullptr),
@@ -51,7 +37,7 @@ void BattleCamera::Update()
 {
 	//ステートで行きたい位置と注視点を計算する
 	m_state->Update();
-
+	ShakeUpdate();
 	LerpCamera();
 	Apply();
 
@@ -128,7 +114,7 @@ void BattleCamera::SetCameraPositionAndTarget()
 void BattleCamera::Apply()
 {
 	// カメラの位置とターゲットをDxLibに設定
-	SetCameraPositionAndTarget_UpVecY(m_position + m_shakeOffset, m_target);
+	SetCameraPositionAndTarget_UpVecY(m_position + m_shakeOffset, m_target + m_shakeOffset);
 	// カメラの向きに合わせて、毎フレーム（BattleCamera の更新のあとなど）
 	Vector3 dir = m_target - m_position;
 	// 少し上から当てる
@@ -144,12 +130,15 @@ void BattleCamera::ShakeStart(float power, int time)
 
 void BattleCamera::ShakeUpdate()
 {
-	m_shakeOffset = {};
 	if (m_shakeTime > 0)
 	{
 		m_shakeTime--;
 		m_shakeOffset.x = (rand() / (float)RAND_MAX - 0.5f) * 2.0f * m_shakePower;
 		m_shakeOffset.y = (rand() / (float)RAND_MAX - 0.5f) * 2.0f * m_shakePower;
 		m_shakeOffset.z = (rand() / (float)RAND_MAX - 0.5f) * 2.0f * m_shakePower;
+	}
+	else
+	{
+		m_shakeOffset = {};
 	}
 }

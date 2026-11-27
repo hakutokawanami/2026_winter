@@ -1,4 +1,4 @@
-#include "GameScene.h"
+﻿#include "GameScene.h"
 #include"TitleScene.h"
 #include"SceneController.h"
 #include"Engine/Core/Application.h"
@@ -147,6 +147,17 @@ void GameScene::NormalUpdate()
 		//ラウンドマネージャー更新
 		m_roundManager->Update(*m_player1, *m_player2);
 	}
+	//イベントを確かめる
+	for (const auto& event : m_battleManager->GetBattleEvents())
+	{
+		//カメラシェイク
+		if (event.isShake)
+		{
+			m_camera->ShakeStart();
+		}
+	}
+	//イベントをクリア
+	m_battleManager->ClearEvent();
 
 	//カメラ更新
 	m_camera->Update();
@@ -159,7 +170,6 @@ void GameScene::NormalUpdate()
 		//フェード用描画
 		m_draw = &GameScene::FadeDraw;
 	}
-
 
 #ifdef _DEBUG
 	if (input.IsTriggered(m_player1->GetPlayerID(),"SELECT"))
@@ -226,6 +236,9 @@ void GameScene::NormalDraw()
 	auto& input = InputManager::GetInstance();
 	input.DebugDrawStickHistory(PlayerID::P1, wsize.w - 260, 16);
 	input.DebugDrawStickHistory(PlayerID::P2, wsize.w - 120, 16);
+
+	DrawFormatString(10, 460, 0xffffff, L"FPS:%f", GetFPS());
+	DrawFormatString(10, 480, 0xffffff, L"RefreshRate:%d", GetRefreshRate());
 #endif // _DEBUG
 }
 

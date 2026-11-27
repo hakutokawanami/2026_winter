@@ -143,7 +143,8 @@ public:
 	/// 攻撃を受けたときの処理
 	/// </summary>
 	/// <param name="attack">受けた技の性能</param>
-	void OnHit(const AttackData& attack);
+	/// <returns>カメラを揺らすかどうか</returns>
+	bool OnHit(const AttackData& attack);
 	/// <summary>
 	/// 体力を取得する
 	/// </summary>

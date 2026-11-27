@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"HitBox.h"
 #include"Engine/Math/Vector3.h"
 #include"Game/Common/PlayerID.h"
