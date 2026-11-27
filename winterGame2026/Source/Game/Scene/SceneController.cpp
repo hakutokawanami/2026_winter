@@ -35,8 +35,15 @@ void SceneController::PopScene()
 
 void SceneController::Update()
 {
+	if (m_scenes.empty())
+	{
+		return;
+	}
+
+	//更新中に消えないようにコピーを持っておく
+	auto scene = m_scenes;
 	//末尾のシーンのみ、Updateを行う
-	m_scenes.back()->Update();
+	scene.back()->Update();
 }
 
 void SceneController::Draw()
