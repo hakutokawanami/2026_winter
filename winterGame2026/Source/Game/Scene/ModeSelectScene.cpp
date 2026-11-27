@@ -11,18 +11,30 @@ namespace
 	//フェードにかかる時間
 	constexpr int kFadeInterval = 60;
 
+	//メニューの種類
+	enum class MenuAction
+	{
+		match,
+		option,
+		exit
+	};
+
 	//名前と対応するゲームモード
 	struct ModeItem
 	{
 		const wchar_t* name;
+		MenuAction menu;
 		GameMode mode;
 	};
+
 	//モードの配列
 	constexpr ModeItem kModeItems[] =
 	{
-		{ L"対CPU",       GameMode::vsCpu },
-		{ L"対人",        GameMode::vsPlayer },
-		{ L"トレーニング", GameMode::training },
+		{ L"対CPU",        MenuAction::match, GameMode::vsCpu },
+		{ L"対人",         MenuAction::match, GameMode::vsPlayer },
+		{ L"トレーニング", MenuAction::match, GameMode::training },
+		{ L"オプション", MenuAction::option, GameMode::vsCpu },
+		{ L"ゲーム終了", MenuAction::exit, GameMode::vsCpu },
 	};
 	//モードの数
 	constexpr int kItemCount = static_cast<int>(std::size(kModeItems));
@@ -82,9 +94,23 @@ void ModeSelectScene::NormalUpdate()
 
 	if (input.IsTriggered("A"))
 	{
-		m_matchSetting.gameMode = kModeItems[m_cursor].mode;
-		m_update = &ModeSelectScene::FadeOutUpdate;
-		m_draw = &ModeSelectScene::FadeDraw;
+		//バトル
+		if (kModeItems[m_cursor].menu == MenuAction::match)
+		{
+			m_matchSetting.gameMode = kModeItems[m_cursor].mode;
+			m_update = &ModeSelectScene::FadeOutUpdate;
+			m_draw = &ModeSelectScene::FadeDraw;
+		}
+		//設定
+		else if (kModeItems[m_cursor].menu == MenuAction::option)
+		{
+
+		}
+		//ゲーム終了
+		else
+		{
+
+		}
 	}
 
 	if (input.IsTriggered("B"))
